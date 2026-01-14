@@ -3,18 +3,30 @@ import { useNavigate } from 'react-router-dom'
 import { Phone, Lock, Eye, EyeOff, TrendingUp, Shield, Zap, AlertCircle } from 'lucide-react'
 import { FyntrixLogo } from '../../components/FyntrixLogo'
 import { BRANDING } from '../../branding'
+import { useLogin } from '../../hooks/useLogin'
 
 export default function Login() {
   const [phone, setPhone] = useState('')
   const [otp, setOtp] = useState('')
   const [showOtpField, setShowOtpField] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
   
   const navigate = useNavigate()
+  const {
+    isLoading,
+    error,
+    sessionData,
+    handleGenerateOtp,
+    handleVerifyOtp,
+    clearError,
+    isAuthenticated
+  } = useLogin()
 
-  // TODO: Add authentication logic later
-  const isAuthenticated = false
+  // Get full phone number with +91 prefix
+  const getFullPhoneNumber = (phone: string) => {
+    // Remove any existing +91 prefix and spaces, then add +91
+    const cleanPhone = phone.replace(/^(\+91|91)?\s*/, '').replace(/\s/g, '')
+    return cleanPhone ? `+91${cleanPhone}` : ''
+  }
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -23,27 +35,22 @@ export default function Login() {
     }
   }, [isAuthenticated, navigate])
 
-  const clearError = () => setError('')
+  // Show OTP field when session data is available
+  useEffect(() => {
+    if (sessionData) {
+      setShowOtpField(true)
+    }
+  }, [sessionData])
 
-  const handleGenerateOtp = async () => {
-    if (!phone) {
-      setError('Please enter your phone number first')
+  const handleGenerateOtpClick = async () => {
+    const fullPhoneNumber = getFullPhoneNumber(phone)
+    if (!fullPhoneNumber) {
+      clearError()
       return
     }
     
     clearError()
-    setIsLoading(true)
-    
-    try {
-      // TODO: Replace with actual OTP generation API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      console.log('Generating OTP for:', phone)
-      setShowOtpField(true)
-    } catch (err) {
-      setError('Failed to generate OTP. Please try again.')
-    } finally {
-      setIsLoading(false)
-    }
+    await handleGenerateOtp(fullPhoneNumber)
   }
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -52,31 +59,18 @@ export default function Login() {
     
     if (!showOtpField) {
       // Generate OTP phase
-      await handleGenerateOtp()
+      await handleGenerateOtpClick()
       return
     }
     
     // Login phase with OTP
     if (!otp) {
-      setError('Please enter the OTP')
       return
     }
     
-    // TODO: Add authentication logic later for OTP
-    console.log('Login attempt with OTP:', { phone, otp })
-    
-    // Simulate API call for now
-    setIsLoading(true)
-    try {
-      // Placeholder for future API integration
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      // TODO: Replace with actual API call
-      // await handleLoginWithOtp({ phone, otp })
-    } catch (err) {
-      setError('Login failed. Please try again.')
-    } finally {
-      setIsLoading(false)
-    }
+    // Verify OTP and complete login
+    const fullPhoneNumber = getFullPhoneNumber(phone)
+    await handleVerifyOtp(fullPhoneNumber, otp)
   }
 
   return (
@@ -242,7 +236,8 @@ export default function Login() {
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="Enter your phone number"
+                placeholder="9876543210"
+                maxLength={10}
                 required
                 style={{
                   width: '100%',
