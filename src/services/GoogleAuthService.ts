@@ -23,7 +23,7 @@ export class GoogleAuthService {
   static async authenticateWithGoogle(token: string): Promise<GoogleAuthResponse> {
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/auth/google`,
+        `${API_BASE_URL}v1/auth/google`,
         { token },
         {
           headers: {
