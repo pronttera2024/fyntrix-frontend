@@ -1,5 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { getAccessToken, setAccessToken, removeAccessToken, getRefreshToken, setRefreshToken, STORAGE_KEYS } from "./authStorage";
+import { API_BASE_URL } from "../config/api";
 
 // Flag to prevent multiple refresh attempts
 let isRefreshing = false;
@@ -22,7 +23,7 @@ const processQueue = (error: any, token: string | null = null) => {
 
 // Create axios instance
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "",
+  baseURL: API_BASE_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -82,7 +83,7 @@ axiosInstance.interceptors.response.use(
       
       // Attempt to refresh the token
       const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/v1/auth/refresh`,
+        `${API_BASE_URL}/auth/refresh`,
         { refreshToken },
         {
           headers: {

@@ -1,74 +1,125 @@
 # ===============================
-# Node / Package Managers
+# Dependencies
 # ===============================
 node_modules/
+.pnp
+.pnp.js
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# ===============================
+# Package Manager Logs
+# ===============================
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+lerna-debug.log*
 
 # ===============================
 # Build Outputs
 # ===============================
 dist/
+dist-ssr/
 build/
 out/
-.next/
-.nuxt/
-.svelte-kit/
-coverage/
+*.local
 
 # ===============================
-# Environment Variables
+# Environment Variables (CRITICAL - Never commit!)
 # ===============================
 .env
 .env.local
+.env.development
 .env.development.local
+.env.test
 .env.test.local
+.env.production
 .env.production.local
+
+# ===============================
+# Vite
+# ===============================
+.vite/
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# ===============================
+# TypeScript
+# ===============================
+*.tsbuildinfo
+next-env.d.ts
 
 # ===============================
 # Cache / Temporary Files
 # ===============================
 .cache/
 .temp/
+.tmp/
 tmp/
 *.tmp
 *.temp
+.eslintcache
+.stylelintcache
 
 # ===============================
 # Logs
 # ===============================
 logs/
 *.log
-
-# ===============================
-# IDE / Editor
-# ===============================
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# ===============================
-# OS Files
-# ===============================
-.DS_Store
-Thumbs.db
-
-# ===============================
-# TypeScript
-# ===============================
-*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
 # ===============================
 # Testing
 # ===============================
 coverage/
+*.lcov
+.nyc_output/
 playwright-report/
+playwright/.cache/
 cypress/videos/
 cypress/screenshots/
+test-results/
+.jest/
+
+# ===============================
+# IDE / Editor
+# ===============================
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*.swo
+*~
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# ===============================
+# OS Files
+# ===============================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
 
 # ===============================
 # Framework-specific
@@ -79,16 +130,119 @@ out/
 
 # Nuxt
 .nuxt/
+.output/
 
 # Gatsby
 .cache/
 public/
 
-# Vite
-.vite/
+# SvelteKit
+.svelte-kit/
+
+# Remix
+.remix/
+
+# ===============================
+# Deployment
+# ===============================
+.vercel/
+.netlify/
+.firebase/
+.surge/
+
+# ===============================
+# Storybook
+# ===============================
+storybook-static/
 
 # ===============================
 # Misc
 # ===============================
-.vercel/
-.netlify/
+*.seed
+*.pid
+*.pid.lock
+.lock-wscript
+lib-cov
+.grunt
+bower_components
+.npm
+.node_repl_history
+*.tgz
+.yarn-integrity
+.env.backup
+.vscode-test
+.turbo
+
+# ===============================
+# Optional npm cache directory
+# ===============================
+.npm
+
+# ===============================
+# Optional eslint cache
+# ===============================
+.eslintcache
+
+# ===============================
+# Optional stylelint cache
+# ===============================
+.stylelintcache
+
+# ===============================
+# Microbundle cache
+# ===============================
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# ===============================
+# Optional REPL history
+# ===============================
+.node_repl_history
+
+# ===============================
+# Output of 'npm pack'
+# ===============================
+*.tgz
+
+# ===============================
+# Yarn Integrity file
+# ===============================
+.yarn-integrity
+
+# ===============================
+# parcel-bundler cache
+# ===============================
+.parcel-cache
+
+# ===============================
+# Serverless directories
+# ===============================
+.serverless/
+
+# ===============================
+# FuseBox cache
+# ===============================
+.fusebox/
+
+# ===============================
+# DynamoDB Local files
+# ===============================
+.dynamodb/
+
+# ===============================
+# TernJS port file
+# ===============================
+.tern-port
+
+# ===============================
+# Stores VSCode versions used for testing
+# ===============================
+.vscode-test
+
+# ===============================
+# Temporary folders
+# ===============================
+temp/
+tmp/

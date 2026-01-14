@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Phone, Lock, Eye, EyeOff, TrendingUp, Shield, Zap, AlertCircle } from 'lucide-react'
+import { GoogleLogin } from '@react-oauth/google'
 import { FyntrixLogo } from '../../components/FyntrixLogo'
 import { BRANDING } from '../../branding'
 import { useLogin } from '../../hooks/useLogin'
+import { useGoogleAuth } from '../../hooks/useGoogleAuth'
 
 export default function Login() {
   const [phone, setPhone] = useState('')
@@ -20,6 +22,14 @@ export default function Login() {
     clearError,
     isAuthenticated
   } = useLogin()
+  
+  const {
+    isLoading: isGoogleLoading,
+    error: googleError,
+    handleGoogleSuccess,
+    handleGoogleError,
+    clearError: clearGoogleError
+  } = useGoogleAuth()
 
   // Get full phone number with +91 prefix
   const getFullPhoneNumber = (phone: string) => {
@@ -360,6 +370,60 @@ export default function Login() {
             )}
           </button>
         </form>
+
+        {/* Divider */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          margin: '24px 0'
+        }}>
+          <div style={{ flex: 1, height: 1, background: '#e5e7eb' }} />
+          <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500 }}>OR</span>
+          <div style={{ flex: 1, height: 1, background: '#e5e7eb' }} />
+        </div>
+
+        {/* Google Sign-In */}
+        <div style={{ marginBottom: 24 }}>
+          {googleError && (
+            <div style={{
+              marginBottom: 16,
+              padding: '12px 16px',
+              background: '#fef2f2',
+              border: '1px solid #fecaca',
+              borderRadius: 8,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8
+            }}>
+              <AlertCircle size={16} color="#dc2626" />
+              <span style={{
+                fontSize: 13,
+                color: '#dc2626',
+                fontWeight: 500
+              }}>
+                {googleError}
+              </span>
+            </div>
+          )}
+          
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            opacity: isGoogleLoading ? 0.6 : 1,
+            pointerEvents: isGoogleLoading ? 'none' : 'auto'
+          }}>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              theme="outline"
+              size="large"
+              text="continue_with"
+              shape="rectangular"
+              width="340"
+            />
+          </div>
+        </div>
 
         {/* Footer */}
         <div style={{

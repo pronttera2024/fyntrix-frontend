@@ -62,9 +62,11 @@ export interface VerifySignupResponse {
 
 export interface User {
   user_id: string;
-  phone: string;
+  phone?: string;
+  email?: string;
   name: string;
-  phone_verified: boolean;
+  phone_verified?: boolean;
+  email_verified?: boolean;
 }
 
 // API Service - Pure API calls without storage logic
