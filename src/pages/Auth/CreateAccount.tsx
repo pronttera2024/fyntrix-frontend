@@ -1,0 +1,612 @@
+import React, { useEffect, useState } from 'react'
+import { User, Lock, Phone, Eye, EyeOff, TrendingUp, Shield, Zap, Check, X, AlertCircle } from 'lucide-react'
+import { FyntrixLogo } from '../../components/FyntrixLogo'
+import { BRANDING } from '../../branding'
+import { useNavigate } from 'react-router-dom'
+
+export default function CreateAccount() {
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    otp: '',
+    acceptTerms: false
+  })
+  const [showOtpField, setShowOtpField] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  
+  const navigate = useNavigate()
+
+  // TODO: Add authentication logic later
+  const isAuthenticated = false
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/', { replace: true })
+    }
+  }, [isAuthenticated, navigate])
+  
+  const clearError = () => setError('')
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {}
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required'
+    }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Phone number is required'
+    } else if (!/^[6-9]\d{9}$/.test(formData.phone.replace(/\D/g, ''))) {
+      newErrors.phone = 'Invalid phone number format'
+    }
+
+    if (showOtpField && !formData.otp.trim()) {
+      newErrors.otp = 'OTP is required'
+    } else if (showOtpField && formData.otp.length !== 6) {
+      newErrors.otp = 'OTP must be 6 digits'
+    }
+
+    if (!formData.acceptTerms) {
+      newErrors.acceptTerms = 'You must accept the terms and conditions'
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleGenerateOtp = async () => {
+    if (!validateForm()) {
+      return
+    }
+    
+    clearError()
+    setIsLoading(true)
+    
+    try {
+      // TODO: Replace with actual OTP generation API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      console.log('Generating OTP for:', formData.phone)
+      setShowOtpField(true)
+    } catch (err) {
+      setError('Failed to generate OTP. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!showOtpField) {
+      // Generate OTP phase
+      await handleGenerateOtp()
+      return
+    }
+    
+    // Account creation phase with OTP
+    if (!validateForm()) {
+      return
+    }
+
+    clearError()
+    
+    // TODO: Add authentication logic later for OTP
+    console.log('Creating account with OTP:', { name: formData.name, phone: formData.phone, otp: formData.otp })
+    
+    // Simulate API call for now
+    setIsLoading(true)
+    try {
+      // Placeholder for future API integration
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      // TODO: Replace with actual API call
+      // await handleCreateAccountWithOtp({ name: formData.name, phone: formData.phone, otp: formData.otp })
+    } catch (err) {
+      setError('Account creation failed. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleInputChange = (field: string, value: string | boolean) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }))
+    }
+  }
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 20,
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
+      {/* Background decorative elements */}
+      <div style={{
+        position: 'absolute',
+        top: -100,
+        right: -100,
+        width: 300,
+        height: 300,
+        background: 'radial-gradient(circle, rgba(0, 149, 255, 0.1) 0%, transparent 70%)',
+        borderRadius: '50%'
+      }} />
+      <div style={{
+        position: 'absolute',
+        bottom: -150,
+        left: -150,
+        width: 400,
+        height: 400,
+        background: 'radial-gradient(circle, rgba(16, 200, 169, 0.08) 0%, transparent 70%)',
+        borderRadius: '50%'
+      }} />
+
+      <div style={{
+        width: '100%',
+        maxWidth: 480,
+        background: 'rgba(255, 255, 255, 0.98)',
+        backdropFilter: 'blur(20px)',
+        borderRadius: 24,
+        padding: 40,
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+        position: 'relative',
+        zIndex: 1
+      }}>
+        {/* Logo and Header */}
+        <div style={{
+          textAlign: 'center',
+          marginBottom: 32
+        }}>
+          <div style={{ marginBottom: 16 }}>
+            <FyntrixLogo fontSize={32} fontWeight={900} />
+          </div>
+          <h1 style={{
+            fontSize: 24,
+            fontWeight: 800,
+            color: '#1e293b',
+            marginBottom: 8,
+            margin: 0
+          }}>
+            Create Account
+          </h1>
+          <p style={{
+            fontSize: 14,
+            color: '#64748b',
+            margin: 0,
+            lineHeight: 1.5
+          }}>
+            Join FYNTRIX and start AI-powered trading today
+          </p>
+        </div>
+
+        {/* Features */}
+        <div style={{
+          display: 'flex',
+          gap: 12,
+          marginBottom: 28,
+          justifyContent: 'center',
+          flexWrap: 'wrap'
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '6px 10px',
+            background: '#f0fdf4',
+            borderRadius: 6,
+            border: '1px solid #dcfce7'
+          }}>
+            <TrendingUp size={12} color="#16a34a" />
+            <span style={{ fontSize: 10, fontWeight: 600, color: '#16a34a' }}>AI Picks</span>
+          </div>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '6px 10px',
+            background: '#eff6ff',
+            borderRadius: 6,
+            border: '1px solid #dbeafe'
+          }}>
+            <Shield size={12} color="#3b82f6" />
+            <span style={{ fontSize: 10, fontWeight: 600, color: '#3b82f6' }}>Secure</span>
+          </div>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '6px 10px',
+            background: '#fef3c7',
+            borderRadius: 6,
+            border: '1px solid #fde68a'
+          }}>
+            <Zap size={12} color="#d97706" />
+            <span style={{ fontSize: 10, fontWeight: 600, color: '#d97706' }}>Real-time</span>
+          </div>
+        </div>
+
+        {/* Create Account Form */}
+        <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
+          {/* API Error Display */}
+          {error && (
+            <div style={{
+              marginBottom: 20,
+              padding: '12px 16px',
+              background: '#fef2f2',
+              border: '1px solid #fecaca',
+              borderRadius: 8,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8
+            }}>
+              <AlertCircle size={16} color="#dc2626" />
+              <span style={{
+                fontSize: 13,
+                color: '#dc2626',
+                fontWeight: 500
+              }}>
+                {error}
+              </span>
+            </div>
+          )}
+          {/* Name Field */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={{
+              display: 'block',
+              fontSize: 13,
+              fontWeight: 600,
+              color: '#374151',
+              marginBottom: 6
+            }}>
+              Full Name
+            </label>
+            <div style={{
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center'
+            }}>
+              <User size={18} color="#6b7280" style={{
+                position: 'absolute',
+                left: 14,
+                zIndex: 1
+              }} />
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                placeholder="Enter your full name"
+                required
+                style={{
+                  width: '100%',
+                  padding: '10px 14px 10px 44px',
+                  border: errors.name ? '1px solid #ef4444' : '1px solid #d1d5db',
+                  borderRadius: 10,
+                  fontSize: 14,
+                  outline: 'none',
+                  transition: 'all 0.2s',
+                  background: '#fff',
+                  boxSizing: 'border-box',
+                  color: '#6b7280'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#0095FF'
+                  e.target.style.boxShadow = '0 0 0 3px rgba(0, 149, 255, 0.1)'
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = errors.name ? '#ef4444' : '#d1d5db'
+                  e.target.style.boxShadow = 'none'
+                }}
+              />
+            </div>
+            {errors.name && (
+              <div style={{
+                fontSize: 11,
+                color: '#ef4444',
+                marginTop: 4,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4
+              }}>
+                <X size={12} />
+                {errors.name}
+              </div>
+            )}
+          </div>
+
+          {/* Phone Number Field */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={{
+              display: 'block',
+              fontSize: 13,
+              fontWeight: 600,
+              color: '#374151',
+              marginBottom: 6
+            }}>
+              Phone Number
+            </label>
+            <div style={{
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center'
+            }}>
+              <Phone size={18} color="#6b7280" style={{
+                position: 'absolute',
+                left: 14,
+                zIndex: 1
+              }} />
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => handleInputChange('phone', e.target.value)}
+                placeholder="Enter your phone number"
+                required
+                style={{
+                  width: '100%',
+                  padding: '10px 14px 10px 44px',
+                  border: errors.phone ? '1px solid #ef4444' : '1px solid #d1d5db',
+                  borderRadius: 10,
+                  fontSize: 14,
+                  outline: 'none',
+                  transition: 'all 0.2s',
+                  background: '#fff',
+                  boxSizing: 'border-box',
+                  color: '#6b7280'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#0095FF'
+                  e.target.style.boxShadow = '0 0 0 3px rgba(0, 149, 255, 0.1)'
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = errors.phone ? '#ef4444' : '#d1d5db'
+                  e.target.style.boxShadow = 'none'
+                }}
+              />
+            </div>
+            {errors.phone && (
+              <div style={{
+                fontSize: 11,
+                color: '#ef4444',
+                marginTop: 4,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4
+              }}>
+                <X size={12} />
+                {errors.phone}
+              </div>
+            )}
+          </div>
+
+          {/* OTP Field - Only visible after Generate OTP is clicked */}
+          {showOtpField && (
+            <div style={{ marginBottom: 16 }}>
+              <label style={{
+                display: 'block',
+                fontSize: 13,
+                fontWeight: 600,
+                color: '#374151',
+                marginBottom: 6
+              }}>
+                Enter OTP
+              </label>
+              <div style={{
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center'
+              }}>
+                <Lock size={18} color="#6b7280" style={{
+                  position: 'absolute',
+                  left: 14,
+                  zIndex: 1
+                }} />
+                <input
+                  type="text"
+                  value={formData.otp}
+                  onChange={(e) => handleInputChange('otp', e.target.value)}
+                  placeholder="Enter the 6-digit OTP"
+                  maxLength={6}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px 10px 44px',
+                    border: errors.otp ? '1px solid #ef4444' : '1px solid #d1d5db',
+                    borderRadius: 10,
+                    fontSize: 14,
+                    outline: 'none',
+                    transition: 'all 0.2s',
+                    background: '#fff',
+                    boxSizing: 'border-box',
+                    color: '#6b7280'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#0095FF'
+                    e.target.style.boxShadow = '0 0 0 3px rgba(0, 149, 255, 0.1)'
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = errors.otp ? '#ef4444' : '#d1d5db'
+                    e.target.style.boxShadow = 'none'
+                  }}
+                />
+              </div>
+              {errors.otp && (
+                <div style={{
+                  fontSize: 11,
+                  color: '#ef4444',
+                  marginTop: 4,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 4
+                }}>
+                  <X size={12} />
+                  {errors.otp}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Terms and Conditions */}
+          <div style={{ marginBottom: 24 }}>
+            <label style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 8,
+              cursor: 'pointer',
+              fontSize: 13,
+              color: '#374151'
+            }}>
+              <input
+                type="checkbox"
+                checked={formData.acceptTerms}
+                onChange={(e) => handleInputChange('acceptTerms', e.target.checked)}
+                style={{
+                  marginTop: 3,
+                  background: formData.acceptTerms ? '#0095FF' : 'white',
+                  border: '2px solid #374151',
+                  colorScheme: formData.acceptTerms ? 'Button' : 'none',
+                }}
+              />
+              <span>
+                I agree to the{' '}
+                <button
+                  type="button"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#0095FF',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    textDecoration: 'underline'
+                  }}
+                >
+                  Terms and Conditions
+                </button>
+                {' '}and{' '}
+                <button
+                  type="button"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#0095FF',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    textDecoration: 'underline'
+                  }}
+                >
+                  Privacy Policy
+                </button>
+              </span>
+            </label>
+            {errors.acceptTerms && (
+              <div style={{
+                fontSize: 11,
+                color: '#ef4444',
+                marginTop: 4,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4
+              }}>
+                <X size={12} />
+                {errors.acceptTerms}
+              </div>
+            )}
+          </div>
+
+          {/* Generate OTP / Create Account Button */}
+          <button
+            type="submit"
+            disabled={
+              isLoading ||
+              !formData.name ||
+              !formData.phone ||
+              !formData.acceptTerms ||
+              (showOtpField && !formData.otp)
+            }
+            style={{
+              width: '100%',
+              padding: '14px 24px',
+              background: isLoading || !formData.name || !formData.phone || !formData.acceptTerms || (showOtpField && !formData.otp)
+                ? '#94a3b8'
+                : 'linear-gradient(135deg, #0095FF 0%, #10C8A9 100%)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 12,
+              fontSize: 15,
+              fontWeight: 700,
+              cursor: isLoading || !formData.name || !formData.phone || !formData.acceptTerms || (showOtpField && !formData.otp) ? 'not-allowed' : 'pointer',
+              transition: 'all 0.2s',
+              boxShadow: isLoading || !formData.name || !formData.phone || !formData.acceptTerms || (showOtpField && !formData.otp)
+                ? 'none'
+                : '0 4px 12px rgba(0, 149, 255, 0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8
+            }}
+          >
+            {isLoading ? (
+              <>
+                <div style={{
+                  width: 16,
+                  height: 16,
+                  border: '2px solid rgba(255, 255, 255, 0.3)',
+                  borderTop: '2px solid #fff',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite'
+                }} />
+                {showOtpField ? 'Creating Account...' : 'Generating OTP...'}
+              </>
+            ) : (
+              showOtpField ? 'Create Account' : 'Generate OTP'
+            )}
+          </button>
+        </form>
+
+        {/* Footer */}
+        <div style={{
+          textAlign: 'center',
+          paddingTop: 20,
+          borderTop: '1px solid #e5e7eb',
+          fontSize: 13,
+          color: '#64748b'
+        }}>
+          <div style={{ marginBottom: 8 }}>
+            Already have an account?{' '}
+            <button
+              onClick={() => window.history.back()}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#0095FF',
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}
+            >
+              Sign In
+            </button>
+          </div>
+          <div style={{ fontSize: 11, opacity: 0.7 }}>
+            Licensed to {BRANDING.owner}
+          </div>
+        </div>
+      </div>
+
+      {/* Add CSS animation */}
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
+    </div>
+  )
+}
