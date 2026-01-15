@@ -267,17 +267,17 @@ export default function Login() {
             <div style={{
               marginBottom: 20,
               padding: isMobile ? '16px 20px' : '12px 16px',
-              background: isMobile ? 'rgba(220, 38, 38, 0.1)' : '#fef2f2',
-              border: isMobile ? '1px solid rgba(220, 38, 38, 0.2)' : '1px solid #fecaca',
+              background: isMobile ? '#fef2f2' : '#fef2f2',
+              border: isMobile ? '1px solid #fecaca' : '1px solid #fecaca',
               borderRadius: isMobile ? 16 : 8,
               display: 'flex',
               alignItems: 'center',
               gap: isMobile ? 12 : 8
             }}>
-              <AlertCircle size={isMobile ? 20 : 16} color={isMobile ? '#fff' : '#dc2626'} />
+              <AlertCircle size={isMobile ? 20 : 16} color="#dc2626" />
               <span style={{
                 fontSize: isMobile ? 14 : 13,
-                color: isMobile ? '#fff' : '#dc2626',
+                color: '#dc2626',
                 fontWeight: 500,
                 lineHeight: 1.4
               }}>
