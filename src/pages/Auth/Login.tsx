@@ -352,7 +352,7 @@ export default function Login() {
 
           {/* OTP Field - Only visible after Generate OTP is clicked */}
           {showOtpField && (
-            <div style={{ marginBottom: 28 }}>
+            <div style={{ marginBottom: isMobile ? 24 : 20 }}>
               <label style={{
                 display: 'block',
                 fontSize: 13,
