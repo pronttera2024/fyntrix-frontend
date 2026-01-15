@@ -4,6 +4,8 @@ import { FyntrixLogo } from '../../components/FyntrixLogo'
 import { BRANDING } from '../../branding'
 import { useNavigate } from 'react-router-dom'
 import { useSignup } from '../../hooks/useSignup'
+import { useGoogleAuth } from '../../hooks/useGoogleAuth'
+import { GoogleLogin } from '@react-oauth/google'
 
 export default function CreateAccount() {
   const [formData, setFormData] = useState({
@@ -14,7 +16,7 @@ export default function CreateAccount() {
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [resendTimer, setResendTimer] = useState(0)
-  
+
   const navigate = useNavigate()
   const {
     isLoading,
@@ -26,6 +28,14 @@ export default function CreateAccount() {
     clearError,
     isAuthenticated
   } = useSignup()
+
+  const {
+      isLoading: isGoogleLoading,
+      error: googleError,
+      handleGoogleSuccess,
+      handleGoogleError,
+      clearError: clearGoogleError
+    } = useGoogleAuth()
 
   // Show OTP field when signup data is available
   const showOtpField = !!signupData
@@ -81,15 +91,15 @@ export default function CreateAccount() {
     if (!validateForm()) {
       return
     }
-    
+
     clearError()
-    
+
     const fullPhoneNumber = getFullPhoneNumber(formData.phone)
     await handleSignup({
       phone_number: fullPhoneNumber,
       name: formData.name
     })
-    
+
     // Start resend timer (30 seconds)
     if (!error) {
       setResendTimer(30)
@@ -98,31 +108,31 @@ export default function CreateAccount() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!showOtpField) {
       // Generate OTP phase
       await handleGenerateOtp()
       return
     }
-    
+
     // Account creation phase with OTP
     if (!validateForm()) {
       return
     }
 
     clearError()
-    
+
     const fullPhoneNumber = getFullPhoneNumber(formData.phone)
     await handleVerifySignup(fullPhoneNumber, formData.otp)
   }
 
   const handleResend = async () => {
     if (resendTimer > 0) return
-    
+
     clearError()
     const fullPhoneNumber = getFullPhoneNumber(formData.phone)
     await handleResendOtp(fullPhoneNumber)
-    
+
     // Restart timer
     if (!error) {
       setResendTimer(30)
@@ -136,140 +146,178 @@ export default function CreateAccount() {
     }
   }
 
+  // Detect mobile device
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
+      background: isMobile
+        ? 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)'
+        : 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
       display: 'flex',
+      flexDirection: isMobile ? 'column' : 'row',
       alignItems: 'center',
-      justifyContent: 'center',
-      padding: 20,
+      justifyContent: isMobile ? 'flex-start' : 'center',
+      padding: isMobile ? '0' : 20,
       position: 'relative',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      width: '100%'
     }}>
-      {/* Background decorative elements */}
-      <div style={{
-        position: 'absolute',
-        top: -100,
-        right: -100,
-        width: 300,
-        height: 300,
-        background: 'radial-gradient(circle, rgba(0, 149, 255, 0.1) 0%, transparent 70%)',
-        borderRadius: '50%'
-      }} />
-      <div style={{
-        position: 'absolute',
-        bottom: -150,
-        left: -150,
-        width: 400,
-        height: 400,
-        background: 'radial-gradient(circle, rgba(16, 200, 169, 0.08) 0%, transparent 70%)',
-        borderRadius: '50%'
-      }} />
+      {/* Background decorative elements - simplified for mobile */}
+      {!isMobile && (
+        <>
+          <div style={{
+            position: 'absolute',
+            top: -100,
+            right: -100,
+            width: 300,
+            height: 300,
+            background: 'radial-gradient(circle, rgba(0, 149, 255, 0.1) 0%, transparent 70%)',
+            borderRadius: '50%'
+          }} />
+          <div style={{
+            position: 'absolute',
+            bottom: -150,
+            left: -150,
+            width: 400,
+            height: 400,
+            background: 'radial-gradient(circle, rgba(16, 200, 169, 0.08) 0%, transparent 70%)',
+            borderRadius: '50%'
+          }} />
+        </>
+      )}
 
       <div style={{
-        width: '100%',
-        maxWidth: 480,
-        background: 'rgba(255, 255, 255, 0.98)',
-        backdropFilter: 'blur(20px)',
-        borderRadius: 24,
-        padding: 40,
-        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+        width: isMobile ? '100%' : '100%',
+        maxWidth: isMobile ? 'none' : 480,
+        background: isMobile
+          ? 'transparent'
+          : 'rgba(255, 255, 255, 0.98)',
+        backdropFilter: isMobile ? 'none' : 'blur(20px)',
+        borderRadius: isMobile ? '0' : 24,
+        padding: isMobile ? '20px 20px 30px 20px' : 40,
+        boxShadow: isMobile
+          ? 'none'
+          : '0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1)',
         position: 'relative',
-        zIndex: 1
+        zIndex: 1,
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center'
       }}>
         {/* Logo and Header */}
         <div style={{
           textAlign: 'center',
-          marginBottom: 32
+          marginBottom: isMobile ? 30 : 40,
+          marginTop: isMobile ? 20 : 0,
         }}>
           <div style={{ marginBottom: 16 }}>
-            <FyntrixLogo fontSize={32} fontWeight={900} />
+            <FyntrixLogo height={56} width={160} />
           </div>
           <h1 style={{
-            fontSize: 24,
+            fontSize: isMobile ? 28 : 24,
             fontWeight: 800,
-            color: '#1e293b',
+            color: isMobile ? '#1f2937' : '#1e293b',
             marginBottom: 8,
-            margin: 0
+            margin: 0,
+            lineHeight: 1.2
           }}>
             Create Account
           </h1>
           <p style={{
-            fontSize: 14,
-            color: '#64748b',
+            fontSize: isMobile ? 16 : 14,
+            color: isMobile ? 'rgba(31, 41, 55, 0.8)' : '#64748b',
             margin: 0,
-            lineHeight: 1.5
+            lineHeight: 1.5,
+            maxWidth: isMobile ? '280px' : 'none',
+            marginLeft: 'auto',
+            marginRight: 'auto'
           }}>
             Join FYNTRIX and start AI-powered trading today
           </p>
         </div>
 
         {/* Features */}
-        <div style={{
-          display: 'flex',
-          gap: 12,
-          marginBottom: 28,
-          justifyContent: 'center',
-          flexWrap: 'wrap'
-        }}>
+        {isMobile && (
           <div style={{
             display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '6px 10px',
-            background: '#f0fdf4',
-            borderRadius: 6,
-            border: '1px solid #dcfce7'
+            gap: 16,
+            marginBottom: 28,
+            justifyContent: 'center',
+            flexWrap: 'wrap'
           }}>
-            <TrendingUp size={12} color="#16a34a" />
-            <span style={{ fontSize: 10, fontWeight: 600, color: '#16a34a' }}>AI Picks</span>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '6px 10px',
+              background: '#f0fdf4',
+              borderRadius: 6,
+              border: '1px solid #dcfce7'
+            }}>
+              <TrendingUp size={12} color="#16a34a" />
+              <span style={{ fontSize: 10, fontWeight: 600, color: '#16a34a' }}>AI Picks</span>
+            </div>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '6px 10px',
+              background: '#eff6ff',
+              borderRadius: 6,
+              border: '1px solid #dbeafe'
+            }}>
+              <Shield size={12} color="#3b82f6" />
+              <span style={{ fontSize: 10, fontWeight: 600, color: '#3b82f6' }}>Secure</span>
+            </div>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '6px 10px',
+              background: '#fef3c7',
+              borderRadius: 6,
+              border: '1px solid #fde68a'
+            }}>
+              <Zap size={12} color="#d97706" />
+              <span style={{ fontSize: 10, fontWeight: 600, color: '#d97706' }}>Real-time</span>
+            </div>
           </div>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '6px 10px',
-            background: '#eff6ff',
-            borderRadius: 6,
-            border: '1px solid #dbeafe'
-          }}>
-            <Shield size={12} color="#3b82f6" />
-            <span style={{ fontSize: 10, fontWeight: 600, color: '#3b82f6' }}>Secure</span>
-          </div>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '6px 10px',
-            background: '#fef3c7',
-            borderRadius: 6,
-            border: '1px solid #fde68a'
-          }}>
-            <Zap size={12} color="#d97706" />
-            <span style={{ fontSize: 10, fontWeight: 600, color: '#d97706' }}>Real-time</span>
-          </div>
-        </div>
+        )}
 
         {/* Create Account Form */}
-        <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
+        <form onSubmit={handleSubmit} style={{ marginBottom: isMobile ? 20 : 24 }}>
           {/* API Error Display */}
           {error && (
             <div style={{
               marginBottom: 20,
-              padding: '12px 16px',
-              background: '#fef2f2',
-              border: '1px solid #fecaca',
-              borderRadius: 8,
+              padding: isMobile ? '16px 20px' : '12px 16px',
+              background: isMobile ? 'rgba(220, 38, 38, 0.1)' : '#fef2f2',
+              border: isMobile ? '1px solid rgba(220, 38, 38, 0.2)' : '1px solid #fecaca',
+              borderRadius: isMobile ? 16 : 8,
               display: 'flex',
               alignItems: 'center',
-              gap: 8
+              gap: isMobile ? 12 : 8
             }}>
-              <AlertCircle size={16} color="#dc2626" />
+              <AlertCircle size={isMobile ? 20 : 16} color={isMobile ? '#fff' : '#dc2626'} />
               <span style={{
-                fontSize: 13,
-                color: '#dc2626',
-                fontWeight: 500
+                fontSize: isMobile ? 14 : 13,
+                color: isMobile ? '#fff' : '#dc2626',
+                fontWeight: 500,
+                lineHeight: 1.4
               }}>
                 {error}
               </span>
@@ -278,11 +326,11 @@ export default function CreateAccount() {
           {/* Name Field */}
           <div style={{ marginBottom: 16 }}>
             <label style={{
-              display: 'block',
-              fontSize: 13,
+               display: 'block',
+              fontSize: isMobile ? 16 : 13,
               fontWeight: 600,
-              color: '#374151',
-              marginBottom: 6
+              color: isMobile ? '#1f2937' : '#374151',
+              marginBottom: isMobile ? 12 : 8
             }}>
               Full Name
             </label>
@@ -291,9 +339,9 @@ export default function CreateAccount() {
               display: 'flex',
               alignItems: 'center'
             }}>
-              <User size={18} color="#6b7280" style={{
+              <User size={isMobile ? 20 : 18} color={isMobile ? 'rgba(31, 41, 55, 0.6)' : '#6b7280'} style={{
                 position: 'absolute',
-                left: 14,
+                left: isMobile ? 18 : 14,
                 zIndex: 1
               }} />
               <input
@@ -304,23 +352,36 @@ export default function CreateAccount() {
                 required
                 style={{
                   width: '100%',
-                  padding: '10px 14px 10px 44px',
-                  border: errors.name ? '1px solid #ef4444' : '1px solid #d1d5db',
-                  borderRadius: 10,
-                  fontSize: 14,
+                  padding: isMobile ? '16px 20px 16px 52px' : '12px 14px 12px 44px',
+                  border: isMobile ? '1px solid rgba(0, 0, 0, 0.2)' : '1px solid #d1d5db',
+                  color: isMobile ? '#1f2937' : '#1f2937',
+                  borderRadius: isMobile ? 16 : 12,
+                  fontSize: isMobile ? 16 : 14,
                   outline: 'none',
                   transition: 'all 0.2s',
-                  background: '#fff',
+                  background: isMobile ? 'rgba(0, 0, 0, 0.05)' : '#fff',
                   boxSizing: 'border-box',
-                  color: '#6b7280'
+                  height: isMobile ? 52 : 'auto',
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'textfield'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = '#0095FF'
-                  e.target.style.boxShadow = '0 0 0 3px rgba(0, 149, 255, 0.1)'
+                  if (isMobile) {
+                    e.target.style.background = 'rgba(255, 255, 255, 0.1)'
+                    e.target.style.borderColor = 'rgba(0, 149, 255, 0.5)'
+                  } else {
+                    e.target.style.borderColor = '#0095FF'
+                    e.target.style.boxShadow = '0 0 0 3px rgba(0, 149, 255, 0.1)'
+                  }
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = errors.name ? '#ef4444' : '#d1d5db'
-                  e.target.style.boxShadow = 'none'
+                  if (isMobile) {
+                    e.target.style.background = 'rgba(0, 0, 0, 0.05)'
+                    e.target.style.borderColor = 'rgba(0, 0, 0, 0.2)'
+                  } else {
+                    e.target.style.borderColor = '#d1d5db'
+                    e.target.style.boxShadow = 'none'
+                  }
                 }}
               />
             </div>
@@ -342,11 +403,11 @@ export default function CreateAccount() {
           {/* Phone Number Field */}
           <div style={{ marginBottom: 16 }}>
             <label style={{
-              display: 'block',
-              fontSize: 13,
+             display: 'block',
+              fontSize: isMobile ? 16 : 13,
               fontWeight: 600,
-              color: '#374151',
-              marginBottom: 6
+              color: isMobile ? '#1f2937' : '#374151',
+              marginBottom: isMobile ? 12 : 8
             }}>
               Phone Number
             </label>
@@ -355,9 +416,9 @@ export default function CreateAccount() {
               display: 'flex',
               alignItems: 'center'
             }}>
-              <Phone size={18} color="#6b7280" style={{
+              <Phone size={isMobile ? 20 : 18} color={isMobile ? 'rgba(31, 41, 55, 0.6)' : '#6b7280'} style={{
                 position: 'absolute',
-                left: 14,
+                left: isMobile ? 18 : 14,
                 zIndex: 1
               }} />
               <input
@@ -368,23 +429,36 @@ export default function CreateAccount() {
                 required
                 style={{
                   width: '100%',
-                  padding: '10px 14px 10px 44px',
-                  border: errors.phone ? '1px solid #ef4444' : '1px solid #d1d5db',
-                  borderRadius: 10,
-                  fontSize: 14,
+                  padding: isMobile ? '16px 20px 16px 52px' : '12px 14px 12px 44px',
+                  border: isMobile ? '1px solid rgba(0, 0, 0, 0.2)' : '1px solid #d1d5db',
+                  color: isMobile ? '#1f2937' : '#1f2937',
+                  borderRadius: isMobile ? 16 : 12,
+                  fontSize: isMobile ? 16 : 14,
                   outline: 'none',
                   transition: 'all 0.2s',
-                  background: '#fff',
+                  background: isMobile ? 'rgba(0, 0, 0, 0.05)' : '#fff',
                   boxSizing: 'border-box',
-                  color: '#6b7280'
+                  height: isMobile ? 52 : 'auto',
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'textfield'
                 }}
                 onFocus={(e) => {
-                  e.target.style.borderColor = '#0095FF'
-                  e.target.style.boxShadow = '0 0 0 3px rgba(0, 149, 255, 0.1)'
+                  if (isMobile) {
+                    e.target.style.background = 'rgba(255, 255, 255, 0.1)'
+                    e.target.style.borderColor = 'rgba(0, 149, 255, 0.5)'
+                  } else {
+                    e.target.style.borderColor = '#0095FF'
+                    e.target.style.boxShadow = '0 0 0 3px rgba(0, 149, 255, 0.1)'
+                  }
                 }}
                 onBlur={(e) => {
-                  e.target.style.borderColor = errors.phone ? '#ef4444' : '#d1d5db'
-                  e.target.style.boxShadow = 'none'
+                  if (isMobile) {
+                    e.target.style.background = 'rgba(0, 0, 0, 0.05)'
+                    e.target.style.borderColor = 'rgba(0, 0, 0, 0.2)'
+                  } else {
+                    e.target.style.borderColor = '#d1d5db'
+                    e.target.style.boxShadow = 'none'
+                  }
                 }}
               />
             </div>
@@ -610,6 +684,60 @@ export default function CreateAccount() {
             )}
           </button>
         </form>
+
+        {/* Divider */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          margin: '24px 0'
+        }}>
+          <div style={{ flex: 1, height: 1, background: '#e5e7eb' }} />
+          <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500 }}>OR</span>
+          <div style={{ flex: 1, height: 1, background: '#e5e7eb' }} />
+        </div>
+
+        {/* Google Sign-In */}
+        <div style={{ marginBottom: 24 }}>
+          {googleError && (
+            <div style={{
+              marginBottom: 16,
+              padding: '12px 16px',
+              background: '#fef2f2',
+              border: '1px solid #fecaca',
+              borderRadius: 8,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8
+            }}>
+              <AlertCircle size={16} color="#dc2626" />
+              <span style={{
+                fontSize: 13,
+                color: '#dc2626',
+                fontWeight: 500
+              }}>
+                {googleError}
+              </span>
+            </div>
+          )}
+          
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            opacity: isGoogleLoading ? 0.6 : 1,
+            pointerEvents: isGoogleLoading ? 'none' : 'auto'
+          }}>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              theme="outline"
+              size="large"
+              text="continue_with"
+              shape="rectangular"
+              width="340"
+            />
+          </div>
+        </div>
 
         {/* Footer */}
         <div style={{
