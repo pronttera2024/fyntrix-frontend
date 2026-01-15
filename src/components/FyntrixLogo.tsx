@@ -15,7 +15,7 @@ export const FyntrixLogo: React.FC<FyntrixLogoProps> = ({
 }) => {
   return (
     <img
-      src="/assets/FyntrixLogo_PNG.png"
+      src="/FyntrixLogo_PNG.png"
       alt="Fyntrix"
       style={{
         width: width,
