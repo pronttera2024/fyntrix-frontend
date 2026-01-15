@@ -134,7 +134,7 @@ out/
 
 # Gatsby
 .cache/
-public/
+# public/ - Commented out to allow PWA assets (manifest, icons, service worker)
 
 # SvelteKit
 .svelte-kit/

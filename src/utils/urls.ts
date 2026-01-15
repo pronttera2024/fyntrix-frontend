@@ -6,6 +6,7 @@ export const loginUrl = `${authUrl}/phone/login`
 export const verifyLoginUrl = `${authUrl}/phone/login/verify`
 export const signupUrl = `${authUrl}/phone/signup`
 export const verifySignupUrl = `${authUrl}/phone/verify-signup`
+export const resendOtpUrl = `${authUrl}/phone/resend-otp`
 export const userUrl = `${authUrl}/me`
 export const refreshTokenUrl = `${authUrl}/refresh`
 export const validateTokenUrl = `${authUrl}/validate`
