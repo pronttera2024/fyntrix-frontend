@@ -1,25 +1,27 @@
 import React from 'react'
 
 interface FyntrixLogoProps {
+  width?: number
+  height?: number
   fontSize?: number
   fontWeight?: number
 }
 
-export const FyntrixLogo: React.FC<FyntrixLogoProps> = ({ fontSize = 18, fontWeight = 900 }) => {
+export const FyntrixLogo: React.FC<FyntrixLogoProps> = ({ 
+  width = 120, 
+  height = 40, 
+  fontSize = 18, 
+  fontWeight = 900 
+}) => {
   return (
-    <span
+    <img
+      src="/assets/FyntrixLogo_PNG.png"
+      alt="Fyntrix"
       style={{
-        backgroundImage: 'linear-gradient(90deg, #0095FF 0%, #10C8A9 100%)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        backgroundClip: 'text',
-        color: 'transparent',
-        fontWeight,
-        fontSize,
-        letterSpacing: 0.5,
+        width: width,
+        height: height,
+        objectFit: 'contain'
       }}
-    >
-      Fyntrix
-    </span>
+    />
   )
 }
