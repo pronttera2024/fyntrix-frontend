@@ -11,6 +11,7 @@ export default function Login() {
   const [phone, setPhone] = useState('')
   const [otp, setOtp] = useState('')
   const [showOtpField, setShowOtpField] = useState(false)
+  const [resendTimer, setResendTimer] = useState(0)
   
   const navigate = useNavigate()
   const {
@@ -19,6 +20,7 @@ export default function Login() {
     sessionData,
     handleGenerateOtp,
     handleVerifyOtp,
+    handleResendOtp,
     clearError,
     isAuthenticated
   } = useLogin()
@@ -49,8 +51,17 @@ export default function Login() {
   useEffect(() => {
     if (sessionData) {
       setShowOtpField(true)
+      setResendTimer(30) // Start 30 second timer
     }
   }, [sessionData])
+
+  // Resend timer countdown
+  useEffect(() => {
+    if (resendTimer > 0) {
+      const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [resendTimer])
 
   const handleGenerateOtpClick = async () => {
     const fullPhoneNumber = getFullPhoneNumber(phone)
@@ -61,6 +72,19 @@ export default function Login() {
     
     clearError()
     await handleGenerateOtp(fullPhoneNumber)
+  }
+
+  const handleResend = async () => {
+    if (resendTimer > 0) return
+    
+    clearError()
+    const fullPhoneNumber = getFullPhoneNumber(phone)
+    await handleResendOtp(fullPhoneNumber)
+    
+    // Restart timer
+    if (!error) {
+      setResendTimer(30)
+    }
   }
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -323,6 +347,28 @@ export default function Login() {
                     e.target.style.boxShadow = 'none'
                   }}
                 />
+              </div>
+              {/* Resend OTP Button */}
+              <div style={{
+                marginTop: 8,
+                textAlign: 'center'
+              }}>
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={resendTimer > 0 || isLoading}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: resendTimer > 0 ? '#9ca3af' : '#0095FF',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: resendTimer > 0 || isLoading ? 'not-allowed' : 'pointer',
+                    textDecoration: 'underline'
+                  }}
+                >
+                  {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : 'Resend OTP'}
+                </button>
               </div>
             </div>
           )}

@@ -3,6 +3,7 @@ import { User, Lock, Phone, Eye, EyeOff, TrendingUp, Shield, Zap, Check, X, Aler
 import { FyntrixLogo } from '../../components/FyntrixLogo'
 import { BRANDING } from '../../branding'
 import { useNavigate } from 'react-router-dom'
+import { useSignup } from '../../hooks/useSignup'
 
 export default function CreateAccount() {
   const [formData, setFormData] = useState({
@@ -11,15 +12,23 @@ export default function CreateAccount() {
     otp: '',
     acceptTerms: false
   })
-  const [showOtpField, setShowOtpField] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [resendTimer, setResendTimer] = useState(0)
   
   const navigate = useNavigate()
+  const {
+    isLoading,
+    error,
+    signupData,
+    handleSignup,
+    handleVerifySignup,
+    handleResendOtp,
+    clearError,
+    isAuthenticated
+  } = useSignup()
 
-  // TODO: Add authentication logic later
-  const isAuthenticated = false
+  // Show OTP field when signup data is available
+  const showOtpField = !!signupData
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -27,8 +36,14 @@ export default function CreateAccount() {
       navigate('/', { replace: true })
     }
   }, [isAuthenticated, navigate])
-  
-  const clearError = () => setError('')
+
+  // Resend timer countdown
+  useEffect(() => {
+    if (resendTimer > 0) {
+      const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [resendTimer])
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
@@ -57,23 +72,27 @@ export default function CreateAccount() {
     return Object.keys(newErrors).length === 0
   }
 
+  const getFullPhoneNumber = (phone: string) => {
+    const cleanPhone = phone.replace(/^(\+91|91)?\s*/, '').replace(/\s/g, '')
+    return cleanPhone ? `+91${cleanPhone}` : ''
+  }
+
   const handleGenerateOtp = async () => {
     if (!validateForm()) {
       return
     }
     
     clearError()
-    setIsLoading(true)
     
-    try {
-      // TODO: Replace with actual OTP generation API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      console.log('Generating OTP for:', formData.phone)
-      setShowOtpField(true)
-    } catch (err) {
-      setError('Failed to generate OTP. Please try again.')
-    } finally {
-      setIsLoading(false)
+    const fullPhoneNumber = getFullPhoneNumber(formData.phone)
+    await handleSignup({
+      phone_number: fullPhoneNumber,
+      name: formData.name
+    })
+    
+    // Start resend timer (30 seconds)
+    if (!error) {
+      setResendTimer(30)
     }
   }
 
@@ -93,20 +112,20 @@ export default function CreateAccount() {
 
     clearError()
     
-    // TODO: Add authentication logic later for OTP
-    console.log('Creating account with OTP:', { name: formData.name, phone: formData.phone, otp: formData.otp })
+    const fullPhoneNumber = getFullPhoneNumber(formData.phone)
+    await handleVerifySignup(fullPhoneNumber, formData.otp)
+  }
+
+  const handleResend = async () => {
+    if (resendTimer > 0) return
     
-    // Simulate API call for now
-    setIsLoading(true)
-    try {
-      // Placeholder for future API integration
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      // TODO: Replace with actual API call
-      // await handleCreateAccountWithOtp({ name: formData.name, phone: formData.phone, otp: formData.otp })
-    } catch (err) {
-      setError('Account creation failed. Please try again.')
-    } finally {
-      setIsLoading(false)
+    clearError()
+    const fullPhoneNumber = getFullPhoneNumber(formData.phone)
+    await handleResendOtp(fullPhoneNumber)
+    
+    // Restart timer
+    if (!error) {
+      setResendTimer(30)
     }
   }
 
@@ -448,6 +467,28 @@ export default function CreateAccount() {
                   {errors.otp}
                 </div>
               )}
+              {/* Resend OTP Button */}
+              <div style={{
+                marginTop: 8,
+                textAlign: 'center'
+              }}>
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={resendTimer > 0 || isLoading}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: resendTimer > 0 ? '#9ca3af' : '#0095FF',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: resendTimer > 0 || isLoading ? 'not-allowed' : 'pointer',
+                    textDecoration: 'underline'
+                  }}
+                >
+                  {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : 'Resend OTP'}
+                </button>
+              </div>
             </div>
           )}
 

@@ -2,11 +2,13 @@ import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { 
   login, 
-  verifyLogin, 
+  verifyLogin,
+  resendOtp,
   LoginRequest, 
   LoginResponse, 
   VerifyLoginRequest, 
   VerifyLoginResponse,
+  ResendOtpRequest,
   getCurrentUser 
 } from '../services/AuthService'
 import {
@@ -26,6 +28,7 @@ interface UseLoginReturn {
   sessionData: LoginResponse | null
   handleGenerateOtp: (phone_number: string) => Promise<void>
   handleVerifyOtp: (phone_number: string, otp_code: string) => Promise<void>
+  handleResendOtp: (phone_number: string) => Promise<void>
   clearError: () => void
   isAuthenticated: boolean
   isTokenExpired: boolean
@@ -148,6 +151,41 @@ export const useLogin = (): UseLoginReturn => {
     }
   }, [sessionData, navigate])
 
+  const handleResendOtp = useCallback(async (phone_number: string): Promise<void> => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const response = await resendOtp({ phone_number })
+      
+      // Update session if returned (for login flow)
+      if (response.session) {
+        setSessionData({
+          message: response.message,
+          session: response.session,
+          phone_number: response.phone_number
+        })
+      }
+    } catch (err: any) {
+      console.error('Resend OTP error:', err)
+      
+      // Handle different error types
+      if (err.message) {
+        setError(err.message)
+      } else if (err.detail) {
+        setError(err.detail)
+      } else if (err.error) {
+        setError(err.error)
+      } else if (typeof err === 'string') {
+        setError(err)
+      } else {
+        setError('Failed to resend OTP. Please try again.')
+      }
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
   const clearError = useCallback((): void => {
     setError(null)
   }, [])
@@ -164,6 +202,7 @@ export const useLogin = (): UseLoginReturn => {
     sessionData,
     handleGenerateOtp,
     handleVerifyOtp,
+    handleResendOtp,
     clearError,
     isAuthenticated: isAuthenticated(),
     isTokenExpired: isTokenExpired(),

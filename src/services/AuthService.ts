@@ -1,5 +1,5 @@
 import axios from "axios";
-import { loginUrl, signupUrl, userUrl, refreshTokenUrl, validateTokenUrl, verifyLoginUrl, verifySignupUrl } from "../utils/urls";
+import { loginUrl, signupUrl, userUrl, refreshTokenUrl, validateTokenUrl, verifyLoginUrl, verifySignupUrl, resendOtpUrl } from "../utils/urls";
 import axiosInstance from "../utils/axiosInstance";
 import {
   getAccessToken,
@@ -55,9 +55,22 @@ export interface VerifySignupRequest {
 }
 
 export interface VerifySignupResponse {
+  access_token: string;
+  id_token: string;
+  refresh_token: string;
+  expires_in: number;
+  token_type: string;
+}
+
+export interface ResendOtpRequest {
+  phone_number: string;
+}
+
+export interface ResendOtpResponse {
   message: string;
   phone_number: string;
-  verified: boolean;
+  session?: string;
+  flow: 'signup' | 'login';
 }
 
 export interface User {
@@ -152,6 +165,26 @@ export class AuthAPI {
     }
   }
 
+  // Resend OTP for signup or login
+  static async resendOtp(request: ResendOtpRequest): Promise<ResendOtpResponse> {
+    try {
+      const response = await axios.post(resendOtpUrl, request, {
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000 // 10 second timeout
+      });
+
+      return response.data;
+    } catch (error: any) {
+      console.error('Resend OTP API error:', error);
+      throw error.response?.data || {
+        message: 'Failed to resend OTP. Please try again.'
+      };
+    }
+  }
+
   // Validate token with backend (optional, for future use)
   static async validateToken(): Promise<{ valid: boolean; user?: User }> {
     try {
@@ -197,6 +230,7 @@ export const login = (credentials: LoginRequest) => AuthAPI.login(credentials);
 export const verifyLogin = (credentials: VerifyLoginRequest) => AuthAPI.verifyLogin(credentials);
 export const signup = (userData: SignupRequest) => AuthAPI.signup(userData);
 export const verifySignup = (credentials: VerifySignupRequest) => AuthAPI.verifySignup(credentials);
+export const resendOtp = (request: ResendOtpRequest) => AuthAPI.resendOtp(request);
 export const validateToken = () => AuthAPI.validateToken();
 export const refreshToken = () => AuthAPI.refreshToken();
 export const getCurrentUser = () => AuthAPI.getCurrentUser();
