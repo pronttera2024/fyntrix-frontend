@@ -2,8 +2,9 @@ import React, { useEffect, useMemo, useState, Fragment, useRef } from 'react'
 import { getFlows, getMarketSummary, getNews, getMiniSeries, postChat, getAgentsPicks, postStrategySuggest, getWinningTrades, getTradingModes, validateTradingModes, logPickInteraction, logPickFeedback, updateMemory, getPortfolioMonitor, addWatchlistEntry, postAnalyze, getStrategyExits, getRlMetrics } from '../api'
 import { BRANDING } from '../branding'
 import { FyntrixLogo } from '../components/FyntrixLogo'
+import { News } from '../components/Home/News'
 import { computeSentimentRiskLevel } from '../sentimentRisk'
-import { LayoutGrid, SlidersHorizontal, BriefcaseBusiness, Image, SquareActivity, Trophy, Copy, Bell, MessageCircle, Megaphone, User, Brain, MoreHorizontal, LogOut, Mail, CheckCircle  } from 'lucide-react'
+import { LayoutGrid, SlidersHorizontal, BriefcaseBusiness, Image, SquareActivity, Trophy, Copy, Bell, MessageCircle, Megaphone, User, Brain, MoreHorizontal, LogOut, Mail, CheckCircle } from 'lucide-react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { ChartView } from '../components/ChartView'
@@ -205,8 +206,8 @@ type ChatLayout = 'left-fixed' | 'bottom-docked'
 
 type MobileNavTab = 'home' | 'picks' | 'chat' | 'winners' | 'watchlist'
 
-export default function App(){
-  try { dayjs.extend(relativeTime) } catch {}
+export default function App() {
+  try { dayjs.extend(relativeTime) } catch { }
   const [market, setMarket] = useState<any>(() => {
     try {
       const raw = localStorage.getItem('arise_market')
@@ -270,21 +271,21 @@ export default function App(){
       return {}
     }
   })
-  const [tip, setTip] = useState<{x:number,y:number,text:string,type?:string}|null>(null)
+  const [tip, setTip] = useState<{ x: number, y: number, text: string, type?: string } | null>(null)
   const [tipTimer, setTipTimer] = useState<any>(null)
   const [showPortfolio, setShowPortfolio] = useState(false)
   const [showWatchlist, setShowWatchlist] = useState(false)
   const [showAgents, setShowAgents] = useState(false)
   const [showCompany, setShowCompany] = useState(false)
   const [showProducts, setShowProducts] = useState(false)
-  const [disclosureAccepted, setDisclosureAccepted] = useState<boolean>(()=>{
+  const [disclosureAccepted, setDisclosureAccepted] = useState<boolean>(() => {
     try {
       return localStorage.getItem('arise_disclosure_accepted_v1') === '1'
     } catch {
       return false
     }
   })
-  const [showDisclosure, setShowDisclosure] = useState<boolean>(()=>{
+  const [showDisclosure, setShowDisclosure] = useState<boolean>(() => {
     try {
       return localStorage.getItem('arise_disclosure_accepted_v1') === '1' ? false : true
     } catch {
@@ -305,10 +306,10 @@ export default function App(){
   const [winningTradesDate, setWinningTradesDate] = useState<string>('all') // Filter by date
   const [strategyExitsByDate, setStrategyExitsByDate] = useState<Record<string, any>>({})
   const [showRlMetrics, setShowRlMetrics] = useState(false)
-  const [rlMetricsData, setRlMetricsData] = useState<any|null>(null)
-  const [rlDailyData, setRlDailyData] = useState<any[]|null>(null)
+  const [rlMetricsData, setRlMetricsData] = useState<any | null>(null)
+  const [rlDailyData, setRlDailyData] = useState<any[] | null>(null)
   const [loadingRlMetrics, setLoadingRlMetrics] = useState(false)
-  const [rlMetricsError, setRlMetricsError] = useState<string|null>(null)
+  const [rlMetricsError, setRlMetricsError] = useState<string | null>(null)
   const winningStrategiesData = winningTradesData
   const winningTradesAvailableDates = useMemo<string[]>(() => {
     const recs = winningTradesData?.recommendations
@@ -353,9 +354,9 @@ export default function App(){
       return { name: '', account_id: '' }
     }
   })
-  const [portfolioMonitor, setPortfolioMonitor] = useState<any|null>(null)
+  const [portfolioMonitor, setPortfolioMonitor] = useState<any | null>(null)
   const [loadingPortfolio, setLoadingPortfolio] = useState(false)
-  const [watchlistMonitor, setWatchlistMonitor] = useState<any|null>(null)
+  const [watchlistMonitor, setWatchlistMonitor] = useState<any | null>(null)
   const [loadingWatchlist, setLoadingWatchlist] = useState(false)
   const [showScalpingMonitor, setShowScalpingMonitor] = useState(false) // Scalping Monitor
   const [scalpingMonitorRefreshToken, setScalpingMonitorRefreshToken] = useState(0)
@@ -374,23 +375,23 @@ export default function App(){
     recommendation?: string
     agents?: any[]
   } | null>(null)
-  const [explainPick, setExplainPick] = useState<string|null>(null) // Symbol to show explanation for
-  const [chartView, setChartView] = useState<{symbol: string, analysis?: AIPick} | null>(null) // Chart view state
-  const [universe, setUniverse] = useState<string>(()=>{
+  const [explainPick, setExplainPick] = useState<string | null>(null) // Symbol to show explanation for
+  const [chartView, setChartView] = useState<{ symbol: string, analysis?: AIPick } | null>(null) // Chart view state
+  const [universe, setUniverse] = useState<string>(() => {
     try { return localStorage.getItem('arise_universe') || 'NIFTY50' } catch { return 'NIFTY50' }
   })
-  const [marketRegion, setMarketRegion] = useState<'India'|'Global'>(()=>{
+  const [marketRegion, setMarketRegion] = useState<'India' | 'Global'>(() => {
     try { return (localStorage.getItem('arise_market_region') as any) || 'India' } catch { return 'India' }
   })
 
   // Trade preferences
   const [prefsOpen, setPrefsOpen] = useState(false)
-  const [risk, setRisk] = useState<'Aggressive'|'Moderate'|'Conservative'>(()=>{
-    try { return (localStorage.getItem('arise_risk') as any)||'Moderate' } catch { return 'Moderate' }
+  const [risk, setRisk] = useState<'Aggressive' | 'Moderate' | 'Conservative'>(() => {
+    try { return (localStorage.getItem('arise_risk') as any) || 'Moderate' } catch { return 'Moderate' }
   })
-  const [modes, setModes] = useState<Record<string, boolean>>(()=>{
+  const [modes, setModes] = useState<Record<string, boolean>>(() => {
     try {
-      const stored = JSON.parse(localStorage.getItem('arise_modes')||'null') as any
+      const stored = JSON.parse(localStorage.getItem('arise_modes') || 'null') as any
       if (stored) {
         if (stored.Delivery && stored.Swing == null) {
           stored.Swing = stored.Delivery
@@ -398,15 +399,15 @@ export default function App(){
         delete stored.Delivery
         return stored
       }
-      return { Intraday:true, Swing:true, Options:false, Futures:false, Commodity:false }
+      return { Intraday: true, Swing: true, Options: false, Futures: false, Commodity: false }
     } catch {
-      return { Intraday:true, Swing:true, Options:false, Futures:false, Commodity:false }
+      return { Intraday: true, Swing: true, Options: false, Futures: false, Commodity: false }
     }
   })
 
   // NEW: Primary trading mode system
   const [availableModes, setAvailableModes] = useState<any[]>(DEFAULT_AVAILABLE_MODES)
-  const [primaryMode, setPrimaryMode] = useState<string>(()=>{
+  const [primaryMode, setPrimaryMode] = useState<string>(() => {
     try {
       const stored = localStorage.getItem('arise_primary_mode')
       if (!stored) return 'Swing'
@@ -414,8 +415,8 @@ export default function App(){
       return stored
     } catch { return 'Swing' }
   })
-  const [auxiliaryModes, setAuxiliaryModes] = useState<string[]>(()=>{
-    try { return JSON.parse(localStorage.getItem('arise_auxiliary_modes')||'[]') } catch { return [] }
+  const [auxiliaryModes, setAuxiliaryModes] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem('arise_auxiliary_modes') || '[]') } catch { return [] }
   })
   const [picksData, setPicksData] = useState<any>(null) // Full picks response with mode info
   const [picksSystemMessage, setPicksSystemMessage] = useState<string>('')
@@ -469,7 +470,7 @@ export default function App(){
     }
   }
 
-  useEffect(()=>{ document.body.style.background='#ffffff'; document.body.style.color='#0b0f14' }, [])
+  useEffect(() => { document.body.style.background = '#ffffff'; document.body.style.color = '#0b0f14' }, [])
 
   const cleanNewsList = (items: any[]): any[] => {
     try {
@@ -528,7 +529,7 @@ export default function App(){
       setWinningTradesData(data)
       try {
         localStorage.setItem('arise_winning_trades', JSON.stringify(data))
-      } catch {}
+      } catch { }
     } catch (e) {
       reportError(e, { feature: 'winners', action: 'load_winning_trades', extra: { universe } })
     } finally {
@@ -561,15 +562,15 @@ export default function App(){
       if (input) {
         try {
           input.scrollIntoView({ block: 'center', behavior: 'smooth' })
-        } catch {}
+        } catch { }
         input.focus()
       }
-    } catch {}
+    } catch { }
   }, [])
 
   // Load trading modes on mount
-  useEffect(()=>{
-    (async()=>{
+  useEffect(() => {
+    (async () => {
       try {
         const data = await getTradingModes()
         const modes = Array.isArray((data as any)?.modes) ? (data as any).modes : []
@@ -658,7 +659,7 @@ export default function App(){
         document.body.style.width = prev.width
         try {
           window.scrollTo(0, prev.scrollY)
-        } catch {}
+        } catch { }
       }
       return
     }
@@ -689,7 +690,7 @@ export default function App(){
       document.body.style.width = prev.width
       try {
         window.scrollTo(0, prev.scrollY)
-      } catch {}
+      } catch { }
     }
   }, [shouldLockBackgroundScroll])
 
@@ -762,7 +763,7 @@ export default function App(){
         if (!Number.isFinite(viewportHeight) || !Number.isFinite(innerHeight)) return
         const inset = Math.max(0, Math.round(innerHeight - (viewportHeight + offsetTop)))
         setChatKeyboardInset(inset)
-      } catch {}
+      } catch { }
     }
 
     recompute()
@@ -770,16 +771,16 @@ export default function App(){
     vv.addEventListener('scroll', recompute)
     try {
       window.addEventListener('orientationchange', recompute)
-    } catch {}
+    } catch { }
 
     return () => {
       try {
         vv.removeEventListener('resize', recompute)
         vv.removeEventListener('scroll', recompute)
-      } catch {}
+      } catch { }
       try {
         window.removeEventListener('orientationchange', recompute as any)
-      } catch {}
+      } catch { }
     }
   }, [isMobile])
 
@@ -802,68 +803,68 @@ export default function App(){
   })
 
   // Global listeners: hide tooltip on scroll; ESC closes drawers/modals and tooltip; keyboard shortcuts
-  useEffect(()=>{
-    const onScroll = ()=> setTip(null)
-    const onKey = (e: KeyboardEvent)=>{
+  useEffect(() => {
+    const onScroll = () => setTip(null)
+    const onKey = (e: KeyboardEvent) => {
       // Ignore if typing in input/textarea
       const target = e.target as HTMLElement
       if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return
-      
-      if (e.key === 'Escape'){
+
+      if (e.key === 'Escape') {
         setPrefsOpen(false); setShowPortfolio(false); setShowWatchlist(false); setShowAgents(false); setShowPicks(false); setAnalyze(null); setTip(null); setChartView(null); setShowScalpingMonitor(false);
         if (disclosureAccepted) setShowDisclosure(false)
       }
       // P = Toggle Picks drawer
-      else if (e.key === 'p' || e.key === 'P'){
-        if (picks.length > 0) setShowPicks(s=>!s)
+      else if (e.key === 'p' || e.key === 'P') {
+        if (picks.length > 0) setShowPicks(s => !s)
         else onFetchPicks()
       }
       // / = Focus Fyntrix chat
-      else if (e.key === '/'){
+      else if (e.key === '/') {
         e.preventDefault()
         const input = document.querySelector('input[placeholder="Ask Fyntrix…"]') as HTMLInputElement
         if (input) input.focus()
       }
       // I = Toggle Intraday mode
-      else if (e.key === 'i' || e.key === 'I'){
-        setModes(m=>{ const updated = {...m, Intraday: !m.Intraday}; try{localStorage.setItem('arise_modes', JSON.stringify(updated))}catch{}; return updated })
+      else if (e.key === 'i' || e.key === 'I') {
+        setModes(m => { const updated = { ...m, Intraday: !m.Intraday }; try { localStorage.setItem('arise_modes', JSON.stringify(updated)) } catch { }; return updated })
       }
       // D = Toggle Swing mode (legacy: Delivery)
-      else if (e.key === 'd' || e.key === 'D'){
-        setModes(m=>{
+      else if (e.key === 'd' || e.key === 'D') {
+        setModes(m => {
           const current = m.Swing ?? m.Delivery ?? true
           const updated: any = { ...m, Swing: !current }
           delete updated.Delivery
-          try{localStorage.setItem('arise_modes', JSON.stringify(updated))}catch{}
+          try { localStorage.setItem('arise_modes', JSON.stringify(updated)) } catch { }
           return updated
         })
       }
       // O = Toggle Options mode
-      else if (e.key === 'o' || e.key === 'O'){
-        setModes(m=>{ const updated = {...m, Options: !m.Options}; try{localStorage.setItem('arise_modes', JSON.stringify(updated))}catch{}; return updated })
+      else if (e.key === 'o' || e.key === 'O') {
+        setModes(m => { const updated = { ...m, Options: !m.Options }; try { localStorage.setItem('arise_modes', JSON.stringify(updated)) } catch { }; return updated })
       }
       // F = Toggle Futures mode
-      else if (e.key === 'f' || e.key === 'F'){
-        setModes(m=>{ const updated = {...m, Futures: !m.Futures}; try{localStorage.setItem('arise_modes', JSON.stringify(updated))}catch{}; return updated })
+      else if (e.key === 'f' || e.key === 'F') {
+        setModes(m => { const updated = { ...m, Futures: !m.Futures }; try { localStorage.setItem('arise_modes', JSON.stringify(updated)) } catch { }; return updated })
       }
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('keydown', onKey)
-    return ()=>{
+    return () => {
       window.removeEventListener('scroll', onScroll as any)
       window.removeEventListener('keydown', onKey)
     }
   }, [picks, disclosureAccepted])
 
   // Realtime WebSocket connection for streaming updates (top picks, market brief, flows, ticks)
-  useEffect(()=>{
+  useEffect(() => {
     let reconnectTimer: any = null
     let lastParseErrorAt = 0
 
     const connect = () => {
       try {
         if (reconnectTimer) {
-          try { clearTimeout(reconnectTimer) } catch {}
+          try { clearTimeout(reconnectTimer) } catch { }
           reconnectTimer = null
         }
         const envBase = import.meta.env.VITE_API_BASE_URL as string | undefined
@@ -929,7 +930,7 @@ export default function App(){
                     primary_mode: primaryMode,
                     picksData: msg
                   }))
-                } catch {}
+                } catch { }
               }
             } else if (type === 'market_summary_update') {
               // Live Market Brief updates
@@ -941,7 +942,7 @@ export default function App(){
                   try {
                     localStorage.setItem('arise_market', JSON.stringify(msg.payload))
                     localStorage.setItem('arise_market_asof', ts)
-                  } catch {}
+                  } catch { }
                 }
               }
             } else if (type === 'flows_update') {
@@ -992,14 +993,14 @@ export default function App(){
 
         ws.onclose = () => {
           if (reconnectTimer) {
-            try { clearTimeout(reconnectTimer) } catch {}
+            try { clearTimeout(reconnectTimer) } catch { }
             reconnectTimer = null
           }
           reconnectTimer = setTimeout(connect, 5000)
         }
 
         ws.onerror = () => {
-          try { ws && ws.close() } catch {}
+          try { ws && ws.close() } catch { }
         }
       } catch (err) {
         reportError(err, { feature: 'ws', action: 'connect', extra: { url: '/v1/ws/market' } })
@@ -1088,8 +1089,8 @@ export default function App(){
     }
   }, [])
 
-  const sessionId = useMemo(()=>{
-    try { return localStorage.getItem('arise_session') || (()=>{ const id = Math.random().toString(36).slice(2); localStorage.setItem('arise_session', id); return id })() } catch { return 'local' }
+  const sessionId = useMemo(() => {
+    try { return localStorage.getItem('arise_session') || (() => { const id = Math.random().toString(36).slice(2); localStorage.setItem('arise_session', id); return id })() } catch { return 'local' }
   }, [])
 
   const isIndiaMarketOpen = useMemo(() => {
@@ -1171,7 +1172,7 @@ export default function App(){
       if (!freshLocal) {
         try {
           localStorage.removeItem('arise_picks')
-        } catch {}
+        } catch { }
       }
 
       // Safe to show cached instantly only if universe+mode match, snapshot is recent, and we're not on a Scalping fallback snapshot
@@ -1190,7 +1191,7 @@ export default function App(){
               needsRefresh = true
             }
           }
-        } catch {}
+        } catch { }
       }
     }
 
@@ -1228,17 +1229,17 @@ export default function App(){
             setPicksData(r)
             setPicksSystemMessage(
               'No actionable ' +
-                primaryMode +
-                ' picks were found for ' +
-                universe.toUpperCase() +
-                ' in the latest run. This can happen during quiet market conditions. Try again in a few minutes or switch universe.',
+              primaryMode +
+              ' picks were found for ' +
+              universe.toUpperCase() +
+              ' in the latest run. This can happen during quiet market conditions. Try again in a few minutes or switch universe.',
             )
             try {
               localStorage.removeItem('arise_picks')
-            } catch {}
+            } catch { }
             return
           }
-        } catch {}
+        } catch { }
 
         // No fresh picks from backend. If we already have a cached snapshot for this
         // universe/mode, keep showing it and clearly label that it is from the last
@@ -1255,10 +1256,10 @@ export default function App(){
         if (hasCachedItems) {
           setPicksSystemMessage(
             'Using last trading session Top Five Picks from the previous run because agents have not produced fresh ' +
-              primaryMode +
-              ' recommendations for ' +
-              universe.toUpperCase() +
-              ' yet.',
+            primaryMode +
+            ' recommendations for ' +
+            universe.toUpperCase() +
+            ' yet.',
           )
           // Keep existing picks/picksAsOf from cache.
         } else {
@@ -1267,10 +1268,10 @@ export default function App(){
           setPicksData(r)
           setPicksSystemMessage(
             'None of the picks got selected by agents for ' +
-              primaryMode +
-              ' in ' +
-              universe.toUpperCase() +
-              ' in the latest run. Try again during market hours or switch universe/mode for more ideas.',
+            primaryMode +
+            ' in ' +
+            universe.toUpperCase() +
+            ' in the latest run. Try again during market hours or switch universe/mode for more ideas.',
           )
         }
         // Do not cache an empty response as a valid snapshot.
@@ -1284,10 +1285,10 @@ export default function App(){
         setPicksData(r)
         setPicksSystemMessage(
           'None of the picks got selected by agents for ' +
-            primaryMode +
-            ' in ' +
-            universe.toUpperCase() +
-            ' in the latest run. Try again during market hours or switch universe/mode for more ideas.',
+          primaryMode +
+          ' in ' +
+          universe.toUpperCase() +
+          ' in the latest run. Try again during market hours or switch universe/mode for more ideas.',
         )
         // Do NOT cache these fallback picks to avoid showing them as real recommendations later
         return
@@ -1301,7 +1302,7 @@ export default function App(){
           'arise_picks',
           JSON.stringify({ items, as_of: r?.as_of || '', universe, primary_mode: primaryMode, picksData: r }),
         )
-      } catch {}
+      } catch { }
     } catch {
       // On error, try to use cache ONLY if mode matches
       try {
@@ -1324,96 +1325,96 @@ export default function App(){
   useEffect(() => {
     let cancelled = false
 
-    ;(async () => {
-      try {
-        if (picks.length > 0 && picksData && picksData.universe === universe && picksData.primary_mode === primaryMode) {
-          return
-        }
-
-        let cached: any = null
+      ; (async () => {
         try {
-          cached = JSON.parse(localStorage.getItem('arise_picks') || 'null')
-        } catch {
-          cached = null
-        }
+          if (picks.length > 0 && picksData && picksData.universe === universe && picksData.primary_mode === primaryMode) {
+            return
+          }
 
-        const cachedFreshForOpenMarket = (() => {
+          let cached: any = null
           try {
-            if (!cached || !cached.as_of) return false
-            return isIndiaMarketOpen ? isWithinTodayIst(cached.as_of) : isWithinLastTradingSession(cached.as_of)
+            cached = JSON.parse(localStorage.getItem('arise_picks') || 'null')
           } catch {
-            return false
+            cached = null
           }
-        })()
 
-        if (
-          cached &&
-          cached.items &&
-          cached.universe === universe &&
-          cached.primary_mode === primaryMode &&
-          cachedFreshForOpenMarket
-        ) {
-          if (!cancelled) {
-            const cachedItems: AIPick[] = Array.isArray(cached.items) ? cached.items : []
-            setPicks(cachedItems as AIPick[])
-            setPicksAsOf(cached.as_of || '')
-            setPicksData(cached.picksData)
+          const cachedFreshForOpenMarket = (() => {
+            try {
+              if (!cached || !cached.as_of) return false
+              return isIndiaMarketOpen ? isWithinTodayIst(cached.as_of) : isWithinLastTradingSession(cached.as_of)
+            } catch {
+              return false
+            }
+          })()
+
+          if (
+            cached &&
+            cached.items &&
+            cached.universe === universe &&
+            cached.primary_mode === primaryMode &&
+            cachedFreshForOpenMarket
+          ) {
+            if (!cancelled) {
+              const cachedItems: AIPick[] = Array.isArray(cached.items) ? cached.items : []
+              setPicks(cachedItems as AIPick[])
+              setPicksAsOf(cached.as_of || '')
+              setPicksData(cached.picksData)
+            }
+            return
+          } else if (cached && cached.as_of && !cachedFreshForOpenMarket) {
+            try {
+              localStorage.removeItem('arise_picks')
+            } catch { }
           }
-          return
-        } else if (cached && cached.as_of && !cachedFreshForOpenMarket) {
+
+          const shouldForceRefresh = (() => {
+            try {
+              if (!isIndiaMarketOpen) return false
+              if (!cached || !cached.as_of) return true
+              if (cached.universe !== universe) return true
+              if (cached.primary_mode !== primaryMode) return true
+              return !isWithinTodayIst(cached.as_of)
+            } catch {
+              return false
+            }
+          })()
+
+          const r = await getAgentsPicks({
+            limit: 10,
+            universe,
+            session_id: sessionId,
+            refresh: shouldForceRefresh,
+            primary_mode: primaryMode,
+          })
+
+          if (cancelled) return
+
+          const items: AIPick[] = Array.isArray(r?.items) ? (r.items as AIPick[]) : []
+          const allFallback = items.length > 0 && items.every(isFallbackPick)
+
+          if (allFallback) {
+            // Do not pre-populate UI with deterministic/fallback picks; leave
+            // picks empty so the drawer can show a clear "none selected" message
+            // on explicit fetch.
+            return
+          }
+
+          setPicks(items)
+          setPicksAsOf(r?.as_of || '')
+          setPicksData(r)
+          // Prefetch with real picks should not leave an old "none selected" or
+          // other stale banner from a different mode/universe.
+          setPicksSystemMessage('')
           try {
-            localStorage.removeItem('arise_picks')
-          } catch {}
+            localStorage.setItem(
+              'arise_picks',
+              JSON.stringify({ items, as_of: r?.as_of || '', universe, primary_mode: primaryMode, picksData: r }),
+            )
+          } catch { }
+        } catch (e) {
+          reportError(e, { feature: 'picks', action: 'prefetch_top_picks', extra: { universe, primaryMode } })
         }
-
-        const shouldForceRefresh = (() => {
-          try {
-            if (!isIndiaMarketOpen) return false
-            if (!cached || !cached.as_of) return true
-            if (cached.universe !== universe) return true
-            if (cached.primary_mode !== primaryMode) return true
-            return !isWithinTodayIst(cached.as_of)
-          } catch {
-            return false
-          }
-        })()
-
-        const r = await getAgentsPicks({
-          limit: 10,
-          universe,
-          session_id: sessionId,
-          refresh: shouldForceRefresh,
-          primary_mode: primaryMode,
-        })
-
-        if (cancelled) return
-
-        const items: AIPick[] = Array.isArray(r?.items) ? (r.items as AIPick[]) : []
-        const allFallback = items.length > 0 && items.every(isFallbackPick)
-
-        if (allFallback) {
-          // Do not pre-populate UI with deterministic/fallback picks; leave
-          // picks empty so the drawer can show a clear "none selected" message
-          // on explicit fetch.
-          return
-        }
-
-        setPicks(items)
-        setPicksAsOf(r?.as_of || '')
-        setPicksData(r)
-        // Prefetch with real picks should not leave an old "none selected" or
-        // other stale banner from a different mode/universe.
-        setPicksSystemMessage('')
-        try {
-          localStorage.setItem(
-            'arise_picks',
-            JSON.stringify({ items, as_of: r?.as_of || '', universe, primary_mode: primaryMode, picksData: r }),
-          )
-        } catch {}
-      } catch (e) {
-        reportError(e, { feature: 'picks', action: 'prefetch_top_picks', extra: { universe, primaryMode } })
-      }
-    })()
+      })()
 
     return () => {
       cancelled = true
@@ -1438,7 +1439,7 @@ export default function App(){
   }, [])
 
   // Auto-refresh picks when primary mode changes (if picks drawer is open)
-  useEffect(()=>{
+  useEffect(() => {
     if (showPicks && picks.length > 0) {
       onFetchPicks(true) // Force refresh when mode changes
     }
@@ -1451,68 +1452,68 @@ export default function App(){
 
     const top = picks.slice(0, 3)
 
-    ;(async () => {
-      const updatedKeys: string[] = []
+      ; (async () => {
+        const updatedKeys: string[] = []
 
-      for (const row of top) {
-        if (!row || !row.symbol) continue
+        for (const row of top) {
+          if (!row || !row.symbol) continue
 
-        const cacheKey = buildStrategyCacheKey(row.symbol, primaryMode, risk, picksAsOf)
+          const cacheKey = buildStrategyCacheKey(row.symbol, primaryMode, risk, picksAsOf)
 
-        if (strategyCacheRef.current[cacheKey]?.plan) {
+          if (strategyCacheRef.current[cacheKey]?.plan) {
+            prefetchedStrategyKeysRef.current.add(cacheKey)
+            continue
+          }
+
+          if (prefetchedStrategyKeysRef.current.has(cacheKey)) {
+            continue
+          }
+
           prefetchedStrategyKeysRef.current.add(cacheKey)
-          continue
-        }
 
-        if (prefetchedStrategyKeysRef.current.has(cacheKey)) {
-          continue
-        }
+          const score = typeof row.score_blend === 'number' ? row.score_blend : 0
+          const dir = classifyPickDirection(score, primaryMode)
+          const derivedFromScore = dir?.label || (score >= 80 ? 'Strong Buy' : score >= 60 ? 'Buy' : 'Sell')
+          const baseRecommendation =
+            row.recommendation && ['Strong Buy', 'Buy', 'Sell', 'Strong Sell'].includes(row.recommendation)
+              ? row.recommendation
+              : derivedFromScore
+          const displayRecommendation = formatRecommendationLabel(row, baseRecommendation, dir)
 
-        prefetchedStrategyKeysRef.current.add(cacheKey)
+          try {
+            const body = {
+              symbol: row.symbol,
+              session_id: sessionId,
+              risk,
+              modes,
+              primary_mode: primaryMode,
+              context: { scores: row.scores },
+            }
 
-        const score = typeof row.score_blend === 'number' ? row.score_blend : 0
-        const dir = classifyPickDirection(score, primaryMode)
-        const derivedFromScore = dir?.label || (score >= 80 ? 'Strong Buy' : score >= 60 ? 'Buy' : 'Sell')
-        const baseRecommendation =
-          row.recommendation && ['Strong Buy', 'Buy', 'Sell', 'Strong Sell'].includes(row.recommendation)
-            ? row.recommendation
-            : derivedFromScore
-        const displayRecommendation = formatRecommendationLabel(row, baseRecommendation, dir)
+            const r = await postStrategySuggest(body as any)
 
-        try {
-          const body = {
-            symbol: row.symbol,
-            session_id: sessionId,
-            risk,
-            modes,
-            primary_mode: primaryMode,
-            context: { scores: row.scores },
+            const entry: TradeStrategyCacheEntry = {
+              symbol: row.symbol,
+              plan: r?.plan,
+              explain: r?.explain || [],
+              scores: row.scores,
+              blendScore: row.score_blend,
+              strategyRationale: row.strategy_rationale,
+              recommendation: displayRecommendation,
+              agents: Array.isArray(row.agents) ? row.agents : undefined,
+            }
+
+            strategyCacheRef.current[cacheKey] = entry
+            updatedKeys.push(cacheKey)
+          } catch (e) {
+            reportError(e, { feature: 'strategy', action: 'prefetch_strategy', extra: { symbol: row.symbol, primaryMode } })
           }
-
-          const r = await postStrategySuggest(body as any)
-
-          const entry: TradeStrategyCacheEntry = {
-            symbol: row.symbol,
-            plan: r?.plan,
-            explain: r?.explain || [],
-            scores: row.scores,
-            blendScore: row.score_blend,
-            strategyRationale: row.strategy_rationale,
-            recommendation: displayRecommendation,
-            agents: Array.isArray(row.agents) ? row.agents : undefined,
-          }
-
-          strategyCacheRef.current[cacheKey] = entry
-          updatedKeys.push(cacheKey)
-        } catch (e) {
-          reportError(e, { feature: 'strategy', action: 'prefetch_strategy', extra: { symbol: row.symbol, primaryMode } })
         }
-      }
 
-      if (updatedKeys.length) {
-        persistStrategyCache()
-      }
-    })()
+        if (updatedKeys.length) {
+          persistStrategyCache()
+        }
+      })()
   }, [picks, primaryMode, risk, picksAsOf, sessionId, modes])
 
   // Clear any stale Top Picks system banner when switching mode or universe.
@@ -1521,23 +1522,23 @@ export default function App(){
   }, [primaryMode, universe])
 
   // Generate insights when picks change (purely factual, no auto market outlook)
-  useEffect(()=>{
+  useEffect(() => {
     if (picks.length > 0) {
       const newInsights: any[] = []
-      
+
       // Opportunity insights for top scoring picks
       const topPicks = picks.filter(p => p.score_blend >= 70)
       if (topPicks.length > 0) {
         const insightId = `hc|${primaryMode}|${universe}|${picksAsOf || 'na'}`
         if (!dismissedInsightIds[insightId]) {
-        newInsights.push({
-          id: insightId,
-          type: 'opportunity',
-          title: `${topPicks.length} High-Confidence Pick${topPicks.length > 1 ? 's' : ''}`,
-          message: `${topPicks.map(p => p.symbol).join(', ')} showing strong signals (70%+ score)`,
-          actionable: true,
-          metadata: { symbols: topPicks.map(p => p.symbol), avgScore: topPicks.reduce((a,p) => a + p.score_blend, 0) / topPicks.length }
-        })
+          newInsights.push({
+            id: insightId,
+            type: 'opportunity',
+            title: `${topPicks.length} High-Confidence Pick${topPicks.length > 1 ? 's' : ''}`,
+            message: `${topPicks.map(p => p.symbol).join(', ')} showing strong signals (70%+ score)`,
+            actionable: true,
+            metadata: { symbols: topPicks.map(p => p.symbol), avgScore: topPicks.reduce((a, p) => a + p.score_blend, 0) / topPicks.length }
+          })
         }
       }
 
@@ -1585,19 +1586,19 @@ export default function App(){
     const timer = setTimeout(() => {
       if (cancelled) return
       if (winningTradesData) return
-      ;(async () => {
-        try {
-          const data = await getWinningTrades({ lookback_days: 7, universe: universe.toLowerCase() })
-          if (!cancelled) {
-            setWinningTradesData(data)
-            try {
-              localStorage.setItem('arise_winning_trades', JSON.stringify(data))
-            } catch {}
+        ; (async () => {
+          try {
+            const data = await getWinningTrades({ lookback_days: 7, universe: universe.toLowerCase() })
+            if (!cancelled) {
+              setWinningTradesData(data)
+              try {
+                localStorage.setItem('arise_winning_trades', JSON.stringify(data))
+              } catch { }
+            }
+          } catch (e) {
+            reportError(e, { feature: 'winners', action: 'prefetch_winning_trades', extra: { universe } })
           }
-        } catch (e) {
-          reportError(e, { feature: 'winners', action: 'prefetch_winning_trades', extra: { universe } })
-        }
-      })()
+        })()
     }, 10000)
 
     return () => {
@@ -1611,19 +1612,19 @@ export default function App(){
     const dates = winningTradesAvailableDates
     if (!dates || dates.length === 0) return
 
-    ;(async () => {
-      const missing = dates.filter(d => !strategyExitsByDate[d])
-      if (missing.length === 0) return
+      ; (async () => {
+        const missing = dates.filter(d => !strategyExitsByDate[d])
+        if (missing.length === 0) return
 
-      for (const d of missing) {
-        try {
-          const data = await getStrategyExits({ date: d, strategy_id: 'NEWS_EXIT' })
-          setStrategyExitsByDate(prev => ({ ...prev, [d]: data }))
-        } catch (e) {
-          reportError(e, { feature: 'winners', action: 'load_strategy_exits', extra: { date: d, strategy_id: 'NEWS_EXIT' } })
+        for (const d of missing) {
+          try {
+            const data = await getStrategyExits({ date: d, strategy_id: 'NEWS_EXIT' })
+            setStrategyExitsByDate(prev => ({ ...prev, [d]: data }))
+          } catch (e) {
+            reportError(e, { feature: 'winners', action: 'load_strategy_exits', extra: { date: d, strategy_id: 'NEWS_EXIT' } })
+          }
         }
-      }
-    })()
+      })()
   }, [winningTradesData, winningTradesAvailableDates, strategyExitsByDate])
 
   useEffect(() => {
@@ -1645,7 +1646,7 @@ export default function App(){
 
   // Proactive messages removed - using single ARIS chat interface only
 
-  const onAnalyze = React.useCallback(async (row:any) => {
+  const onAnalyze = React.useCallback(async (row: any) => {
     ensureStrategyCacheLoaded()
 
     const score = typeof row.score_blend === 'number' ? row.score_blend : 0
@@ -1742,14 +1743,14 @@ export default function App(){
     }
   }, [sessionId, risk, modes, primaryMode, picksAsOf])
 
-  const onAskFromPick = (row:any) => {
+  const onAskFromPick = (row: any) => {
     const text = `Analyze ${row.symbol} and suggest a trading strategy. Agent blend score: ${row.score_blend}%.`
-    setChat(c=>[...c, { role:'user', text }])
+    setChat(c => [...c, { role: 'user', text }])
   }
 
 
   // Fetch market data when region changes
-  useEffect(()=>{
+  useEffect(() => {
     let timer: any = null
     let cancelled = false
 
@@ -1767,7 +1768,7 @@ export default function App(){
           localStorage.setItem('arise_market', JSON.stringify(m))
           localStorage.setItem('arise_flows', JSON.stringify(f))
           localStorage.setItem('arise_market_asof', ts)
-        } catch {}
+        } catch { }
       } catch (err) {
         reportError(err, { feature: 'market', action: 'fetch_market_flows', extra: { region: marketRegion } })
         try {
@@ -1780,7 +1781,7 @@ export default function App(){
           if (fRaw) {
             setFlows(JSON.parse(fRaw))
           }
-        } catch {}
+        } catch { }
       }
     }
 
@@ -1805,61 +1806,63 @@ export default function App(){
   }, [marketRegion])
 
   // Fetch sparklines based on region
-  useEffect(()=>{ (async()=>{
-    try {
-      let symbols = 'NIFTY,BANKNIFTY,GOLD,USDINR'
-      if (marketRegion === 'Global') {
-        symbols = 'S&P 500,NASDAQ,LSE (FTSE 100),Hang Seng'
-      }
-      const r = await getMiniSeries(symbols, 20, marketRegion)
-      console.log('Sparkline data received:', r?.series)
-      const series = r?.series || {}
-      setSpark(series)
+  useEffect(() => {
+    (async () => {
       try {
-        localStorage.setItem('arise_spark', JSON.stringify(series))
-      } catch {}
-    } catch (err) { 
-      reportError(err, { feature: 'market', action: 'fetch_sparklines', extra: { region: marketRegion } })
-      try {
-        const raw = localStorage.getItem('arise_spark')
-        if (raw) {
-          const parsed = JSON.parse(raw)
-          if (parsed && typeof parsed === 'object') {
-            setSpark(parsed)
-            return
-          }
+        let symbols = 'NIFTY,BANKNIFTY,GOLD,USDINR'
+        if (marketRegion === 'Global') {
+          symbols = 'S&P 500,NASDAQ,LSE (FTSE 100),Hang Seng'
         }
-      } catch {}
-      setSpark({}) 
-    }
-  })() }, [marketRegion])
+        const r = await getMiniSeries(symbols, 20, marketRegion)
+        console.log('Sparkline data received:', r?.series)
+        const series = r?.series || {}
+        setSpark(series)
+        try {
+          localStorage.setItem('arise_spark', JSON.stringify(series))
+        } catch { }
+      } catch (err) {
+        reportError(err, { feature: 'market', action: 'fetch_sparklines', extra: { region: marketRegion } })
+        try {
+          const raw = localStorage.getItem('arise_spark')
+          if (raw) {
+            const parsed = JSON.parse(raw)
+            if (parsed && typeof parsed === 'object') {
+              setSpark(parsed)
+              return
+            }
+          }
+        } catch { }
+        setSpark({})
+      }
+    })()
+  }, [marketRegion])
 
-  useEffect(()=>{ 
+  useEffect(() => {
     let timer: any
 
     const fetchNews = async () => {
       try {
         const r = await getNews({ category: 'general', limit: 20 })
-        const items = Array.isArray(r?.items)? r.items: []
+        const items = Array.isArray(r?.items) ? r.items : []
         // Separate events (corporate actions, earnings, announcements) from general news
-        const evts = items.filter((n:any)=> {
-          const title = String(n.title||'').toLowerCase()
-          const desc = String(n.description||'').toLowerCase()
-          return title.includes('announcement') || title.includes('filing') || 
-                 title.includes('corporate action') || title.includes('agm') || 
-                 desc.includes('corporate filing') || desc.includes('event calendar')
+        const evts = items.filter((n: any) => {
+          const title = String(n.title || '').toLowerCase()
+          const desc = String(n.description || '').toLowerCase()
+          return title.includes('announcement') || title.includes('filing') ||
+            title.includes('corporate action') || title.includes('agm') ||
+            desc.includes('corporate filing') || desc.includes('event calendar')
         })
         const newsItems = cleanNewsList(items)
         setEvents(evts.length > 0 ? evts : items.slice(0, 3)) // Fallback to first 3 items if no events
-        setEventsAsOf(r?.as_of||'')
+        setEventsAsOf(r?.as_of || '')
         setNews(newsItems)
-        setNewsAsOf(r?.as_of||'')
+        setNewsAsOf(r?.as_of || '')
         try {
           localStorage.setItem('arise_news', JSON.stringify({
             items: newsItems,
             as_of: r?.as_of || '',
           }))
-        } catch {}
+        } catch { }
       } catch (e) {
         reportError(e, { feature: 'news', action: 'fetch_news', extra: { category: 'general' } })
         // On failure, fall back to cached news if available
@@ -1868,12 +1871,12 @@ export default function App(){
           if (raw) {
             const parsed = JSON.parse(raw)
             const items = Array.isArray(parsed?.items) ? parsed.items : (Array.isArray(parsed) ? parsed : [])
-            const evts = items.filter((n:any)=> {
-              const title = String(n.title||'').toLowerCase()
-              const desc = String(n.description||'').toLowerCase()
-              return title.includes('announcement') || title.includes('filing') || 
-                     title.includes('corporate action') || title.includes('agm') || 
-                     desc.includes('corporate filing') || desc.includes('event calendar')
+            const evts = items.filter((n: any) => {
+              const title = String(n.title || '').toLowerCase()
+              const desc = String(n.description || '').toLowerCase()
+              return title.includes('announcement') || title.includes('filing') ||
+                title.includes('corporate action') || title.includes('agm') ||
+                desc.includes('corporate filing') || desc.includes('event calendar')
             })
             const newsItems = cleanNewsList(items)
             setEvents(evts.length > 0 ? evts : items.slice(0, 3))
@@ -1898,91 +1901,91 @@ export default function App(){
     }
   }, [])
 
-  const tiles = useMemo(()=>{
-    const t: Array<{name:string,val:string,pct?:number,accent:string}> = []
+  const tiles = useMemo(() => {
+    const t: Array<{ name: string, val: string, pct?: number, accent: string }> = []
     try {
-      const indices = market?.indices||[]
-      
+      const indices = market?.indices || []
+
       if (marketRegion === 'India') {
-        const nf = indices.find((x:any)=> (x.name||'').toLowerCase().includes('nifty 50') || (x.name||'').toLowerCase() === 'nifty')
-        const bn = indices.find((x:any)=> (x.name||'').toLowerCase().includes('bank'))
-        const gold = indices.find((x:any)=> (x.name||'').toLowerCase().includes('gold'))
-        
-        if (nf) t.push({ name:'NIFTY', val: String(Number(nf.price||0).toFixed(2)), pct:Number(nf.chg_pct||0), accent:'#1d4ed8' })
-        if (bn) t.push({ name:'BANKNIFTY', val: String(Number(bn.price||0).toFixed(2)), pct:Number(bn.chg_pct||0), accent:'#7c3aed' })
-        
+        const nf = indices.find((x: any) => (x.name || '').toLowerCase().includes('nifty 50') || (x.name || '').toLowerCase() === 'nifty')
+        const bn = indices.find((x: any) => (x.name || '').toLowerCase().includes('bank'))
+        const gold = indices.find((x: any) => (x.name || '').toLowerCase().includes('gold'))
+
+        if (nf) t.push({ name: 'NIFTY', val: String(Number(nf.price || 0).toFixed(2)), pct: Number(nf.chg_pct || 0), accent: '#1d4ed8' })
+        if (bn) t.push({ name: 'BANKNIFTY', val: String(Number(bn.price || 0).toFixed(2)), pct: Number(bn.chg_pct || 0), accent: '#7c3aed' })
+
         // Try to get GOLD from indices first, then from spark
         if (gold && gold.price) {
-          t.push({ name:'GOLD', val: String(Number(gold.price).toFixed(2)), pct:Number(gold.chg_pct||0), accent:'#f59e0b' })
+          t.push({ name: 'GOLD', val: String(Number(gold.price).toFixed(2)), pct: Number(gold.chg_pct || 0), accent: '#f59e0b' })
         } else {
-          const goldSpark = spark['GOLD']||[]
+          const goldSpark = spark['GOLD'] || []
           if (goldSpark.length) {
-            const last=goldSpark[goldSpark.length-1], prev=goldSpark[goldSpark.length-2]||last
-            const pct= prev? ((last-prev)/prev*100):0
-            t.push({ name:'GOLD', val: String(last.toFixed(2)), pct: Number(pct.toFixed(2)), accent:'#f59e0b' })
+            const last = goldSpark[goldSpark.length - 1], prev = goldSpark[goldSpark.length - 2] || last
+            const pct = prev ? ((last - prev) / prev * 100) : 0
+            t.push({ name: 'GOLD', val: String(last.toFixed(2)), pct: Number(pct.toFixed(2)), accent: '#f59e0b' })
           } else if (gold) {
             // Show Gold card even if price is null
-            t.push({ name:'GOLD', val: 'N/A', pct:undefined, accent:'#f59e0b' })
+            t.push({ name: 'GOLD', val: 'N/A', pct: undefined, accent: '#f59e0b' })
           }
         }
-        
+
         // USDINR from indices first (if available), then from spark
-        const fxIndex = indices.find((x:any)=>{
-          const nm = (x.name||'').toUpperCase()
+        const fxIndex = indices.find((x: any) => {
+          const nm = (x.name || '').toUpperCase()
           return nm.includes('USD/INR') || nm.includes('USDINR')
         })
         if (fxIndex && fxIndex.price != null) {
           t.push({
-            name:'USD/INR',
-            val: String(Number(fxIndex.price||0).toFixed(2)),
-            pct: Number(fxIndex.chg_pct||0),
-            accent:'#10b981'
+            name: 'USD/INR',
+            val: String(Number(fxIndex.price || 0).toFixed(2)),
+            pct: Number(fxIndex.chg_pct || 0),
+            accent: '#10b981'
           })
         } else {
-          const fx = spark['USDINR']||[]
+          const fx = spark['USDINR'] || []
           if (fx.length) {
-            const last=fx[fx.length-1], prev=fx[fx.length-2]||last
-            const pct= prev? ((last-prev)/prev*100):0
-            t.push({ name:'USD/INR', val: String(last.toFixed(2)), pct: Number(pct.toFixed(2)), accent:'#10b981' })
+            const last = fx[fx.length - 1], prev = fx[fx.length - 2] || last
+            const pct = prev ? ((last - prev) / prev * 100) : 0
+            t.push({ name: 'USD/INR', val: String(last.toFixed(2)), pct: Number(pct.toFixed(2)), accent: '#10b981' })
           } else if (fxIndex) {
-            t.push({ name:'USD/INR', val: 'N/A', pct: undefined, accent:'#10b981' })
+            t.push({ name: 'USD/INR', val: 'N/A', pct: undefined, accent: '#10b981' })
           }
         }
       } else {
         // Global markets
-        indices.forEach((idx:any) => {
+        indices.forEach((idx: any) => {
           const name = idx.name || ''
           let displayName = name
           let accent = '#1d4ed8'
-          
+
           if (name.toLowerCase().includes('s&p')) { displayName = 'S&P 500'; accent = '#1d4ed8' }
           else if (name.toLowerCase().includes('nasdaq')) { displayName = 'NASDAQ'; accent = '#7c3aed' }
           else if (name.toLowerCase().includes('ftse')) { displayName = 'FTSE 100'; accent = '#f59e0b' }
           else if (name.toLowerCase().includes('hang seng')) { displayName = 'Hang Seng'; accent = '#10b981' }
-          
+
           t.push({
             name: displayName,
-            val: String(Number(idx.price||0).toFixed(2)),
-            pct: Number(idx.chg_pct||0),
+            val: String(Number(idx.price || 0).toFixed(2)),
+            pct: Number(idx.chg_pct || 0),
             accent
           })
         })
       }
-    } catch {}
+    } catch { }
     return t
   }, [market, spark, marketRegion])
 
-  const sentiment = useMemo(()=>{
+  const sentiment = useMemo(() => {
     try {
       // Sentiment based only on Nifty 50 performance
-      const niftyPct = Number((tiles.find(x=>x.name==='NIFTY')?.pct) ?? 0)
-      
-      if (niftyPct > 0.40) return { label:'Bullish', color:'#16a34a', score:niftyPct }
-      if (niftyPct >= 0.20) return { label:'Trending Upward', color:'#22c55e', score:niftyPct }
-      if (niftyPct > -0.20) return { label:'Range Bound', color:'#64748b', score:niftyPct }
-      if (niftyPct >= -0.40) return { label:'Trending Downward', color:'#f97316', score:niftyPct }
-      return { label:'Bearish', color:'#ef4444', score:niftyPct }
-    } catch { return { label:'Range Bound', color:'#64748b', score:0 } }
+      const niftyPct = Number((tiles.find(x => x.name === 'NIFTY')?.pct) ?? 0)
+
+      if (niftyPct > 0.40) return { label: 'Bullish', color: '#16a34a', score: niftyPct }
+      if (niftyPct >= 0.20) return { label: 'Trending Upward', color: '#22c55e', score: niftyPct }
+      if (niftyPct > -0.20) return { label: 'Range Bound', color: '#64748b', score: niftyPct }
+      if (niftyPct >= -0.40) return { label: 'Trending Downward', color: '#f97316', score: niftyPct }
+      return { label: 'Bearish', color: '#ef4444', score: niftyPct }
+    } catch { return { label: 'Range Bound', color: '#64748b', score: 0 } }
   }, [tiles])
 
   const { buyPicks, sellPicks } = useMemo(() => {
@@ -2159,11 +2162,11 @@ export default function App(){
       localStorage.setItem('arise_modes', JSON.stringify(modes))
       localStorage.setItem('arise_primary_mode', primaryMode)
       localStorage.setItem('arise_auxiliary_modes', JSON.stringify(auxiliaryModes))
-    } catch {}
+    } catch { }
     try {
-      const session = localStorage.getItem('arise_session')||'local'
-      await fetch('/v1/memory/upsert', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ session_id: session, data: { risk, modes, primary_mode: primaryMode, auxiliary_modes: auxiliaryModes } }) })
-    } catch {}
+      const session = localStorage.getItem('arise_session') || 'local'
+      await fetch('/v1/memory/upsert', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_id: session, data: { risk, modes, primary_mode: primaryMode, auxiliary_modes: auxiliaryModes } }) })
+    } catch { }
     setPrefsOpen(false)
     // Refresh picks if drawer is open to reflect new trading mode
     if (showPicks && picks.length > 0) {
@@ -2172,21 +2175,21 @@ export default function App(){
   }
 
   const [chatInput, setChatInput] = useState('')
-  const [chat, setChat] = useState<Array<{role:'user'|'assistant', text:string}>>([])
+  const [chat, setChat] = useState<Array<{ role: 'user' | 'assistant', text: string }>>([])
   const [chatLayout, setChatLayout] = useState<ChatLayout>('bottom-docked')
   const [chatLoading, setChatLoading] = useState(false)
   const chatMessagesRef = useRef<HTMLDivElement | null>(null)
   const onSend = React.useCallback(async () => {
     const t = chatInput.trim()
     if (!t) return
-    setChat(c=>[...c, { role:'user', text:t }])
+    setChat(c => [...c, { role: 'user', text: t }])
     setChatInput('')
-    
+
     try {
       setChatLoading(true)
       // Build context with agent data
       const context: any = {}
-      
+
       // If we have picks loaded, include them for context
       if (picks.length > 0) {
         context.top_picks = picks.slice(0, 5).map(p => ({
@@ -2198,7 +2201,7 @@ export default function App(){
           agents: p.agents
         }))
       }
-      
+
       // Include market sentiment
       if (market.indices && market.indices.length > 0) {
         const nifty = market.indices.find((i: any) => i.name?.includes('NIFTY'))
@@ -2211,21 +2214,21 @@ export default function App(){
           }
         }
       }
-      
+
       // Include user preferences
       context.user_preferences = {
         risk_profile: risk,
         primary_mode: primaryMode,
         universe: universe
       }
-      
+
       const r = await postChat({ session_id: sessionId, conversation_id: sessionId, message: t, context })
       // Backend returns {response: string, suggestions: [], ...}
       const responseText = r?.response || 'Sorry, I could not process that.'
-      setChat(c=>[...c, { role:'assistant', text: responseText }])
+      setChat(c => [...c, { role: 'assistant', text: responseText }])
     } catch (e) {
       reportError(e, { feature: 'chat', action: 'send' })
-      setChat(c=>[...c, { role:'assistant', text: 'Sorry, I am having trouble connecting. Please check if OpenAI API key is configured.' }])
+      setChat(c => [...c, { role: 'assistant', text: 'Sorry, I am having trouble connecting. Please check if OpenAI API key is configured.' }])
     } finally {
       setChatLoading(false)
     }
@@ -2238,345 +2241,345 @@ export default function App(){
   }, [chat.length])
 
   return (
-    <div className="app-shell" style={{display:'flex', height:'100dvh', background:'#f9fafb', overflow:'hidden'}}>
+    <div className="app-shell" style={{ display: 'flex', height: '100dvh', background: '#f9fafb', overflow: 'hidden' }}>
       {/* Continuous Left Sidebar - dark unified band */}
       {!isMobile && (
-      <aside style={{
-        width:116,
-        background:'#f5faff',
-        boxShadow:'none',
-        display:'flex',
-        flexDirection:'column',
-        position:'fixed',
-        height:'100dvh',
-        left:0,
-        top:0,
-        zIndex:100
-      }}>
-        {/* Branding */}
-        <div style={{height:44}} />
-        
-        {/* Navigation */}
-        <nav style={{display:'flex', flexDirection:'column', gap:6, padding:'10px 6px', flex:1}}>
-          <button
-            title="Home"
-            onClick={handleHomeClick}
-            style={{
-              display:'flex',
-              flexDirection:'column',
-              alignItems:'center',
-              gap:4,
-              padding:'10px 6px',
-              borderRadius:999,
-              background:'transparent',
-              border:'none',
-              cursor:'pointer',
-              width:'100%',
-              transition:'background 0.15s ease'
-            }}
-            onMouseEnter={e=>{
-              e.currentTarget.style.background = 'rgba(59,130,246,0.14)'
-            }}
-            onMouseLeave={e=>{
-              e.currentTarget.style.background = 'transparent'
-            }}
-          >
-            <LayoutGrid size={18} color="#0f172a" />
-            <span style={{fontSize:12, fontWeight:600, color:'#0f172a'}}>Home</span>
-          </button>
+        <aside style={{
+          width: 116,
+          background: '#f5faff',
+          boxShadow: 'none',
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'fixed',
+          height: '100dvh',
+          left: 0,
+          top: 0,
+          zIndex: 100
+        }}>
+          {/* Branding */}
+          <div style={{ height: 44 }} />
 
-          <button
-            title="Preferences"
-            onClick={()=>setPrefsOpen(true)}
-            style={{
-              display:'flex',
-              flexDirection:'column',
-              alignItems:'center',
-              gap:4,
-              padding:'10px 6px',
-              borderRadius:999,
-              background:'transparent',
-              border:'none',
-              cursor:'pointer',
-              width:'100%',
-              transition:'background 0.15s ease'
-            }}
-            onMouseEnter={e=>{
-              e.currentTarget.style.background = 'rgba(59,130,246,0.14)'
-            }}
-            onMouseLeave={e=>{
-              e.currentTarget.style.background = 'transparent'
-            }}
-          >
-            <SlidersHorizontal size={18} color="#0f172a" />
-            <span style={{fontSize:12, fontWeight:600, color:'#0f172a'}}>Preferences</span>
-          </button>
+          {/* Navigation */}
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '10px 6px', flex: 1 }}>
+            <button
+              title="Home"
+              onClick={handleHomeClick}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 4,
+                padding: '10px 6px',
+                borderRadius: 999,
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                width: '100%',
+                transition: 'background 0.15s ease'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'rgba(59,130,246,0.14)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'transparent'
+              }}
+            >
+              <LayoutGrid size={18} color="#0f172a" />
+              <span style={{ fontSize: 12, fontWeight: 600, color: '#0f172a' }}>Home</span>
+            </button>
 
-          <button
-            title="Portfolio"
-            onClick={()=>{
-              setShowPortfolio(true)
-              setShowWatchlist(false)
-              setShowPicks(false)
-              setShowHeatMap(false)
-            }}
-            style={{
-              display:'flex',
-              flexDirection:'column',
-              alignItems:'center',
-              gap:4,
-              padding:'10px 6px',
-              borderRadius:999,
-              background:'transparent',
-              border:'none',
-              cursor:'pointer',
-              width:'100%',
-              transition:'background 0.15s ease'
-            }}
-            onMouseEnter={e=>{
-              e.currentTarget.style.background = 'rgba(59,130,246,0.14)'
-            }}
-            onMouseLeave={e=>{
-              e.currentTarget.style.background = 'transparent'
-            }}
-          >
-            <BriefcaseBusiness size={18} color="#0f172a" />
-            <span style={{fontSize:12, fontWeight:600, color:'#0f172a'}}>Portfolio</span>
-          </button>
-          <button
-            title="Watchlist"
-            onClick={()=>{
-              setShowWatchlist(true)
-              setShowPortfolio(false)
-              setShowPicks(false)
-              setShowHeatMap(false)
-            }}
-            style={{
-              display:'flex',
-              flexDirection:'column',
-              alignItems:'center',
-              gap:4,
-              padding:'10px 6px',
-              borderRadius:999,
-              background:'transparent',
-              border:'none',
-              cursor:'pointer',
-              width:'100%',
-              transition:'background 0.15s ease'
-            }}
-            onMouseEnter={e=>{
-              e.currentTarget.style.background = 'rgba(59,130,246,0.14)'
-            }}
-            onMouseLeave={e=>{
-              e.currentTarget.style.background = 'transparent'
-            }}
-          >
-            <Image size={18} color="#0f172a" />
-            <span style={{fontSize:12, fontWeight:600, color:'#0f172a'}}>Watchlist</span>
-          </button>
-          <button 
-            title="Scalping Monitor"
-            onClick={()=>setShowScalpingMonitor(true)} 
-            style={{
-              display:'flex',
-              flexDirection:'column',
-              alignItems:'center',
-              gap:4,
-              padding:'10px 6px',
-              borderRadius:999,
-              background:'transparent',
-              border:'none',
-              cursor:'pointer',
-              width:'100%',
-              transition:'background 0.15s ease'
-            }}
-            onMouseEnter={e=>{
-              e.currentTarget.style.background = 'rgba(59,130,246,0.14)'
-            }}
-            onMouseLeave={e=>{
-              e.currentTarget.style.background = 'transparent'
-            }}
-          >
-            <SquareActivity size={18} color="#0f172a" />
-            <span style={{fontSize:12, fontWeight:600, color:'#0f172a'}}>Scalp</span>
-          </button>
-          <button 
-            title="Winning Trades"
-            onClick={async ()=>{
-              setShowWinningTrades(true)
-              try {
-                setLoadingWinningTrades(true)
-                const data = await getWinningTrades({ lookback_days: 7, universe: universe.toLowerCase() })
-                setWinningTradesData(data)
+            <button
+              title="Preferences"
+              onClick={() => setPrefsOpen(true)}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 4,
+                padding: '10px 6px',
+                borderRadius: 999,
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                width: '100%',
+                transition: 'background 0.15s ease'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'rgba(59,130,246,0.14)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'transparent'
+              }}
+            >
+              <SlidersHorizontal size={18} color="#0f172a" />
+              <span style={{ fontSize: 12, fontWeight: 600, color: '#0f172a' }}>Preferences</span>
+            </button>
+
+            <button
+              title="Portfolio"
+              onClick={() => {
+                setShowPortfolio(true)
+                setShowWatchlist(false)
+                setShowPicks(false)
+                setShowHeatMap(false)
+              }}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 4,
+                padding: '10px 6px',
+                borderRadius: 999,
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                width: '100%',
+                transition: 'background 0.15s ease'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'rgba(59,130,246,0.14)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'transparent'
+              }}
+            >
+              <BriefcaseBusiness size={18} color="#0f172a" />
+              <span style={{ fontSize: 12, fontWeight: 600, color: '#0f172a' }}>Portfolio</span>
+            </button>
+            <button
+              title="Watchlist"
+              onClick={() => {
+                setShowWatchlist(true)
+                setShowPortfolio(false)
+                setShowPicks(false)
+                setShowHeatMap(false)
+              }}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 4,
+                padding: '10px 6px',
+                borderRadius: 999,
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                width: '100%',
+                transition: 'background 0.15s ease'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'rgba(59,130,246,0.14)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'transparent'
+              }}
+            >
+              <Image size={18} color="#0f172a" />
+              <span style={{ fontSize: 12, fontWeight: 600, color: '#0f172a' }}>Watchlist</span>
+            </button>
+            <button
+              title="Scalping Monitor"
+              onClick={() => setShowScalpingMonitor(true)}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 4,
+                padding: '10px 6px',
+                borderRadius: 999,
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                width: '100%',
+                transition: 'background 0.15s ease'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'rgba(59,130,246,0.14)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'transparent'
+              }}
+            >
+              <SquareActivity size={18} color="#0f172a" />
+              <span style={{ fontSize: 12, fontWeight: 600, color: '#0f172a' }}>Scalp</span>
+            </button>
+            <button
+              title="Winning Trades"
+              onClick={async () => {
+                setShowWinningTrades(true)
                 try {
-                  localStorage.setItem('arise_winning_trades', JSON.stringify(data))
-                } catch {}
-              } catch (e) {
-                reportError(e, { feature: 'winners', action: 'load_winning_trades', extra: { universe } })
-              } finally {
-                setLoadingWinningTrades(false)
-              }
-            }} 
-            style={{
-              display:'flex',
-              flexDirection:'column',
-              alignItems:'center',
-              gap:4,
-              padding:'10px 6px',
-              borderRadius:999,
-              background:'transparent',
-              border:'none',
-              cursor:'pointer',
-              width:'100%',
-              transition:'background 0.15s ease'
-            }}
-            onMouseEnter={e=>{
-              e.currentTarget.style.background = 'rgba(59,130,246,0.14)'
-            }}
-            onMouseLeave={e=>{
-              e.currentTarget.style.background = 'transparent'
-            }}
-          >
-            <Trophy size={18} color="#0f172a" />
-            <span style={{fontSize:12, fontWeight:600, color:'#0f172a'}}>Winners</span>
-          </button>
-          <button
-            title="RL Metrics"
-            onClick={async ()=>{
-              setShowRlMetrics(true)
-              setRlMetricsError(null)
-              try {
-                setLoadingRlMetrics(true)
-                const [daily, policy] = await Promise.all([
-                  getRlMetrics({ view: 'daily' }),
-                  getRlMetrics({ view: 'policy' }),
-                ])
-                setRlDailyData(Array.isArray(daily?.daily) ? daily.daily : null)
-                setRlMetricsData(policy)
-              } catch (e) {
-                reportError(e, { feature: 'rl', action: 'load_metrics' })
-                setRlMetricsError('Failed to load RL metrics')
-              } finally {
-                setLoadingRlMetrics(false)
-              }
-            }}
-            style={{
-              display:'flex',
-              flexDirection:'column',
-              alignItems:'center',
-              gap:4,
-              padding:'10px 6px',
-              borderRadius:999,
-              background:'transparent',
-              border:'none',
-              cursor:'pointer',
-              width:'100%',
-              transition:'background 0.15s ease'
-            }}
-            onMouseEnter={e=>{
-              e.currentTarget.style.background = 'rgba(59,130,246,0.14)'
-            }}
-            onMouseLeave={e=>{
-              e.currentTarget.style.background = 'transparent'
-            }}
-          >
-            <Brain size={18} color="#0f172a" />
-            <span style={{fontSize:12, fontWeight:600, color:'#0f172a'}}>RL</span>
-          </button>
-        </nav>
+                  setLoadingWinningTrades(true)
+                  const data = await getWinningTrades({ lookback_days: 7, universe: universe.toLowerCase() })
+                  setWinningTradesData(data)
+                  try {
+                    localStorage.setItem('arise_winning_trades', JSON.stringify(data))
+                  } catch { }
+                } catch (e) {
+                  reportError(e, { feature: 'winners', action: 'load_winning_trades', extra: { universe } })
+                } finally {
+                  setLoadingWinningTrades(false)
+                }
+              }}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 4,
+                padding: '10px 6px',
+                borderRadius: 999,
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                width: '100%',
+                transition: 'background 0.15s ease'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'rgba(59,130,246,0.14)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'transparent'
+              }}
+            >
+              <Trophy size={18} color="#0f172a" />
+              <span style={{ fontSize: 12, fontWeight: 600, color: '#0f172a' }}>Winners</span>
+            </button>
+            <button
+              title="RL Metrics"
+              onClick={async () => {
+                setShowRlMetrics(true)
+                setRlMetricsError(null)
+                try {
+                  setLoadingRlMetrics(true)
+                  const [daily, policy] = await Promise.all([
+                    getRlMetrics({ view: 'daily' }),
+                    getRlMetrics({ view: 'policy' }),
+                  ])
+                  setRlDailyData(Array.isArray(daily?.daily) ? daily.daily : null)
+                  setRlMetricsData(policy)
+                } catch (e) {
+                  reportError(e, { feature: 'rl', action: 'load_metrics' })
+                  setRlMetricsError('Failed to load RL metrics')
+                } finally {
+                  setLoadingRlMetrics(false)
+                }
+              }}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 4,
+                padding: '10px 6px',
+                borderRadius: 999,
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                width: '100%',
+                transition: 'background 0.15s ease'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'rgba(59,130,246,0.14)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'transparent'
+              }}
+            >
+              <Brain size={18} color="#0f172a" />
+              <span style={{ fontSize: 12, fontWeight: 600, color: '#0f172a' }}>RL</span>
+            </button>
+          </nav>
 
-        {/* Primary Mode Display at Bottom */}
-        <div style={{padding:'16px', borderTop:'1px solid rgba(30,64,175,0.7)'}}>
-          <div style={{fontSize:10, fontWeight:700, color:'#0f172a', marginBottom:8}}>TRADING MODE</div>
-          <div style={{display:'flex', flexWrap:'wrap', gap:6}}>
-            {availableModes.filter(m => m.value !== 'Commodity').map((mode)=> {
-              const isActive = primaryMode === mode.value
-              // Extract text without emoji for display
-              const displayText = mode.value
-              return (
-                <button
-                  key={mode.value}
-                  onClick={()=>{
-                    setPrimaryMode(mode.value)
-                    setAuxiliaryModes(aux => aux.filter(m => m !== mode.value))
-                    try{localStorage.setItem('arise_primary_mode', mode.value)}catch{}
-                    // Refresh picks if drawer is open
-                    if (showPicks) onFetchPicks(true)
-                  }}
-                  onMouseEnter={(e)=>{
-                    const rect = e.currentTarget.getBoundingClientRect()
-                    setTip({
-                      x: rect.left + rect.width / 2,
-                      y: rect.top - 8,
-                      text: mode.description,
-                      type: 'mode'
-                    })
-                    e.currentTarget.style.background = 'rgba(37,99,235,0.95)'
-                    e.currentTarget.style.border = '1px solid rgba(148,163,184,0.9)'
-                  }}
-                  onMouseLeave={e=>{
-                    setTip(null)
-                    e.currentTarget.style.background = isActive ? 'rgba(37,99,235,0.95)' : 'rgba(15,23,42,0.9)'
-                    e.currentTarget.style.border = isActive
-                      ? '1px solid rgba(148,163,184,0.9)'
-                      : '1px solid rgba(30,41,59,0.9)'
-                  }}
-                  style={{
-                    padding:'4px 8px',
-                    fontSize:9,
-                    fontWeight:600,
-                    borderRadius:999,
-                    border: isActive ? '1px solid rgba(148,163,184,0.9)' : '1px solid rgba(30,41,59,0.9)',
-                    background: isActive ? 'rgba(37,99,235,0.95)' : 'rgba(15,23,42,0.9)',
-                    color: '#e5e7eb',
-                    cursor:'pointer',
-                    whiteSpace:'nowrap',
-                    letterSpacing:0.3
-                  }}
-                >
-                  {displayText} {isActive?'\u2713':''}
-                </button>
-              )
-            })}
+          {/* Primary Mode Display at Bottom */}
+          <div style={{ padding: '16px', borderTop: '1px solid rgba(30,64,175,0.7)' }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#0f172a', marginBottom: 8 }}>TRADING MODE</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {availableModes.filter(m => m.value !== 'Commodity').map((mode) => {
+                const isActive = primaryMode === mode.value
+                // Extract text without emoji for display
+                const displayText = mode.value
+                return (
+                  <button
+                    key={mode.value}
+                    onClick={() => {
+                      setPrimaryMode(mode.value)
+                      setAuxiliaryModes(aux => aux.filter(m => m !== mode.value))
+                      try { localStorage.setItem('arise_primary_mode', mode.value) } catch { }
+                      // Refresh picks if drawer is open
+                      if (showPicks) onFetchPicks(true)
+                    }}
+                    onMouseEnter={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect()
+                      setTip({
+                        x: rect.left + rect.width / 2,
+                        y: rect.top - 8,
+                        text: mode.description,
+                        type: 'mode'
+                      })
+                      e.currentTarget.style.background = 'rgba(37,99,235,0.95)'
+                      e.currentTarget.style.border = '1px solid rgba(148,163,184,0.9)'
+                    }}
+                    onMouseLeave={e => {
+                      setTip(null)
+                      e.currentTarget.style.background = isActive ? 'rgba(37,99,235,0.95)' : 'rgba(15,23,42,0.9)'
+                      e.currentTarget.style.border = isActive
+                        ? '1px solid rgba(148,163,184,0.9)'
+                        : '1px solid rgba(30,41,59,0.9)'
+                    }}
+                    style={{
+                      padding: '4px 8px',
+                      fontSize: 9,
+                      fontWeight: 600,
+                      borderRadius: 999,
+                      border: isActive ? '1px solid rgba(148,163,184,0.9)' : '1px solid rgba(30,41,59,0.9)',
+                      background: isActive ? 'rgba(37,99,235,0.95)' : 'rgba(15,23,42,0.9)',
+                      color: '#e5e7eb',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      letterSpacing: 0.3
+                    }}
+                  >
+                    {displayText} {isActive ? '\u2713' : ''}
+                  </button>
+                )
+              })}
+            </div>
           </div>
-        </div>
-      </aside>
+        </aside>
       )}
 
       <div
         style={{
-          position:'fixed',
-          left:0,
-          right:0,
-          top:0,
-          height:44,
-          background:'#f5faff',
-          zIndex:200,
-          display:'flex',
-          alignItems:'center',
-          justifyContent:'space-between',
+          position: 'fixed',
+          left: 0,
+          right: 0,
+          top: 0,
+          height: 44,
+          background: '#f5faff',
+          zIndex: 200,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
           padding: isMobile ? '0 12px' : '0 24px',
-          boxShadow:'none'
+          boxShadow: 'none'
         }}
       >
-        <div style={{display:'flex', alignItems:'baseline', gap:8, marginLeft: isMobile ? 12 : 128, maxWidth:'100%'}}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginLeft: isMobile ? 12 : 128, maxWidth: '100%' }}>
           <FyntrixLogo fontSize={22} fontWeight={900} />
           <div
             style={{
-              fontSize:12,
-              color:'#334155',
-              fontWeight:500,
-              fontStyle:'italic',
-              cursor:'pointer',
-              whiteSpace:'nowrap'
+              fontSize: 12,
+              color: '#334155',
+              fontWeight: 500,
+              fontStyle: 'italic',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap'
             }}
-            onClick={()=>setShowAgents(true)}
-            onMouseEnter={e=>{
+            onClick={() => setShowAgents(true)}
+            onMouseEnter={e => {
               e.currentTarget.style.color = '#0f172a'
               e.currentTarget.style.textDecoration = 'underline'
               e.currentTarget.style.textDecorationStyle = 'dotted'
             }}
-            onMouseLeave={e=>{
+            onMouseLeave={e => {
               e.currentTarget.style.color = '#334155'
               e.currentTarget.style.textDecoration = 'none'
             }}
@@ -2584,65 +2587,65 @@ export default function App(){
             (trading assisted by AI agents)
           </div>
         </div>
-        <div style={{display:'flex', alignItems:'center', gap:16}}>
-          <div style={{flex:1, display:'flex', justifyContent:'center'}}>
-            <div className={isMobile ? 'hide-on-mobile' : undefined} style={{display:'flex', alignItems:'center', gap:16, transform: isMobile ? 'none' : 'translateX(-140px)'}}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+            <div className={isMobile ? 'hide-on-mobile' : undefined} style={{ display: 'flex', alignItems: 'center', gap: 16, transform: isMobile ? 'none' : 'translateX(-140px)' }}>
               <button
                 style={{
-                  background:'transparent',
-                  border:'none',
-                  color:'#0f172a',
-                  fontSize:13,
-                  fontWeight:700,
-                  cursor:'pointer',
-                  padding:'4px 6px',
-                  letterSpacing:0.25
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#0f172a',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  padding: '4px 6px',
+                  letterSpacing: 0.25
                 }}
-                onMouseEnter={e=>{e.currentTarget.style.textDecoration='underline'}}
-                onMouseLeave={e=>{e.currentTarget.style.textDecoration='none'}}
-                onClick={()=>setShowCompany(true)}
+                onMouseEnter={e => { e.currentTarget.style.textDecoration = 'underline' }}
+                onMouseLeave={e => { e.currentTarget.style.textDecoration = 'none' }}
+                onClick={() => setShowCompany(true)}
               >
                 Company
               </button>
               <button
                 style={{
-                  background:'transparent',
-                  border:'none',
-                  color:'#0f172a',
-                  fontSize:13,
-                  fontWeight:700,
-                  cursor:'pointer',
-                  padding:'4px 6px',
-                  letterSpacing:0.25
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#0f172a',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  padding: '4px 6px',
+                  letterSpacing: 0.25
                 }}
-                onMouseEnter={e=>{e.currentTarget.style.textDecoration='underline'}}
-                onMouseLeave={e=>{e.currentTarget.style.textDecoration='none'}}
-                onClick={()=>setShowProducts(true)}
+                onMouseEnter={e => { e.currentTarget.style.textDecoration = 'underline' }}
+                onMouseLeave={e => { e.currentTarget.style.textDecoration = 'none' }}
+                onClick={() => setShowProducts(true)}
               >
                 Products
               </button>
               <button
                 title="Disclosure & Disclaimer"
-                onClick={()=>setShowDisclosure(true)}
+                onClick={() => setShowDisclosure(true)}
                 style={{
-                  display:'flex',
-                  alignItems:'center',
-                  gap:8,
-                  padding:'6px 10px',
-                  borderRadius:999,
-                  background:'rgba(15,23,42,0.95)',
-                  border:'1px solid rgba(148,163,184,0.85)',
-                  cursor:'pointer',
-                  color:'#e5e7eb',
-                  fontSize:12,
-                  fontWeight:600,
-                  letterSpacing:0.4
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '6px 10px',
+                  borderRadius: 999,
+                  background: 'rgba(15,23,42,0.95)',
+                  border: '1px solid rgba(148,163,184,0.85)',
+                  cursor: 'pointer',
+                  color: '#e5e7eb',
+                  fontSize: 12,
+                  fontWeight: 600,
+                  letterSpacing: 0.4
                 }}
-                onMouseEnter={e=>{e.currentTarget.style.background='rgba(30,64,175,0.95)'; e.currentTarget.style.boxShadow='0 3px 8px rgba(37,99,235,0.5)'; e.currentTarget.style.transform='translateY(-1px)'}}
-                onMouseLeave={e=>{e.currentTarget.style.background='rgba(15,23,42,0.95)'; e.currentTarget.style.boxShadow='none'; e.currentTarget.style.transform='translateY(0)'}}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(30,64,175,0.95)'; e.currentTarget.style.boxShadow = '0 3px 8px rgba(37,99,235,0.5)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,23,42,0.95)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)' }}
               >
                 <Copy size={16} color="#e5e7eb" />
-                <span style={{textTransform:'uppercase'}}>Disclosure</span>
+                <span style={{ textTransform: 'uppercase' }}>Disclosure</span>
               </button>
             </div>
           </div>
@@ -2650,16 +2653,16 @@ export default function App(){
             <button
               title="More"
               style={{
-                width:36,
-                height:36,
-                borderRadius:12,
-                background:'rgba(15,23,42,0.95)',
-                border:'1px solid rgba(148,163,184,0.9)',
-                display:'flex',
-                alignItems:'center',
-                justifyContent:'center',
-                cursor:'pointer',
-                transition:'background 0.15s ease, transform 0.1s ease, boxShadow 0.15s ease'
+                width: 36,
+                height: 36,
+                borderRadius: 12,
+                background: 'rgba(15,23,42,0.95)',
+                border: '1px solid rgba(148,163,184,0.9)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                transition: 'background 0.15s ease, transform 0.1s ease, boxShadow 0.15s ease'
               }}
               onClick={() => setIsMoreOpen(true)}
             >
@@ -2670,58 +2673,58 @@ export default function App(){
               <button
                 title="Notifications"
                 style={{
-                  width:32,
-                  height:32,
-                  borderRadius:999,
-                  background:'rgba(15,23,42,0.95)',
-                  border:'1px solid rgba(148,163,184,0.9)',
-                  display:'flex',
-                  alignItems:'center',
-                  justifyContent:'center',
-                  cursor:'pointer',
-                  transition:'background 0.15s ease, transform 0.1s ease, boxShadow 0.15s ease'
+                  width: 32,
+                  height: 32,
+                  borderRadius: 999,
+                  background: 'rgba(15,23,42,0.95)',
+                  border: '1px solid rgba(148,163,184,0.9)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  transition: 'background 0.15s ease, transform 0.1s ease, boxShadow 0.15s ease'
                 }}
-                onMouseEnter={e=>{e.currentTarget.style.background='rgba(30,64,175,0.95)'; e.currentTarget.style.boxShadow='0 3px 8px rgba(37,99,235,0.5)'; e.currentTarget.style.transform='translateY(-1px)'}}
-                onMouseLeave={e=>{e.currentTarget.style.background='rgba(15,23,42,0.95)'; e.currentTarget.style.boxShadow='none'; e.currentTarget.style.transform='translateY(0)'}}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(30,64,175,0.95)'; e.currentTarget.style.boxShadow = '0 3px 8px rgba(37,99,235,0.5)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,23,42,0.95)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)' }}
               >
                 <Bell size={16} color="#e5e7eb" />
               </button>
               <button
                 title="Chat"
                 style={{
-                  width:32,
-                  height:32,
-                  borderRadius:999,
-                  background:'rgba(15,23,42,0.95)',
-                  border:'1px solid rgba(148,163,184,0.9)',
-                  display:'flex',
-                  alignItems:'center',
-                  justifyContent:'center',
-                  cursor:'pointer',
-                  transition:'background 0.15s ease, transform 0.1s ease, boxShadow 0.15s ease'
+                  width: 32,
+                  height: 32,
+                  borderRadius: 999,
+                  background: 'rgba(15,23,42,0.95)',
+                  border: '1px solid rgba(148,163,184,0.9)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  transition: 'background 0.15s ease, transform 0.1s ease, boxShadow 0.15s ease'
                 }}
                 onClick={() => setIsSupportChatOpen(true)}
-                onMouseEnter={e=>{e.currentTarget.style.background='rgba(30,64,175,0.95)'; e.currentTarget.style.boxShadow='0 3px 8px rgba(37,99,235,0.5)'; e.currentTarget.style.transform='translateY(-1px)'}}
-                onMouseLeave={e=>{e.currentTarget.style.background='rgba(15,23,42,0.95)'; e.currentTarget.style.boxShadow='none'; e.currentTarget.style.transform='translateY(0)'}}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(30,64,175,0.95)'; e.currentTarget.style.boxShadow = '0 3px 8px rgba(37,99,235,0.5)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,23,42,0.95)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)' }}
               >
                 <MessageCircle size={16} color="#e5e7eb" />
               </button>
               <button
                 title="What's New"
                 style={{
-                  width:32,
-                  height:32,
-                  borderRadius:999,
-                  background:'rgba(15,23,42,0.95)',
-                  border:'1px solid rgba(148,163,184,0.9)',
-                  display:'flex',
-                  alignItems:'center',
-                  justifyContent:'center',
-                  cursor:'pointer',
-                  transition:'background 0.15s ease, transform 0.1s ease, boxShadow 0.15s ease'
+                  width: 32,
+                  height: 32,
+                  borderRadius: 999,
+                  background: 'rgba(15,23,42,0.95)',
+                  border: '1px solid rgba(148,163,184,0.9)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  transition: 'background 0.15s ease, transform 0.1s ease, boxShadow 0.15s ease'
                 }}
-                onMouseEnter={e=>{e.currentTarget.style.background='rgba(30,64,175,0.95)'; e.currentTarget.style.boxShadow='0 3px 8px rgba(37,99,235,0.5)'; e.currentTarget.style.transform='translateY(-1px)'}}
-                onMouseLeave={e=>{e.currentTarget.style.background='rgba(15,23,42,0.95)'; e.currentTarget.style.boxShadow='none'; e.currentTarget.style.transform='translateY(0)'}}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(30,64,175,0.95)'; e.currentTarget.style.boxShadow = '0 3px 8px rgba(37,99,235,0.5)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,23,42,0.95)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)' }}
               >
                 <Megaphone size={16} color="#e5e7eb" />
               </button>
@@ -2750,20 +2753,20 @@ export default function App(){
                 <button
                   title={accountProfile.name ? `Account: ${accountProfile.name}` : 'Account'}
                   style={{
-                    width:32,
-                    height:32,
-                    borderRadius:999,
-                    background:'rgba(15,23,42,0.95)',
-                    border:'1px solid rgba(148,163,184,0.9)',
-                    display:'flex',
-                    alignItems:'center',
-                    justifyContent:'center',
-                    cursor:'pointer',
-                    transition:'background 0.15s ease, transform 0.1s ease, boxShadow 0.15s ease'
+                    width: 32,
+                    height: 32,
+                    borderRadius: 999,
+                    background: 'rgba(15,23,42,0.95)',
+                    border: '1px solid rgba(148,163,184,0.9)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    transition: 'background 0.15s ease, transform 0.1s ease, boxShadow 0.15s ease'
                   }}
                   onClick={() => setIsAccountOpen(true)}
-                  onMouseEnter={e=>{e.currentTarget.style.background='rgba(30,64,175,0.95)'; e.currentTarget.style.boxShadow='0 3px 8px rgba(37,99,235,0.5)'; e.currentTarget.style.transform='translateY(-1px)'}}
-                  onMouseLeave={e=>{e.currentTarget.style.background='rgba(15,23,42,0.95)'; e.currentTarget.style.boxShadow='none'; e.currentTarget.style.transform='translateY(0)'}}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(30,64,175,0.95)'; e.currentTarget.style.boxShadow = '0 3px 8px rgba(37,99,235,0.5)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,23,42,0.95)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)' }}
                 >
                   <User size={16} color="#e5e7eb" />
                 </button>
@@ -2937,69 +2940,69 @@ export default function App(){
       {/* Main Content Area */}
       <div style={{
         marginLeft: isMobile ? 0 : 116,
-        flex:1,
-        display:'flex',
+        flex: 1,
+        display: 'flex',
         flexDirection: isMobile ? 'column' : 'row',
         gap: isMobile ? 12 : 20,
         padding: isMobile
           ? `44px 12px calc(${LAYOUT_TOKENS.bottomNavHeight}px + env(safe-area-inset-bottom) + 12px) 12px`
           : '44px 32px 20px 32px',
         maxWidth: isMobile ? '100vw' : 'calc(100vw - 116px)',
-        height:'100dvh',
-        boxSizing:'border-box',
-        overflow:'hidden'
+        height: '100dvh',
+        boxSizing: 'border-box',
+        overflow: 'hidden'
       }}>
 
-        <div style={{flex:1, width:'auto', display:'flex', flexDirection:'column', minHeight:0, overflowY:'hidden', paddingRight:4}}>
+        <div style={{ flex: 1, width: 'auto', display: 'flex', flexDirection: 'column', minHeight: 0, overflowY: 'hidden', paddingRight: 4 }}>
           {/* ARIS Chat - Single, Intelligent, Stable Interface */}
           <section style={{
-            background:'#ffffff',
-            borderRadius:16,
-            border:'2px solid #e5e7eb',
-            marginBottom:20,
-            boxShadow:'0 2px 8px rgba(0,0,0,0.06)',
-            overflow:'hidden',
+            background: '#ffffff',
+            borderRadius: 16,
+            border: '2px solid #e5e7eb',
+            marginBottom: 20,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+            overflow: 'hidden',
             height: chat.length === 0
               ? 200
               : 380, // More compact when empty in bottom-docked mode
-            display:'flex',
-            flexDirection:'column',
-            transition:'height 0.3s ease', // Smooth height transition
+            display: 'flex',
+            flexDirection: 'column',
+            transition: 'height 0.3s ease', // Smooth height transition
             order: 2
           }}>
             {/* Header with Clear Button */}
             <div style={{
-              padding:'14px 20px',
-              borderBottom:'2px solid #e5e7eb',
-              background:'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
-              display:'flex',
-              alignItems:'center',
-              justifyContent:'space-between'
+              padding: '14px 20px',
+              borderBottom: '2px solid #e5e7eb',
+              background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
             }}>
               <div>
-                <div style={{fontWeight:700, fontSize:18, color:'#1e40af', marginBottom:2}}>
+                <div style={{ fontWeight: 700, fontSize: 18, color: '#1e40af', marginBottom: 2 }}>
                   AI Research and Trade Strategist
                 </div>
-                <div style={{fontSize:12, color:'#64748b', fontStyle:'italic'}}>Ask me about markets, picks, or strategies</div>
+                <div style={{ fontSize: 12, color: '#64748b', fontStyle: 'italic' }}>Ask me about markets, picks, or strategies</div>
               </div>
-              <div style={{display:'flex', alignItems:'center', gap:8}}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 {chat.length > 0 && (
                   <button
                     onClick={() => setChat([])}
                     style={{
-                      padding:'8px 14px',
-                      fontSize:12,
-                      fontWeight:600,
-                      borderRadius:999,
-                      border:'1px solid #cbd5e1',
-                      background:'#f8fafc',
-                      color:'#0f172a',
-                      cursor:'pointer',
-                      transition:'all 0.2s',
-                      boxShadow:'0 1px 3px rgba(15,23,42,0.15)',
-                      display:'flex',
-                      alignItems:'center',
-                      gap:6
+                      padding: '8px 14px',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      borderRadius: 999,
+                      border: '1px solid #cbd5e1',
+                      background: '#f8fafc',
+                      color: '#0f172a',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      boxShadow: '0 1px 3px rgba(15,23,42,0.15)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6
                     }}
                     onMouseEnter={e => {
                       e.currentTarget.style.background = '#e2e8f0'
@@ -3012,7 +3015,7 @@ export default function App(){
                       e.currentTarget.style.boxShadow = '0 1px 3px rgba(15,23,42,0.15)'
                     }}
                   >
-                    <span style={{fontSize:14}}>🧹</span>
+                    <span style={{ fontSize: 14 }}>🧹</span>
                     <span>Clear chat</span>
                   </button>
                 )}
@@ -3021,26 +3024,26 @@ export default function App(){
 
             {/* Chat Messages - Fixed height with FORCED scroll */}
             <div style={{
-              flex:1, 
-              display:'flex', 
-              flexDirection:'column',
-              minHeight:0, // Critical for flex scrolling
-              overflow:'hidden' // Contain the scrollable child
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: 0, // Critical for flex scrolling
+              overflow: 'hidden' // Contain the scrollable child
             }}>
-              <div 
+              <div
                 ref={(el) => {
                   chatMessagesRef.current = el
                 }}
                 style={{
-                  flex:'1 1 auto',
-                  height:'100%', // Explicit height
-                  overflowY:'auto',
-                  overflowX:'hidden',
+                  flex: '1 1 auto',
+                  height: '100%', // Explicit height
+                  overflowY: 'auto',
+                  overflowX: 'hidden',
                   overscrollBehavior: 'contain',
-                  padding:'16px 20px',
-                  background:'#f9fafb',
-                  fontSize:14,
-                  WebkitOverflowScrolling:'touch'
+                  padding: '16px 20px',
+                  background: '#f9fafb',
+                  fontSize: 14,
+                  WebkitOverflowScrolling: 'touch'
                 }}
                 className="aris-chat-messages"
               >
@@ -3081,47 +3084,47 @@ export default function App(){
                 `}</style>
                 {/* Chat messages - streamlined without redundant labels */}
                 {chat.length === 0 ? (
-                  <div style={{padding:'8px 16px', textAlign:'center', color:'#94a3b8', fontSize:12, fontStyle:'italic'}}>
+                  <div style={{ padding: '8px 16px', textAlign: 'center', color: '#94a3b8', fontSize: 12, fontStyle: 'italic' }}>
                     Start a conversation by asking a question below
                   </div>
                 ) : (
-                  chat.map((m, i)=> (
-                  <div key={i} style={{
-                    display:'flex', 
-                    flexDirection:'column',
-                    alignItems: m.role==='user' ? 'flex-end' : 'flex-start',
-                    marginBottom:14
-                  }}>
-                    <div style={{
-                      padding:'12px 16px',
-                      borderRadius:12,
-                      background: m.role==='user' ? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' : '#ffffff',
-                      color: m.role==='user' ? '#ffffff' : '#0f172a',
-                      maxWidth:'85%',
-                      lineHeight:1.7,
-                      wordBreak:'break-word',
-                      boxShadow: m.role==='user' ? '0 2px 8px rgba(59, 130, 246, 0.3)' : '0 1px 3px rgba(0,0,0,0.1)',
-                      border: m.role==='assistant' ? '1px solid #e5e7eb' : 'none'
+                  chat.map((m, i) => (
+                    <div key={i} style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: m.role === 'user' ? 'flex-end' : 'flex-start',
+                      marginBottom: 14
                     }}>
-                      {m.text}
+                      <div style={{
+                        padding: '12px 16px',
+                        borderRadius: 12,
+                        background: m.role === 'user' ? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' : '#ffffff',
+                        color: m.role === 'user' ? '#ffffff' : '#0f172a',
+                        maxWidth: '85%',
+                        lineHeight: 1.7,
+                        wordBreak: 'break-word',
+                        boxShadow: m.role === 'user' ? '0 2px 8px rgba(59, 130, 246, 0.3)' : '0 1px 3px rgba(0,0,0,0.1)',
+                        border: m.role === 'assistant' ? '1px solid #e5e7eb' : 'none'
+                      }}>
+                        {m.text}
+                      </div>
                     </div>
-                  </div>
                   ))
                 )}
                 {chatLoading && (
                   <div style={{
-                    display:'flex',
-                    flexDirection:'column',
-                    alignItems:'flex-start',
-                    marginBottom:8
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    marginBottom: 8
                   }}>
                     <div style={{
-                      padding:'8px 12px',
-                      borderRadius:999,
-                      background:'#e5e7eb',
-                      color:'#4b5563',
-                      fontSize:12,
-                      fontStyle:'italic'
+                      padding: '8px 12px',
+                      borderRadius: 999,
+                      background: '#e5e7eb',
+                      color: '#4b5563',
+                      fontSize: 12,
+                      fontStyle: 'italic'
                     }}>
                       Fyntrix is thinking…
                     </div>
@@ -3131,31 +3134,31 @@ export default function App(){
 
               {/* Input Area - Fixed at bottom */}
               <div style={{
-                padding:'12px 16px',
-                borderTop:'1px solid #e5e7eb',
-                background:'#ffffff',
-                display:'flex',
-                gap:10,
+                padding: '12px 16px',
+                borderTop: '1px solid #e5e7eb',
+                background: '#ffffff',
+                display: 'flex',
+                gap: 10,
                 paddingBottom: isMobile
                   ? `calc(env(safe-area-inset-bottom) + ${chatKeyboardInset}px + 12px)`
                   : undefined,
               }}>
-                <input 
+                <input
                   ref={chatInputElRef}
-                  value={chatInput} 
-                  onChange={e=>setChatInput(e.target.value)}
+                  value={chatInput}
+                  onChange={e => setChatInput(e.target.value)}
                   onKeyPress={e => e.key === 'Enter' && !e.shiftKey && onSend()}
-                  placeholder="Ask Fyntrix…" 
+                  placeholder="Ask Fyntrix…"
                   style={{
-                    flex:1, 
-                    padding:'10px 14px', 
-                    border:'1px solid #e5e7eb', 
-                    borderRadius:8,
-                    fontSize:14,
-                    fontFamily:'system-ui, -apple-system, sans-serif',
-                    outline:'none',
-                    transition:'all 0.15s',
-                    background:'#f9fafb'
+                    flex: 1,
+                    padding: '10px 14px',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: 8,
+                    fontSize: 14,
+                    fontFamily: 'system-ui, -apple-system, sans-serif',
+                    outline: 'none',
+                    transition: 'all 0.15s',
+                    background: '#f9fafb'
                   }}
                   onFocus={e => {
                     e.target.style.borderColor = '#3b82f6'
@@ -3165,7 +3168,7 @@ export default function App(){
                         requestAnimationFrame(() => {
                           chatInputElRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' })
                         })
-                      } catch {}
+                      } catch { }
                     }
                   }}
                   onBlur={e => {
@@ -3173,21 +3176,21 @@ export default function App(){
                     e.target.style.background = '#f9fafb'
                   }}
                 />
-                <button 
+                <button
                   onClick={onSend}
                   disabled={!chatInput.trim()}
                   style={{
-                    padding:'10px 20px', 
-                    borderRadius:8, 
-                    background: chatInput.trim() ? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' : '#e5e7eb', 
-                    color: chatInput.trim() ? '#ffffff' : '#94a3b8', 
-                    border:'none',
-                    fontWeight:600,
-                    fontSize:13,
+                    padding: '10px 20px',
+                    borderRadius: 8,
+                    background: chatInput.trim() ? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' : '#e5e7eb',
+                    color: chatInput.trim() ? '#ffffff' : '#94a3b8',
+                    border: 'none',
+                    fontWeight: 600,
+                    fontSize: 13,
                     cursor: chatInput.trim() ? 'pointer' : 'not-allowed',
                     boxShadow: chatInput.trim() ? '0 2px 4px rgba(59, 130, 246, 0.2)' : 'none',
-                    transition:'all 0.15s',
-                    minWidth:70
+                    transition: 'all 0.15s',
+                    minWidth: 70
                   }}
                   onMouseEnter={e => {
                     if (chatInput.trim()) {
@@ -3208,1447 +3211,1355 @@ export default function App(){
 
           <div style={{ order: 1, flex: 1, minHeight: 0, overflowY: 'auto', overscrollBehavior: isMobile ? 'contain' : undefined }}>
 
-          {!showPicks && (showPortfolio || showWatchlist) && (
-          <section style={{padding:0, border:'1px solid #e5e7eb', borderRadius:12, background:'#fff', marginBottom:12, boxShadow:'0 1px 2px rgba(0,0,0,0.04)', overflow:'hidden'}}>
-            <div style={{padding:'10px 12px', background:'linear-gradient(135deg, #0095FF 0%, #10C8A9 100%)', color:'#ffffff', display:'flex', alignItems:'center', justifyContent:'space-between', gap:12}}>
-              <div style={{display:'flex', flexDirection:'column', gap:2}}>
-                <div style={{fontWeight:800, fontSize:14, letterSpacing:0.2}}>{showPortfolio ? 'Portfolio' : 'Watchlist'}</div>
-                <div style={{fontSize:11, opacity:0.9}}>
-                  {showPortfolio ? 'Live snapshot of your Zerodha positions and holdings.' : 'Symbols you have marked via Set Alert.'}
-                </div>
-              </div>
-              <button
-                onClick={() => {
-                  setShowPortfolio(false)
-                  setShowWatchlist(false)
-                  setShowHeatMap(true)
-                }}
-                style={{border:'1px solid rgba(255,255,255,0.65)', background:'rgba(255,255,255,0.18)', color:'#ffffff', width:34, height:34, borderRadius:10, cursor:'pointer', fontSize:20, lineHeight:'20px', display:'flex', alignItems:'center', justifyContent:'center', fontWeight:900}}
-                aria-label={showPortfolio ? 'Close Portfolio' : 'Close Watchlist'}
-                title="Close"
-              >
-                ×
-              </button>
-            </div>
-
-            <div style={{padding:12}}>
-              {showPortfolio && (
-                (() => {
-                  if (loadingPortfolio) {
-                    return <div style={{fontSize:12, color:'#64748b', padding:8}}>Loading portfolio snapshot…</div>
-                  }
-
-                  const data = portfolioMonitor
-                  if (!data || !Array.isArray(data.positions) || data.positions.length === 0) {
-                    return (
-                      <div style={{fontSize:12, color:'#64748b', padding:8}}>
-                        No open positions or holdings detected.
-                        <br />
-                        Ensure Zerodha is connected and market is open.
-                      </div>
-                    )
-                  }
-
-                  const summary = data.summary || {}
-
-                  return (
-                    <div style={{display:'flex', flexDirection:'column', gap:8}}>
-                      <div style={{borderRadius:8, border:'1px solid #e5e7eb', padding:8, background:'#f9fafb'}}>
-                        <div style={{fontSize:11, color:'#6b7280', marginBottom:4}}>
-                          Snapshot as of {data.as_of ? formatIstTime(data.as_of) : '–'}
-                        </div>
-                        <div style={{display:'flex', flexWrap:'wrap', gap:8, fontSize:11}}>
-                          <div style={{flex:'1 1 45%'}}>
-                            <div style={{color:'#4b5563'}}>Positions</div>
-                            <div style={{fontWeight:600}}>{summary.positions ?? data.positions.length}</div>
-                          </div>
-                          <div style={{flex:'1 1 45%'}}>
-                            <div style={{color:'#4b5563'}}>Net Exposure</div>
-                            <div style={{fontWeight:600}}>₹{Number(summary.net_exposure || 0).toLocaleString('en-IN')}</div>
-                          </div>
-                          <div style={{flex:'1 1 45%'}}>
-                            <div style={{color:'#4b5563'}}>Gross Exposure</div>
-                            <div style={{fontWeight:600}}>₹{Number(summary.gross_exposure || 0).toLocaleString('en-IN')}</div>
-                          </div>
-                          <div style={{flex:'1 1 45%'}}>
-                            <div style={{color:'#4b5563'}}>Avg Health</div>
-                            <div style={{fontWeight:600}}>{summary.avg_health_score ?? 100}</div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div style={{display:'flex', flexDirection:'column', gap:6}}>
-                        <div style={{fontSize:11, color:'#6b7280', marginBottom:2}}>Positions</div>
-                        {data.positions.map((p:any, idx:number) => {
-                          const urgency = String(p.urgency || 'LOW').toUpperCase()
-                          let urgencyColor = '#10b981'
-                          if (urgency === 'CRITICAL') urgencyColor = '#ef4444'
-                          else if (urgency === 'HIGH') urgencyColor = '#f97316'
-                          else if (urgency === 'MEDIUM') urgencyColor = '#eab308'
-                          const ret = typeof p.return_pct === 'number' ? p.return_pct : 0
-                          const retColor = ret > 0 ? '#16a34a' : ret < 0 ? '#dc2626' : '#6b7280'
-
-                          const alerts: any[] = Array.isArray(p.alerts) ? p.alerts : []
-                          const newsAlert = alerts.find(a => a && a.type === 'NEWS_STRATEGY_ADVISORY')
-                          let newsRiskLabel: string | null = null
-                          let newsRiskScore: number | null = null
-                          let newsRiskColor = '#6b7280'
-                          let newsRiskSummary: string | null = null
-                          if (newsAlert) {
-                            const level = computeSentimentRiskLevel((newsAlert as any).news_risk_score)
-                            if (level) {
-                              newsRiskScore = level.score
-                              newsRiskLabel = level.label
-                              newsRiskColor = level.color
-                            }
-                            if (typeof newsAlert.news_reason === 'string' && newsAlert.news_reason.trim()) {
-                              let s = newsAlert.news_reason.trim()
-                              if (s.length > 120) s = s.slice(0, 117) + '...'
-                              newsRiskSummary = s
-                            }
-                          }
-
-                          return (
-                            <div key={idx} style={{borderRadius:8, border:'1px solid #e5e7eb', padding:8, background:'#ffffff'}}>
-                              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:4}}>
-                                <div style={{fontWeight:600, fontSize:13}}>{p.symbol}</div>
-                                <div style={{fontSize:11, padding:'2px 6px', borderRadius:999, border:`1px solid ${urgencyColor}40`, color:urgencyColor}}>
-                                  {urgency}
-                                </div>
-                              </div>
-                              <div style={{display:'flex', justifyContent:'space-between', fontSize:11, color:'#4b5563'}}>
-                                <div>
-                                  <div>{p.direction} · {p.mode || p.product}</div>
-                                  <div>Qty {p.quantity}</div>
-                                </div>
-                                <div style={{textAlign:'right'}}>
-                                  <div>₹{Number(p.current_price || 0).toFixed(2)} <span style={{fontSize:10, color:'#9ca3af'}}>({p.price_source || 'tick'})</span></div>
-                                  <div style={{color:retColor}}>{ret.toFixed(2)}%</div>
-                                </div>
-                              </div>
-                              {newsRiskLabel && newsRiskScore != null && (
-                                <div style={{marginTop:6, fontSize:11, color:'#4b5563'}}>
-                                  <div style={{fontWeight:600, marginBottom:2}}>Sentiment risk</div>
-                                  <div style={{display:'flex', flexDirection:'column', gap:2}}>
-                                    <div style={{display:'flex', alignItems:'center', gap:6}}>
-                                      <span style={{padding:'2px 8px', borderRadius:999, fontSize:10, fontWeight:600, background:newsRiskColor + '15', color:newsRiskColor}}>
-                                        {newsRiskLabel} ({Math.round(newsRiskScore)}/100)
-                                      </span>
-                                    </div>
-                                    {newsRiskSummary && (
-                                      <div style={{color:'#6b7280'}}>{newsRiskSummary}</div>
-                                    )}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          )
-                        })}
-                      </div>
+            {!showPicks && (showPortfolio || showWatchlist) && (
+              <section style={{ padding: 0, border: '1px solid #e5e7eb', borderRadius: 12, background: '#fff', marginBottom: 12, boxShadow: '0 1px 2px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
+                <div style={{ padding: '10px 12px', background: 'linear-gradient(135deg, #0095FF 0%, #10C8A9 100%)', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <div style={{ fontWeight: 800, fontSize: 14, letterSpacing: 0.2 }}>{showPortfolio ? 'Portfolio' : 'Watchlist'}</div>
+                    <div style={{ fontSize: 11, opacity: 0.9 }}>
+                      {showPortfolio ? 'Live snapshot of your Zerodha positions and holdings.' : 'Symbols you have marked via Set Alert.'}
                     </div>
-                  )
-                })()
-              )}
-
-              {showWatchlist && (
-                (() => {
-                  if (loadingWatchlist) {
-                    return <div style={{fontSize:12, color:'#64748b', padding:8}}>Loading watchlist snapshot…</div>
-                  }
-
-                  const data = watchlistMonitor
-                  if (!data || !Array.isArray(data.entries) || data.entries.length === 0) {
-                    return (
-                      <div style={{fontSize:12, color:'#64748b', padding:8}}>
-                        No active watchlist entries.
-                        <br />
-                        Use Set Alert from Charts or Trade Strategy to add symbols.
-                      </div>
-                    )
-                  }
-
-                  const summary = data.summary || {}
-
-                  return (
-                    <div style={{display:'flex', flexDirection:'column', gap:8}}>
-                      <div style={{borderRadius:8, border:'1px solid #e5e7eb', padding:8, background:'#f9fafb'}}>
-                        <div style={{fontSize:11, color:'#6b7280', marginBottom:4}}>
-                          Snapshot as of {data.as_of ? formatIstTime(data.as_of) : '–'}
-                        </div>
-                        <div style={{display:'flex', flexWrap:'wrap', gap:8, fontSize:11}}>
-                          <div style={{flex:'1 1 45%'}}>
-                            <div style={{color:'#4b5563'}}>Entries</div>
-                            <div style={{fontWeight:600}}>{summary.entries ?? data.entries.length}</div>
-                          </div>
-                          <div style={{flex:'1 1 45%'}}>
-                            <div style={{color:'#4b5563'}}>Avg Health</div>
-                            <div style={{fontWeight:600}}>{summary.avg_health_score ?? 100}</div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div style={{display:'flex', flexDirection:'column', gap:6}}>
-                        <div style={{fontSize:11, color:'#6b7280', marginBottom:2}}>Watchlist</div>
-                        {data.entries.map((w:any, idx:number) => {
-                          const urgency = String(w.urgency || 'LOW').toUpperCase()
-                          let urgencyColor = '#10b981'
-                          if (urgency === 'CRITICAL') urgencyColor = '#ef4444'
-                          else if (urgency === 'HIGH') urgencyColor = '#f97316'
-                          else if (urgency === 'MEDIUM') urgencyColor = '#eab308'
-                          const dist = typeof w.distance_to_entry_pct === 'number' ? w.distance_to_entry_pct : 0
-                          const distColor = dist > 0 ? '#dc2626' : dist < 0 ? '#16a34a' : '#6b7280'
-                          return (
-                            <div key={idx} style={{borderRadius:8, border:'1px solid #e5e7eb', padding:8, background:'#ffffff'}}>
-                              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:4}}>
-                                <div style={{fontWeight:600, fontSize:13}}>{w.symbol}</div>
-                                <div style={{fontSize:11, padding:'2px 6px', borderRadius:999, border:`1px solid ${urgencyColor}40`, color:urgencyColor}}>
-                                  {urgency}
-                                </div>
-                              </div>
-                              <div style={{display:'flex', justifyContent:'space-between', fontSize:11, color:'#4b5563'}}>
-                                <div>
-                                  <div>{w.timeframe || '—'}</div>
-                                  <div>Desired ₹{w.desired_entry != null ? Number(w.desired_entry).toFixed(2) : '—'}</div>
-                                </div>
-                                <div style={{textAlign:'right'}}>
-                                  <div>₹{Number(w.current_price || 0).toFixed(2)} <span style={{fontSize:10, color:'#9ca3af'}}>({w.price_source || 'tick'})</span></div>
-                                  <div style={{color:distColor}}>{dist.toFixed(2)}%</div>
-                                </div>
-                              </div>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  )
-                })()
-              )}
-            </div>
-          </section>
-          )}
-
-          {/* Market Brief with Cards - Hidden only when picks drawer is shown */}
-          {!showPicks && !showPortfolio && !showWatchlist && (
-          <section style={{padding:12, border:'1px solid #e5e7eb', borderRadius:12, background:'#fff', marginBottom:12, boxShadow:'0 1px 2px rgba(0,0,0,0.04)'}}>
-            <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12, gap:12, flexWrap:'wrap'}}>
-              <div style={{display:'flex', flexDirection:'column', gap:6}}>
-                <span style={{fontWeight:600, fontSize:16}}>Market Brief</span>
-                <div style={{display:'flex', gap:12, borderBottom:'1px solid #e5e7eb', paddingBottom:4}}>
-                  {[
-                    { value: 'India' as const, label: 'India Markets', icon: '🇮🇳' },
-                    { value: 'Global' as const, label: 'World Markets', icon: '🌍' },
-                  ].map(tab => {
-                    const isActive = marketRegion === tab.value
-                    return (
-                      <button
-                        key={tab.value}
-                        type="button"
-                        onClick={() => {
-                          if (marketRegion === tab.value) return
-                          const r = tab.value
-                          setMarketRegion(r)
-                          try{localStorage.setItem('arise_market_region', r)}catch{}
-                        }}
-                        style={{
-                          border:'none',
-                          background:'transparent',
-                          padding:'2px 4px 6px 4px',
-                          borderBottom:isActive ? '3px solid #2563eb' : '3px solid transparent',
-                          cursor:'pointer',
-                          display:'flex',
-                          alignItems:'center',
-                          gap:6,
-                          fontSize:13,
-                          color:isActive ? '#1d4ed8' : '#4b5563',
-                          fontWeight:isActive ? 600 : 500
-                        }}
-                      >
-                        <span style={{fontSize:14}}>{tab.icon}</span>
-                        <span>{tab.label}</span>
-                      </button>
-                    )
-                  })}
+                  </div>
+                  <button
+                    onClick={() => {
+                      setShowPortfolio(false)
+                      setShowWatchlist(false)
+                      setShowHeatMap(true)
+                    }}
+                    style={{ border: '1px solid rgba(255,255,255,0.65)', background: 'rgba(255,255,255,0.18)', color: '#ffffff', width: 34, height: 34, borderRadius: 10, cursor: 'pointer', fontSize: 20, lineHeight: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900 }}
+                    aria-label={showPortfolio ? 'Close Portfolio' : 'Close Watchlist'}
+                    title="Close"
+                  >
+                    ×
+                  </button>
                 </div>
-              </div>
-              <div style={{display:'flex', flexDirection:'column', alignItems:'flex-end', gap:4}}>
-                {(() => {
-                  // Determine market open status strictly from weekday + intraday time window
-                  const now = new Date()
-                  const nowIst = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
-                  const day = nowIst.getDay() // 0=Sun, 6=Sat
-                  const isWeekday = day >= 1 && day <= 5
 
-                  const hours = nowIst.getHours()
-                  const minutes = nowIst.getMinutes()
-                  const currentTime = hours * 60 + minutes // minutes since midnight
-                  const marketOpen = 9 * 60 + 15  // 9:15 AM = 555 minutes
-                  const marketClose = 15 * 60 + 30 // 3:30 PM = 930 minutes
+                <div style={{ padding: 12 }}>
+                  {showPortfolio && (
+                    (() => {
+                      if (loadingPortfolio) {
+                        return <div style={{ fontSize: 12, color: '#64748b', padding: 8 }}>Loading portfolio snapshot…</div>
+                      }
 
-                  const isMarketOpen = isWeekday && currentTime >= marketOpen && currentTime <= marketClose
-
-                  const prevTradingCloseIst = () => {
-                    const closing = new Date(nowIst)
-                    // If it's a weekday and after 3:30 PM IST, last close is today.
-                    // Otherwise (pre-market / weekend), last close is previous trading day.
-                    if (!(isWeekday && currentTime >= marketClose)) {
-                      do {
-                        closing.setDate(closing.getDate() - 1)
-                      } while (closing.getDay() === 0 || closing.getDay() === 6)
-                    }
-                    closing.setHours(15, 30, 0, 0)
-                    return closing
-                  }
-
-                  // Determine appropriate timestamp:
-                  // - Market open: use backend-provided market.as_of (preferred), else now
-                  // - Market closed: always show last session close (never a future time)
-                  let asOf: Date
-                  if (isMarketOpen) {
-                    const raw = market && market.as_of ? new Date(market.as_of) : null
-                    asOf = raw && !Number.isNaN(raw.getTime()) ? raw : now
-                  } else {
-                    asOf = prevTradingCloseIst()
-                  }
-
-                  const datePart = formatIstDate(asOf)
-                  const timePart = formatIstTime(asOf)
-                  const ageMs = (() => {
-                    try {
-                      const t = asOf.getTime()
-                      return Number.isNaN(t) ? null : (Date.now() - t)
-                    } catch {
-                      return null
-                    }
-                  })()
-                  const isStale = isMarketOpen && typeof ageMs === 'number' && ageMs > 60_000
-                  const label = isMarketOpen
-                    ? isStale
-                      ? `Stale · last update ${datePart}, ${timePart}`
-                      : `Data as of ${datePart}, ${timePart}`
-                    : `Last close · ${datePart}, ${timePart}`
-
-                  return (
-                    <React.Fragment>
-                      <div style={{display:'flex', alignItems:'center', gap:8}}>
-                        <span style={{
-                          fontSize:11, 
-                          padding:'3px 8px', 
-                          borderRadius:999, 
-                          background: !isMarketOpen ? '#fef3c7' : (isStale ? '#fee2e2' : '#dcfce7'),
-                          color: !isMarketOpen ? '#92400e' : (isStale ? '#991b1b' : '#166534'),
-                          fontWeight:600
-                        }}>
-                          {!isMarketOpen ? '⏸️ Market Closed' : (isStale ? '🔴 Stale' : '🟢 Live')}
-                        </span>
-                        <span style={{
-                          fontSize:11,
-                          color:'#64748b',
-                          whiteSpace:'nowrap',
-                          maxWidth:240,
-                          overflow:'hidden',
-                          textOverflow:'ellipsis'
-                        }}>{label}</span>
-                      </div>
-                    </React.Fragment>
-                  )
-                })()}
-                <div style={{display:'flex', flexDirection:'column', alignItems:'flex-end', gap:2}}>
-                  <span style={{fontSize:9, color:'#94a3b8', textTransform:'uppercase', letterSpacing:'0.5px'}}>Nifty 50 Sentiment</span>
-                  <span style={{display:'inline-flex', alignItems:'center', gap:6, fontSize:11, padding:'2px 8px', borderRadius:999, background:'#f1f5f9', color: sentiment.color, border:'1px solid #e2e8f0' }}>
-                    <span style={{display:'inline-flex', gap:1}}>
-                      {Array.from({length:5}).map((_,i)=>{
-                        const active = (sentiment.score||0) > ((i-2)*15)
-                        const bg = active ? sentiment.color : '#cbd5e1'
-                        return <span key={i} style={{width:3, height:9, borderRadius:2, background:bg}} />
-                      })}
-                    </span>
-                    <span style={{fontWeight:600}}>{sentiment.label}</span>
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div style={{display:'flex', gap:8, overflowX:'auto', paddingBottom:4}}>
-          {tiles.length? tiles.map(t=> {
-          const isPositive = (t.pct||0) >= 0
-          const trendColor = isPositive ? '#16a34a' : '#ef4444'
-          return (
-          <div key={t.name} style={{minWidth:150, flex:'0 0 auto', padding:10, border:'1px solid #e5e7eb', borderRadius:12, background:'#ffffff', boxShadow:'0 1px 3px rgba(15,23,42,0.05)'}}>
-            <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:6}}>
-              <div>
-                <div style={{fontSize:12, fontWeight:700, color:'#0f172a', textTransform:'uppercase', marginBottom:1}}>{t.name === 'GOLD' ? 'GOLD (IN $/OUNCE)' : t.name}</div>
-                </div>
-              {typeof t.pct==='number' ? (
-                <div style={{display:'flex', flexDirection:'column', alignItems:'flex-end'}}>
-                  <span style={{fontSize:11, fontWeight:600, color:trendColor, padding:'2px 8px', borderRadius:999, background:(t.pct||0)>=0 ? '#ecfdf3' : '#fef2f2'}}>{(t.pct||0)>=0?'↑':'↓'} {Math.abs(t.pct).toFixed(2)}%</span>
-                </div>
-              ) : (
-                <div style={{fontSize:11, color:'#94a3b8'}}>-</div>
-              )}
-            </div>
-            <div style={{fontSize:16, fontWeight:700, marginBottom:6}}>{t.val}</div>
-            <div style={{height:28, position:'relative'}}>
-              {(() => {
-                // Smart key lookup - try exact match, then fallbacks for global markets
-                let key = t.name
-                if (key === 'USD/INR') key = 'USDINR'
-                // Try exact match first
-                let s = spark[key] || []
-                // If not found and it's a global market, try alternative keys
-                if (!s.length && marketRegion === 'Global') {
-                  if (key === 'FTSE 100') s = spark['LSE (FTSE 100)'] || spark['^FTSE'] || []
-                  else if (key === 'S&P 500') s = spark['S&P 500'] || spark['^GSPC'] || []
-                  else if (key === 'NASDAQ') s = spark['NASDAQ'] || spark['^IXIC'] || []
-                  else if (key === 'Hang Seng') s = spark['Hang Seng'] || spark['^HSI'] || []
-                }
-                if (!s.length) {
-                  return <div style={{fontSize:10, color:'#cbd5e1', textAlign:'center', paddingTop:12}}>Chart loading...</div>
-                }
-                return (
-                  <svg width="100%" height={32} style={{display:'block'}} viewBox="0 0 180 40" preserveAspectRatio="none"
-                       onMouseMove={(e)=>{
-                         const last = s[s.length-1]; const prev = s[s.length-2] ?? last
-                         const pct = prev? ((last-prev)/prev*100):0
-                         if (tipTimer) clearTimeout(tipTimer)
-                         const timer = setTimeout(()=>{
-                           const maxX = Math.max(0, (window.innerWidth || 0) - 200)
-                           const maxY = Math.max(0, (window.innerHeight || 0) - 60)
-                           const x = Math.min(e.clientX + 8, maxX)
-                           const y = Math.min(e.clientY + 8, maxY)
-                           setTip({ x, y, text: `Last ${last.toFixed(2)} · Prev ${prev.toFixed(2)} · ${(pct>=0?'+':'')+pct.toFixed(2)}%` })
-                         }, 60)
-                         setTipTimer(timer)
-                       }}
-                       onMouseLeave={()=>{ if (tipTimer) clearTimeout(tipTimer); setTip(null) }}>
-                    {(() => {
-                      // Build a smooth sparkline based on the actual intraday series
-                      const tilePct = t.pct ?? 0
-                      const strokeColor = tilePct >= 0 ? '#22c55e' : '#f97373'
-                      const areaFill = tilePct >= 0 ? '#dcfce7' : '#fee2e2'
-
-                      const width = 180
-                      const height = 40
-
-                      const values = s
-                      const n = values.length
-                      if (n < 2) {
-                        const midY = height - 10
-                        const dFlat = `M0,${midY} L${width},${midY}`
+                      const data = portfolioMonitor
+                      if (!data || !Array.isArray(data.positions) || data.positions.length === 0) {
                         return (
-                          <path d={dFlat} stroke={strokeColor} strokeWidth={2} fill="none" strokeLinecap="round" strokeLinejoin="round" opacity={0.9} />
+                          <div style={{ fontSize: 12, color: '#64748b', padding: 8 }}>
+                            No open positions or holdings detected.
+                            <br />
+                            Ensure Zerodha is connected and market is open.
+                          </div>
                         )
                       }
 
-                      let min = Math.min(...values)
-                      let max = Math.max(...values)
-                      if (min === max) {
-                        // Avoid divide-by-zero: expand a tiny band around the value
-                        min = min - 1
-                        max = max + 1
-                      }
-                      const span = max - min
-
-                      const marginTop = 6
-                      const marginBottom = 6
-                      const usableHeight = height - marginTop - marginBottom
-
-                      const points = values.map((v, idx) => {
-                        const x = (idx / (n - 1)) * width
-                        const norm = (v - min) / span // 0..1
-                        const y = height - marginBottom - norm * usableHeight
-                        return { x, y }
-                      })
-
-                      const baseY = height - marginBottom
-                      let areaPath = `M${points[0].x},${baseY}`
-                      for (let i = 0; i < points.length; i++) {
-                        const p = points[i]
-                        areaPath += ` L${p.x},${p.y}`
-                      }
-                      areaPath += ` L${points[points.length - 1].x},${baseY} Z`
-
-                      // Quadratic smoothing between points for a soft curve
-                      let d = `M${points[0].x},${points[0].y}`
-                      for (let i = 1; i < points.length; i++) {
-                        const prev = points[i - 1]
-                        const curr = points[i]
-                        const midX = (prev.x + curr.x) / 2
-                        const midY = (prev.y + curr.y) / 2
-                        d += ` Q${prev.x},${prev.y} ${midX},${midY}`
-                      }
-                      // Ensure we end exactly at the last point
-                      const lastPoint = points[points.length - 1]
-                      d += ` T${lastPoint.x},${lastPoint.y}`
+                      const summary = data.summary || {}
 
                       return (
-                        <>
-                          <path d={areaPath} fill={areaFill} stroke="none" opacity={0.6} />
-                          <path d={d} stroke={strokeColor} strokeWidth={2} fill="none" strokeLinecap="round" strokeLinejoin="round" opacity={0.95} />
-                        </>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                          <div style={{ borderRadius: 8, border: '1px solid #e5e7eb', padding: 8, background: '#f9fafb' }}>
+                            <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 4 }}>
+                              Snapshot as of {data.as_of ? formatIstTime(data.as_of) : '–'}
+                            </div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 11 }}>
+                              <div style={{ flex: '1 1 45%' }}>
+                                <div style={{ color: '#4b5563' }}>Positions</div>
+                                <div style={{ fontWeight: 600 }}>{summary.positions ?? data.positions.length}</div>
+                              </div>
+                              <div style={{ flex: '1 1 45%' }}>
+                                <div style={{ color: '#4b5563' }}>Net Exposure</div>
+                                <div style={{ fontWeight: 600 }}>₹{Number(summary.net_exposure || 0).toLocaleString('en-IN')}</div>
+                              </div>
+                              <div style={{ flex: '1 1 45%' }}>
+                                <div style={{ color: '#4b5563' }}>Gross Exposure</div>
+                                <div style={{ fontWeight: 600 }}>₹{Number(summary.gross_exposure || 0).toLocaleString('en-IN')}</div>
+                              </div>
+                              <div style={{ flex: '1 1 45%' }}>
+                                <div style={{ color: '#4b5563' }}>Avg Health</div>
+                                <div style={{ fontWeight: 600 }}>{summary.avg_health_score ?? 100}</div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                            <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 2 }}>Positions</div>
+                            {data.positions.map((p: any, idx: number) => {
+                              const urgency = String(p.urgency || 'LOW').toUpperCase()
+                              let urgencyColor = '#10b981'
+                              if (urgency === 'CRITICAL') urgencyColor = '#ef4444'
+                              else if (urgency === 'HIGH') urgencyColor = '#f97316'
+                              else if (urgency === 'MEDIUM') urgencyColor = '#eab308'
+                              const ret = typeof p.return_pct === 'number' ? p.return_pct : 0
+                              const retColor = ret > 0 ? '#16a34a' : ret < 0 ? '#dc2626' : '#6b7280'
+
+                              const alerts: any[] = Array.isArray(p.alerts) ? p.alerts : []
+                              const newsAlert = alerts.find(a => a && a.type === 'NEWS_STRATEGY_ADVISORY')
+                              let newsRiskLabel: string | null = null
+                              let newsRiskScore: number | null = null
+                              let newsRiskColor = '#6b7280'
+                              let newsRiskSummary: string | null = null
+                              if (newsAlert) {
+                                const level = computeSentimentRiskLevel((newsAlert as any).news_risk_score)
+                                if (level) {
+                                  newsRiskScore = level.score
+                                  newsRiskLabel = level.label
+                                  newsRiskColor = level.color
+                                }
+                                if (typeof newsAlert.news_reason === 'string' && newsAlert.news_reason.trim()) {
+                                  let s = newsAlert.news_reason.trim()
+                                  if (s.length > 120) s = s.slice(0, 117) + '...'
+                                  newsRiskSummary = s
+                                }
+                              }
+
+                              return (
+                                <div key={idx} style={{ borderRadius: 8, border: '1px solid #e5e7eb', padding: 8, background: '#ffffff' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                                    <div style={{ fontWeight: 600, fontSize: 13 }}>{p.symbol}</div>
+                                    <div style={{ fontSize: 11, padding: '2px 6px', borderRadius: 999, border: `1px solid ${urgencyColor}40`, color: urgencyColor }}>
+                                      {urgency}
+                                    </div>
+                                  </div>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#4b5563' }}>
+                                    <div>
+                                      <div>{p.direction} · {p.mode || p.product}</div>
+                                      <div>Qty {p.quantity}</div>
+                                    </div>
+                                    <div style={{ textAlign: 'right' }}>
+                                      <div>₹{Number(p.current_price || 0).toFixed(2)} <span style={{ fontSize: 10, color: '#9ca3af' }}>({p.price_source || 'tick'})</span></div>
+                                      <div style={{ color: retColor }}>{ret.toFixed(2)}%</div>
+                                    </div>
+                                  </div>
+                                  {newsRiskLabel && newsRiskScore != null && (
+                                    <div style={{ marginTop: 6, fontSize: 11, color: '#4b5563' }}>
+                                      <div style={{ fontWeight: 600, marginBottom: 2 }}>Sentiment risk</div>
+                                      <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                          <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: newsRiskColor + '15', color: newsRiskColor }}>
+                                            {newsRiskLabel} ({Math.round(newsRiskScore)}/100)
+                                          </span>
+                                        </div>
+                                        {newsRiskSummary && (
+                                          <div style={{ color: '#6b7280' }}>{newsRiskSummary}</div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      )
+                    })()
+                  )}
+
+                  {showWatchlist && (
+                    (() => {
+                      if (loadingWatchlist) {
+                        return <div style={{ fontSize: 12, color: '#64748b', padding: 8 }}>Loading watchlist snapshot…</div>
+                      }
+
+                      const data = watchlistMonitor
+                      if (!data || !Array.isArray(data.entries) || data.entries.length === 0) {
+                        return (
+                          <div style={{ fontSize: 12, color: '#64748b', padding: 8 }}>
+                            No active watchlist entries.
+                            <br />
+                            Use Set Alert from Charts or Trade Strategy to add symbols.
+                          </div>
+                        )
+                      }
+
+                      const summary = data.summary || {}
+
+                      return (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                          <div style={{ borderRadius: 8, border: '1px solid #e5e7eb', padding: 8, background: '#f9fafb' }}>
+                            <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 4 }}>
+                              Snapshot as of {data.as_of ? formatIstTime(data.as_of) : '–'}
+                            </div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 11 }}>
+                              <div style={{ flex: '1 1 45%' }}>
+                                <div style={{ color: '#4b5563' }}>Entries</div>
+                                <div style={{ fontWeight: 600 }}>{summary.entries ?? data.entries.length}</div>
+                              </div>
+                              <div style={{ flex: '1 1 45%' }}>
+                                <div style={{ color: '#4b5563' }}>Avg Health</div>
+                                <div style={{ fontWeight: 600 }}>{summary.avg_health_score ?? 100}</div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                            <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 2 }}>Watchlist</div>
+                            {data.entries.map((w: any, idx: number) => {
+                              const urgency = String(w.urgency || 'LOW').toUpperCase()
+                              let urgencyColor = '#10b981'
+                              if (urgency === 'CRITICAL') urgencyColor = '#ef4444'
+                              else if (urgency === 'HIGH') urgencyColor = '#f97316'
+                              else if (urgency === 'MEDIUM') urgencyColor = '#eab308'
+                              const dist = typeof w.distance_to_entry_pct === 'number' ? w.distance_to_entry_pct : 0
+                              const distColor = dist > 0 ? '#dc2626' : dist < 0 ? '#16a34a' : '#6b7280'
+                              return (
+                                <div key={idx} style={{ borderRadius: 8, border: '1px solid #e5e7eb', padding: 8, background: '#ffffff' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                                    <div style={{ fontWeight: 600, fontSize: 13 }}>{w.symbol}</div>
+                                    <div style={{ fontSize: 11, padding: '2px 6px', borderRadius: 999, border: `1px solid ${urgencyColor}40`, color: urgencyColor }}>
+                                      {urgency}
+                                    </div>
+                                  </div>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#4b5563' }}>
+                                    <div>
+                                      <div>{w.timeframe || '—'}</div>
+                                      <div>Desired ₹{w.desired_entry != null ? Number(w.desired_entry).toFixed(2) : '—'}</div>
+                                    </div>
+                                    <div style={{ textAlign: 'right' }}>
+                                      <div>₹{Number(w.current_price || 0).toFixed(2)} <span style={{ fontSize: 10, color: '#9ca3af' }}>({w.price_source || 'tick'})</span></div>
+                                      <div style={{ color: distColor }}>{dist.toFixed(2)}%</div>
+                                    </div>
+                                  </div>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      )
+                    })()
+                  )}
+                </div>
+              </section>
+            )}
+
+            {/* Market Brief with Cards - Hidden only when picks drawer is shown */}
+            {!showPicks && !showPortfolio && !showWatchlist && (
+              <section style={{ padding: 12, border: '1px solid #e5e7eb', borderRadius: 12, background: '#fff', marginBottom: 12, boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12, gap: 12, flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <span style={{ fontWeight: 600, fontSize: 16 }}>Market Brief</span>
+                    <div style={{ display: 'flex', gap: 12, borderBottom: '1px solid #e5e7eb', paddingBottom: 4 }}>
+                      {[
+                        { value: 'India' as const, label: 'India Markets', icon: '🇮🇳' },
+                        { value: 'Global' as const, label: 'World Markets', icon: '🌍' },
+                      ].map(tab => {
+                        const isActive = marketRegion === tab.value
+                        return (
+                          <button
+                            key={tab.value}
+                            type="button"
+                            onClick={() => {
+                              if (marketRegion === tab.value) return
+                              const r = tab.value
+                              setMarketRegion(r)
+                              try { localStorage.setItem('arise_market_region', r) } catch { }
+                            }}
+                            style={{
+                              border: 'none',
+                              background: 'transparent',
+                              padding: '2px 4px 6px 4px',
+                              borderBottom: isActive ? '3px solid #2563eb' : '3px solid transparent',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 6,
+                              fontSize: 13,
+                              color: isActive ? '#1d4ed8' : '#4b5563',
+                              fontWeight: isActive ? 600 : 500
+                            }}
+                          >
+                            <span style={{ fontSize: 14 }}>{tab.icon}</span>
+                            <span>{tab.label}</span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+                    {(() => {
+                      // Determine market open status strictly from weekday + intraday time window
+                      const now = new Date()
+                      const nowIst = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
+                      const day = nowIst.getDay() // 0=Sun, 6=Sat
+                      const isWeekday = day >= 1 && day <= 5
+
+                      const hours = nowIst.getHours()
+                      const minutes = nowIst.getMinutes()
+                      const currentTime = hours * 60 + minutes // minutes since midnight
+                      const marketOpen = 9 * 60 + 15  // 9:15 AM = 555 minutes
+                      const marketClose = 15 * 60 + 30 // 3:30 PM = 930 minutes
+
+                      const isMarketOpen = isWeekday && currentTime >= marketOpen && currentTime <= marketClose
+
+                      const prevTradingCloseIst = () => {
+                        const closing = new Date(nowIst)
+                        // If it's a weekday and after 3:30 PM IST, last close is today.
+                        // Otherwise (pre-market / weekend), last close is previous trading day.
+                        if (!(isWeekday && currentTime >= marketClose)) {
+                          do {
+                            closing.setDate(closing.getDate() - 1)
+                          } while (closing.getDay() === 0 || closing.getDay() === 6)
+                        }
+                        closing.setHours(15, 30, 0, 0)
+                        return closing
+                      }
+
+                      // Determine appropriate timestamp:
+                      // - Market open: use backend-provided market.as_of (preferred), else now
+                      // - Market closed: always show last session close (never a future time)
+                      let asOf: Date
+                      if (isMarketOpen) {
+                        const raw = market && market.as_of ? new Date(market.as_of) : null
+                        asOf = raw && !Number.isNaN(raw.getTime()) ? raw : now
+                      } else {
+                        asOf = prevTradingCloseIst()
+                      }
+
+                      const datePart = formatIstDate(asOf)
+                      const timePart = formatIstTime(asOf)
+                      const ageMs = (() => {
+                        try {
+                          const t = asOf.getTime()
+                          return Number.isNaN(t) ? null : (Date.now() - t)
+                        } catch {
+                          return null
+                        }
+                      })()
+                      const isStale = isMarketOpen && typeof ageMs === 'number' && ageMs > 60_000
+                      const label = isMarketOpen
+                        ? isStale
+                          ? `Stale · last update ${datePart}, ${timePart}`
+                          : `Data as of ${datePart}, ${timePart}`
+                        : `Last close · ${datePart}, ${timePart}`
+
+                      return (
+                        <React.Fragment>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span style={{
+                              fontSize: 11,
+                              padding: '3px 8px',
+                              borderRadius: 999,
+                              background: !isMarketOpen ? '#fef3c7' : (isStale ? '#fee2e2' : '#dcfce7'),
+                              color: !isMarketOpen ? '#92400e' : (isStale ? '#991b1b' : '#166534'),
+                              fontWeight: 600
+                            }}>
+                              {!isMarketOpen ? '⏸️ Market Closed' : (isStale ? '🔴 Stale' : '🟢 Live')}
+                            </span>
+                            <span style={{
+                              fontSize: 11,
+                              color: '#64748b',
+                              whiteSpace: 'nowrap',
+                              maxWidth: 240,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis'
+                            }}>{label}</span>
+                          </div>
+                        </React.Fragment>
                       )
                     })()}
-                  </svg>
-                )
-              })()}
-            </div>
-          </div>
-            )}): <div style={{fontSize:12, opacity:0.7, padding:20, textAlign:'center'}}>Loading market data...</div>}
-            </div>
-            {!showPicks && insights.length > 0 && (
-              <div style={{marginTop:10, marginBottom:6, display:'flex', justifyContent:'center'}}>
-                <div style={{maxWidth:520, width:'100%'}}>
-                  <InsightCards 
-                    insights={insights}
-                    onInsightClick={(insight) => {
-                      if (insight.metadata && 'symbols' in insight.metadata) {
-                        setShowPicks(true)
-                      }
-                    }}
-                    onDismiss={(id) => {
-                      setInsights(insights.filter(i => i.id !== id))
-                      setDismissedInsightIds(prev => ({ ...prev, [id]: true }))
-                    }}
-                  />
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
+                      <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Nifty 50 Sentiment</span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, padding: '2px 8px', borderRadius: 999, background: '#f1f5f9', color: sentiment.color, border: '1px solid #e2e8f0' }}>
+                        <span style={{ display: 'inline-flex', gap: 1 }}>
+                          {Array.from({ length: 5 }).map((_, i) => {
+                            const active = (sentiment.score || 0) > ((i - 2) * 15)
+                            const bg = active ? sentiment.color : '#cbd5e1'
+                            return <span key={i} style={{ width: 3, height: 9, borderRadius: 2, background: bg }} />
+                          })}
+                        </span>
+                        <span style={{ fontWeight: 600 }}>{sentiment.label}</span>
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            )}
-            {showHeatMap && picks.length > 0 && (
-              <div style={{marginTop:10}}>
-                <MarketHeatMap
-                  stocks={heatMapStocks}
-                  onStockClick={(symbol) => {
-                    const row = picks.find((p: any) => p.symbol === symbol)
-                    if (row) {
-                      setChartView({ symbol: row.symbol, analysis: row })
-                    } else {
-                      setChartView({ symbol })
-                    }
-                  }}
-                  universe={universe}
-                  modeLabel={primaryMode}
-                />
-              </div>
-            )}
-          </section>
-          )}
-
-          {/* Top Five Picks Panel - replaces Market Brief when showPicks is true */}
-          {showPicks && (
-          <section
-          ref={topPicksDialogRef}
-          role={isMobile ? 'dialog' : undefined}
-          aria-modal={isMobile ? true : undefined}
-          aria-label={isMobile ? 'Top Five Picks' : undefined}
-          tabIndex={isMobile ? -1 : undefined}
-          style={{
-            padding: isMobile
-              ? 'calc(env(safe-area-inset-top) + 12px) 12px calc(env(safe-area-inset-bottom) + 12px) 12px'
-              : 16,
-            border: isMobile ? 'none' : '1px solid #e5e7eb',
-            borderRadius: isMobile ? 0 : 12,
-            background:'#fff',
-            marginBottom: isMobile ? 0 : 16,
-            boxShadow: isMobile ? 'none' : '0 1px 2px rgba(0,0,0,0.04)',
-            position: isMobile ? 'fixed' : 'relative',
-            inset: isMobile ? 0 : undefined,
-            zIndex: isMobile ? LAYOUT_TOKENS.zIndex.sheet : undefined,
-            overflowY: isMobile ? 'auto' : undefined,
-            WebkitOverflowScrolling: isMobile ? 'touch' : undefined,
-            overscrollBehavior: isMobile ? 'contain' : undefined,
-          }}>
-          <div
-          {...swipeCloseTopPicks}
-          style={{
-            padding:'12px 0 8px 0',
-            borderBottom:'1px solid #e5e7eb',
-            marginBottom:12,
-            position: isMobile ? 'sticky' : 'static',
-            top: isMobile ? 0 : undefined,
-            background: '#fff',
-            zIndex: 2,
-          }}>
-            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8, gap:12, flexWrap:'wrap'}}>
-              <div style={{fontWeight:600, fontSize:18}}>★ Top Five Picks</div>
-              <div style={{display:'flex', alignItems:'center', gap:8, flexWrap:'wrap'}}>
-                <div style={{fontSize:12, color:'#64748b'}}>
-                  {loadingPicks
-                    ? `Agents are working… Refreshing ${primaryMode} recommendations for ${universe.toUpperCase()}`
-                    : (isIndiaMarketOpen && picksAsOf
-                        ? `Last updated ${dayjs(picksAsOf).fromNow()} (${formatIstTime(picksAsOf)})`
-                        : '')}
-                </div>
-                {isIndiaMarketOpen && (
-                <button
-                  disabled={loadingPicks}
-                  onClick={() => onFetchPicks(true)}
-                  style={{
-                    border:'2px solid #3b82f6',
-                    background: loadingPicks ? '#9ca3af' : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                    borderRadius:999,
-                    padding:'6px 14px',
-                    fontSize:12,
-                    fontWeight:600,
-                    color:'#fff',
-                    cursor: loadingPicks ? 'not-allowed' : 'pointer',
-                    boxShadow:'0 2px 8px rgba(59, 130, 246, 0.3)',
-                    display:'flex',
-                    alignItems:'center',
-                    gap:6,
-                    opacity: loadingPicks ? 0.7 : 1
-                  }}
-                >
-                  🔄 Recalculate
-                </button>
-                )}
-                <button
-                  ref={topPicksCloseRef}
-                  onClick={()=>{ setShowPicks(false); setShowHeatMap(true) }}
-                  title="Close Top Five Picks"
-                  aria-label="Close Top Five Picks"
-                  style={{
-                    border:'2px solid #ef4444',
-                    background:'#fff',
-                    borderRadius:999,
-                    padding:'8px 12px',
-                    fontSize:13,
-                    fontWeight:800,
-                    color:'#b91c1c',
-                    cursor:'pointer',
-                    boxShadow:'0 2px 10px rgba(239, 68, 68, 0.18)',
-                    display:'flex',
-                    alignItems:'center',
-                    gap:8,
-                    minHeight: isMobile ? 44 : 34,
-                    userSelect:'none'
-                  }}
-                >
-                  <span style={{
-                    width:18,
-                    height:18,
-                    borderRadius:999,
-                    border:'2px solid #ef4444',
-                    display:'inline-flex',
-                    alignItems:'center',
-                    justifyContent:'center',
-                    lineHeight:1,
-                    fontSize:12,
-                    fontWeight:900
-                  }}>×</span>
-                  Close
-                </button>
-              </div>
-            </div>
-            {picksAsOf && picks.length > 0 && (!isIndiaMarketOpen || isPreviousSessionData) && (
-            <div style={{fontSize:11, color:'#92400e', maxWidth:420}}>
-              {!isIndiaMarketOpen
-                ? "Markets are closed. These recommendations are based on data from the last trading session (around 3:15 PM). They'll refresh automatically when markets reopen."
-                : "These recommendations are from the last trading session. Fresh picks will appear automatically once the agents complete a new run for today."}
-            </div>
-            )}
-            {/* Mode Selector */}
-            <div style={{marginTop:10}}>
-              <div style={{display:'flex', flexWrap:'wrap', gap:12, borderBottom:'1px solid #e5e7eb', paddingBottom:8, marginBottom:8}}>
-                {(availableModes && availableModes.length ? availableModes : DEFAULT_AVAILABLE_MODES)
-                  .filter(mode => mode.value !== 'Commodity')
-                  .map(mode => {
-                    const isActive = primaryMode === mode.value
+                <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
+                  {tiles.length ? tiles.map(t => {
+                    const isPositive = (t.pct || 0) >= 0
+                    const trendColor = isPositive ? '#16a34a' : '#ef4444'
                     return (
-                      <button
-                        key={mode.value}
-                        onClick={() => {
-                          if (primaryMode === mode.value) return
-                          const newMode = mode.value
-                          setPrimaryMode(newMode)
-                          try{localStorage.setItem('arise_primary_mode', newMode)}catch{}
-                        }}
-                        onMouseEnter={(e)=>{
-                          const rect = e.currentTarget.getBoundingClientRect()
-                          setTip({
-                            x: rect.left + rect.width / 2,
-                            y: rect.top - 8,
-                            text: mode.description,
-                            type: 'mode'
-                          })
-                        }}
-                        onMouseLeave={()=>setTip(null)}
-                        style={{
-                          border:'none',
-                          background:isActive ? '#eff6ff' : 'transparent',
-                          padding:'6px 10px 10px 10px',
-                          borderRadius:6,
-                          borderBottom:isActive ? '3px solid #2563eb' : '3px solid transparent',
-                          cursor:'pointer',
-                          minWidth:90
-                        }}
-                      >
-                        <div style={{fontSize:13, fontWeight:isActive ? 700 : 500, color:isActive ? '#1d4ed8' : '#4b5563'}}>
-                          {mode.display_name}
+                      <div key={t.name} style={{ minWidth: 150, flex: '0 0 auto', padding: 10, border: '1px solid #e5e7eb', borderRadius: 12, background: '#ffffff', boxShadow: '0 1px 3px rgba(15,23,42,0.05)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+                          <div>
+                            <div style={{ fontSize: 12, fontWeight: 700, color: '#0f172a', textTransform: 'uppercase', marginBottom: 1 }}>{t.name === 'GOLD' ? 'GOLD (IN $/OUNCE)' : t.name}</div>
+                          </div>
+                          {typeof t.pct === 'number' ? (
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                              <span style={{ fontSize: 11, fontWeight: 600, color: trendColor, padding: '2px 8px', borderRadius: 999, background: (t.pct || 0) >= 0 ? '#ecfdf3' : '#fef2f2' }}>{(t.pct || 0) >= 0 ? '↑' : '↓'} {Math.abs(t.pct).toFixed(2)}%</span>
+                            </div>
+                          ) : (
+                            <div style={{ fontSize: 11, color: '#94a3b8' }}>-</div>
+                          )}
                         </div>
-                        <div style={{fontSize:11, color:'#6b7280'}}>
-                          {mode.horizon}
+                        <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>{t.val}</div>
+                        <div style={{ height: 28, position: 'relative' }}>
+                          {(() => {
+                            // Smart key lookup - try exact match, then fallbacks for global markets
+                            let key = t.name
+                            if (key === 'USD/INR') key = 'USDINR'
+                            // Try exact match first
+                            let s = spark[key] || []
+                            // If not found and it's a global market, try alternative keys
+                            if (!s.length && marketRegion === 'Global') {
+                              if (key === 'FTSE 100') s = spark['LSE (FTSE 100)'] || spark['^FTSE'] || []
+                              else if (key === 'S&P 500') s = spark['S&P 500'] || spark['^GSPC'] || []
+                              else if (key === 'NASDAQ') s = spark['NASDAQ'] || spark['^IXIC'] || []
+                              else if (key === 'Hang Seng') s = spark['Hang Seng'] || spark['^HSI'] || []
+                            }
+                            if (!s.length) {
+                              return <div style={{ fontSize: 10, color: '#cbd5e1', textAlign: 'center', paddingTop: 12 }}>Chart loading...</div>
+                            }
+                            return (
+                              <svg width="100%" height={32} style={{ display: 'block' }} viewBox="0 0 180 40" preserveAspectRatio="none"
+                                onMouseMove={(e) => {
+                                  const last = s[s.length - 1]; const prev = s[s.length - 2] ?? last
+                                  const pct = prev ? ((last - prev) / prev * 100) : 0
+                                  if (tipTimer) clearTimeout(tipTimer)
+                                  const timer = setTimeout(() => {
+                                    const maxX = Math.max(0, (window.innerWidth || 0) - 200)
+                                    const maxY = Math.max(0, (window.innerHeight || 0) - 60)
+                                    const x = Math.min(e.clientX + 8, maxX)
+                                    const y = Math.min(e.clientY + 8, maxY)
+                                    setTip({ x, y, text: `Last ${last.toFixed(2)} · Prev ${prev.toFixed(2)} · ${(pct >= 0 ? '+' : '') + pct.toFixed(2)}%` })
+                                  }, 60)
+                                  setTipTimer(timer)
+                                }}
+                                onMouseLeave={() => { if (tipTimer) clearTimeout(tipTimer); setTip(null) }}>
+                                {(() => {
+                                  // Build a smooth sparkline based on the actual intraday series
+                                  const tilePct = t.pct ?? 0
+                                  const strokeColor = tilePct >= 0 ? '#22c55e' : '#f97373'
+                                  const areaFill = tilePct >= 0 ? '#dcfce7' : '#fee2e2'
+
+                                  const width = 180
+                                  const height = 40
+
+                                  const values = s
+                                  const n = values.length
+                                  if (n < 2) {
+                                    const midY = height - 10
+                                    const dFlat = `M0,${midY} L${width},${midY}`
+                                    return (
+                                      <path d={dFlat} stroke={strokeColor} strokeWidth={2} fill="none" strokeLinecap="round" strokeLinejoin="round" opacity={0.9} />
+                                    )
+                                  }
+
+                                  let min = Math.min(...values)
+                                  let max = Math.max(...values)
+                                  if (min === max) {
+                                    // Avoid divide-by-zero: expand a tiny band around the value
+                                    min = min - 1
+                                    max = max + 1
+                                  }
+                                  const span = max - min
+
+                                  const marginTop = 6
+                                  const marginBottom = 6
+                                  const usableHeight = height - marginTop - marginBottom
+
+                                  const points = values.map((v, idx) => {
+                                    const x = (idx / (n - 1)) * width
+                                    const norm = (v - min) / span // 0..1
+                                    const y = height - marginBottom - norm * usableHeight
+                                    return { x, y }
+                                  })
+
+                                  const baseY = height - marginBottom
+                                  let areaPath = `M${points[0].x},${baseY}`
+                                  for (let i = 0; i < points.length; i++) {
+                                    const p = points[i]
+                                    areaPath += ` L${p.x},${p.y}`
+                                  }
+                                  areaPath += ` L${points[points.length - 1].x},${baseY} Z`
+
+                                  // Quadratic smoothing between points for a soft curve
+                                  let d = `M${points[0].x},${points[0].y}`
+                                  for (let i = 1; i < points.length; i++) {
+                                    const prev = points[i - 1]
+                                    const curr = points[i]
+                                    const midX = (prev.x + curr.x) / 2
+                                    const midY = (prev.y + curr.y) / 2
+                                    d += ` Q${prev.x},${prev.y} ${midX},${midY}`
+                                  }
+                                  // Ensure we end exactly at the last point
+                                  const lastPoint = points[points.length - 1]
+                                  d += ` T${lastPoint.x},${lastPoint.y}`
+
+                                  return (
+                                    <>
+                                      <path d={areaPath} fill={areaFill} stroke="none" opacity={0.6} />
+                                      <path d={d} stroke={strokeColor} strokeWidth={2} fill="none" strokeLinecap="round" strokeLinejoin="round" opacity={0.95} />
+                                    </>
+                                  )
+                                })()}
+                              </svg>
+                            )
+                          })()}
                         </div>
-                      </button>
+                      </div>
                     )
-                  })}
-              </div>
-              <div style={{display:'flex', flexWrap:'wrap', gap:16, alignItems:'center'}}>
-                {[
-                  { value: 'NIFTY50', label: 'Nifty 50', disabled: false },
-                  { value: 'BANKNIFTY', label: 'Bank Nifty', disabled: false },
-                  { value: 'NIFTY100', label: 'Nifty 100 (coming soon)', disabled: true },
-                  { value: 'NIFTY500', label: 'Nifty 500 (coming soon)', disabled: true },
-                ].map(item => {
-                  const isActive = universe === item.value
-                  const isDisabled = item.disabled
-                  return (
-                    <button
-                      key={item.value}
-                      type="button"
-                      onClick={() => {
-                        if (isDisabled || universe === item.value) return
-                        const u = item.value
-                        setUniverse(u)
-                        try{localStorage.setItem('arise_universe', u)}catch{}
-                        onFetchPicks()
-                      }}
-                      style={{
-                        display:'flex',
-                        alignItems:'center',
-                        gap:6,
-                        padding:'6px 10px',
-                        borderRadius:999,
-                        border:isActive ? '2px solid #2563eb' : '1px solid #cbd5e1',
-                        background:isActive ? '#eff6ff' : '#f9fafb',
-                        cursor:isDisabled ? 'not-allowed' : 'pointer',
-                        opacity:isDisabled ? 0.5 : 1,
-                        fontSize:12,
-                        color:isActive ? '#1d4ed8' : '#0f172a'
-                      }}
-                    >
-                      <span
-                        style={{
-                          width:12,
-                          height:12,
-                          borderRadius:999,
-                          border:'2px solid ' + (isActive ? '#2563eb' : '#cbd5e1'),
-                          background:isActive ? '#2563eb' : '#fff'
+                  }) : <div style={{ fontSize: 12, opacity: 0.7, padding: 20, textAlign: 'center' }}>Loading market data...</div>}
+                </div>
+                {!showPicks && insights.length > 0 && (
+                  <div style={{ marginTop: 10, marginBottom: 6, display: 'flex', justifyContent: 'center' }}>
+                    <div style={{ maxWidth: 520, width: '100%' }}>
+                      <InsightCards
+                        insights={insights}
+                        onInsightClick={(insight) => {
+                          if (insight.metadata && 'symbols' in insight.metadata) {
+                            setShowPicks(true)
+                          }
+                        }}
+                        onDismiss={(id) => {
+                          setInsights(insights.filter(i => i.id !== id))
+                          setDismissedInsightIds(prev => ({ ...prev, [id]: true }))
                         }}
                       />
-                      <span>{item.label}</span>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          </div>
-
-          {picksSystemMessage && (
-            <div style={{
-              marginBottom:10,
-              padding:'8px 10px',
-              borderRadius:8,
-              background:'#fef3c7',
-              border:'1px solid #facc15',
-              fontSize:12,
-              color:'#92400e'
-            }}>
-              {picksSystemMessage}
-            </div>
-          )}
-
-          <div style={{padding:10}}>
-            {loadingPicks && picks.length === 0 ? (
-              <div style={{textAlign:'center', padding:40, color:'#64748b'}}>
-                <div style={{fontSize:32, marginBottom:12}}>⏳</div>
-                <div style={{fontSize:14}}>
-                  {`Agents are working… Generating fresh ${primaryMode} Top Five Picks for ${universe.toUpperCase()}. `}
-                  {!picksAsOf
-                    ? 'The first run of the day can take up to about a minute while data loads. Later runs will be much faster.'
-                    : primaryMode === 'Scalping'
-                      ? 'This usually takes under a minute in Scalping mode.'
-                      : 'This usually completes in a few seconds once today\'s data is cached.'}
-                </div>
-              </div>
-            ) : picks.length ? (
-              <div style={{overflowX:'auto'}}>
-                <table style={{width:'100%', minWidth:'930px', fontSize:13, borderCollapse:'separate', borderSpacing:0}}>
-                  <thead>
-                    <tr style={{textAlign:'left', color:'#64748b', fontSize:12, fontWeight:600}}>
-                      <th style={{padding:'10px 8px', width:'95px'}}>Symbol</th>
-                      <th style={{padding:'10px 8px', width:'75px'}}>Score</th>
-                      <th style={{padding:'10px 8px', width:'115px'}}>Current Price</th>
-                      <th style={{padding:'10px 8px', width:'130px'}}>Recommendation</th>
-                      <th style={{padding:'10px 8px'}}>Key Findings</th>
-                      <th style={{padding:'10px 8px', width:'95px', textAlign:'center'}}>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {buyPicks.length > 0 && (
-                      <React.Fragment>
-                        <tr>
-                          <td colSpan={6} style={{padding:'8px 8px', fontWeight:600, fontSize:13, color:'#166534', background:'#ecfdf5'}}>
-                            {(primaryMode || '').toLowerCase() === 'options' ? 'Top Five Call Picks' : 'Top Five Buy Picks'}
-                          </td>
-                        </tr>
-                        {buyPicks.map((r:any, i:number)=> {
-                          const score = typeof r.score_blend === 'number' ? r.score_blend : 0
-                          const dir = classifyPickDirection(score, primaryMode)
-                          const baseRec = dir ? dir.label : (r.recommendation || 'Buy')
-                          const recommendation = formatRecommendationLabel(r, baseRec, dir)
-                          const isPut = isOptionPick(r) && getOptionType(r) === 'PE'
-
-                          const sym = String(r.symbol || '').toUpperCase()
-                          const lp = livePrices[sym]
-                          let isLiveTick: boolean | undefined
-                          try {
-                            if (lp && typeof lp.updated_at === 'string') {
-                              const ts = new Date(lp.updated_at).getTime()
-                              if (!Number.isNaN(ts)) isLiveTick = (Date.now() - ts) <= 20000
-                            }
-                          } catch {
-                            isLiveTick = undefined
-                          }
-
-                          return (
-                          <React.Fragment key={`buy-${r.symbol}-${i}`}>
-                            <tr>
-                              <td 
-                                style={{
-                                  padding:'10px 8px', 
-                                  fontWeight:600, 
-                                  cursor:'pointer',
-                                  color:'#2563eb',
-                                  textDecoration:'underline',
-                                  textDecorationStyle:'dotted',
-                                  textDecorationColor:'#93c5fd'
-                                }}
-                                onClick={()=>setChartView({symbol: r.symbol, analysis: r})}
-                                onMouseEnter={(e)=>{
-                                  const rect = e.currentTarget.getBoundingClientRect()
-                                  setTip({
-                                    x: rect.left + rect.width / 2,
-                                    y: rect.top - 8,
-                                    text: '📊 Click to view interactive chart',
-                                    type: 'chart'
-                                  })
-                                }}
-                                onMouseLeave={()=>setTip(null)}
-                              >
-                                {r.symbol}
-                              </td>
-                              <td style={{padding:'10px 8px'}}>
-                                <span 
-                                  style={{fontWeight:600, color:getScoreColor(r.score_blend), cursor:'pointer', fontSize:14}} 
-                                  onClick={()=>setExplainPick(explainPick===r.symbol? null : r.symbol)}
-                                  onMouseEnter={(e)=>{
-                                    const rect = e.currentTarget.getBoundingClientRect()
-                                    setTip({
-                                      x: rect.left + rect.width / 2,
-                                      y: rect.top - 8,
-                                      text: '🤖 Click to see agent breakdown',
-                                      type: 'score'
-                                    })
-                                  }}
-                                  onMouseLeave={()=>setTip(null)}
-                                >
-                                  {r.score_blend}%
-                                </span>
-                              </td>
-                              <td style={{padding:'10px 8px', fontWeight:600, color:'#0f172a'}}>
-                                <span style={{display:'inline-flex', alignItems:'center', gap:8, whiteSpace:'nowrap'}}>
-                                  <span>
-                                    {typeof r.current_price === 'number'
-                                      ? `₹${Number(r.current_price).toFixed(2)}`
-                                      : (typeof r.last_price === 'number'
-                                          ? `₹${Number(r.last_price).toFixed(2)}`
-                                          : '-')}
-                                  </span>
-                                  {typeof isLiveTick === 'boolean' && (
-                                    <span
-                                      style={{
-                                        fontSize: 10,
-                                        fontWeight: 800,
-                                        padding: '2px 8px',
-                                        borderRadius: 999,
-                                        border: '1px solid ' + (isLiveTick ? '#86efac' : '#cbd5e1'),
-                                        background: isLiveTick ? '#dcfce7' : '#f1f5f9',
-                                        color: isLiveTick ? '#166534' : '#475569',
-                                      }}
-                                    >
-                                      {isLiveTick ? 'LIVE' : 'DELAYED'}
-                                    </span>
-                                  )}
-                                </span>
-                              </td>
-                              <td style={{padding:'10px 8px'}}>
-                                <div style={{display:'flex', alignItems:'center', gap:6}}>
-                                  <span style={{
-                                    padding:'4px 10px',
-                                    borderRadius:6,
-                                    fontSize:12,
-                                    fontWeight:600,
-                                    whiteSpace:'nowrap',
-                                    display:'inline-block',
-                                    background: isPut ? '#fef2f2' : '#dcfce7',
-                                    color: isPut ? '#991b1b' : '#166534'
-                                  }}>
-                                    {recommendation}
-                                  </span>
-                                </div>
-                              </td>
-                              <td 
-                                style={{
-                                  padding:'10px 8px', 
-                                  color:'#475569', 
-                                  fontSize:13,
-                                  lineHeight:1.5
-                                }}
-                              >
-                                {r.key_findings || (() => {
-                                  const scores = r.scores || {}
-                                  const findings: string[] = []
-                                  if (scores.technical >= 70) findings.push('strong technical setup')
-                                  else if (scores.technical >= 60) findings.push('positive technicals')
-                                  if (scores.sentiment >= 70) findings.push('bullish sentiment')
-                                  if (scores.options >= 70) findings.push('strong options flow')
-                                  if (scores.pattern >= 70) findings.push('favorable patterns')
-                                  if (scores.global >= 65) findings.push('supportive global markets')
-                                  if (scores.risk <= 40) findings.push('manageable risk')
-                                  const text = findings.length > 0 ? findings.slice(0,2).join(', ') + (findings.length > 2 ? '...' : '') : (r.rationale || 'Multi-agent analysis complete')
-                                  return text.charAt(0).toUpperCase() + text.slice(1)
-                                })()}
-                              </td>
-                              <td style={{padding:'10px 8px', textAlign:'center'}}>
-                                <button 
-                                  onClick={()=>onAnalyze(r)} 
-                                  style={{
-                                    padding:'6px 16px', 
-                                    fontSize:13, 
-                                    borderRadius:999, 
-                                    border:'none', 
-                                    background:'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)', 
-                                    color:'#fff', 
-                                    fontWeight:600, 
-                                    cursor:'pointer',
-                                    boxShadow:'0 2px 8px rgba(34, 197, 94, 0.35)'
-                                  }}
-                                >
-                                  Analyze
-                                </button>
-                              </td>
-                            </tr>
-                            {explainPick === r.symbol && (
-                              <tr>
-                                <td colSpan={6} style={{padding:'12px', background:'#f9fafb', borderTop:'1px solid #e5e7eb'}}>
-                                  {r.agents && r.agents.length > 0 && (() => {
-                                    const utilityAgents = ['trade_strategy', 'auto_monitoring', 'personalization']
-                                    const scoringAgents = r.agents.filter((a: any) => !utilityAgents.includes(a.agent))
-                                    const agentVotes = scoringAgents.map((a: any) => ({
-                                      name: a.agent || 'unknown',
-                                      icon: '🤖',
-                                      vote: a.score >= 60 ? 'bullish' : a.score <= 40 ? 'bearish' : 'neutral',
-                                      confidence: a.confidence || 'Medium',
-                                      score: a.score || 50
-                                    }))
-                                    const bullishCount = agentVotes.filter((a: any) => a.vote === 'bullish').length
-                                    const consensus = bullishCount > agentVotes.length / 2 ? 'bullish' : 
-                                                     bullishCount < agentVotes.length / 3 ? 'bearish' : 'mixed'
-                                    const consensusStrength = Math.abs((bullishCount / agentVotes.length) - 0.5) * 200
-                                    return (
-                                      <div style={{marginBottom: 16}}>
-                                        <AgentConsensus
-                                          symbol={r.symbol}
-                                          agents={agentVotes}
-                                          consensus={consensus}
-                                          consensusStrength={consensusStrength}
-                                        />
-                                      </div>
-                                    )
-                                  })()}
-                                  <div style={{display:'grid', gap:12}}>
-                                    <div>
-                                      <div style={{fontSize:12, fontWeight:600, marginBottom:6}}>Confidence:</div>
-                                      <div style={{display:'flex', alignItems:'center', gap:8}}>
-                                        <div style={{flex:1, height:8, background:'#e5e7eb', borderRadius:4, overflow:'hidden'}}>
-                                          <div style={{
-                                            width: `${r.score_blend}%`,
-                                            height:'100%',
-                                            background: getScoreColor(r.score_blend),
-                                            transition: 'width 0.3s'
-                                          }} />
-                                        </div>
-                                        <span style={{fontSize:13, fontWeight:600, color: getScoreColor(r.score_blend)}}>
-                                          {r.score_blend}% {r.score_blend >= 70 ? 'High' : r.score_blend >= 50 ? 'Medium' : r.score_blend >= 30 ? 'Low' : 'Very Low'}
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </td>
-                              </tr>
-                            )}
-                          </React.Fragment>
-                          )
-                        })}
-                      </React.Fragment>
-                    )}
-
-                    {sellPicks.length > 0 && (
-                      <React.Fragment>
-                        <tr>
-                          <td colSpan={6} style={{padding:'8px 8px', fontWeight:600, fontSize:13, color:'#991b1b', background:'#fef2f2'}}>
-                            {(primaryMode || '').toLowerCase() === 'options' ? 'Top Five Put Picks' : 'Top Five Sell Picks'}
-                          </td>
-                        </tr>
-                        {sellPicks.map((r:any, i:number)=> {
-                          const score = typeof r.score_blend === 'number' ? r.score_blend : 0
-                          const dir = classifyPickDirection(score, primaryMode)
-                          const baseRec = dir ? dir.label : (r.recommendation || 'Sell')
-                          const recommendation = formatRecommendationLabel(r, baseRec, dir)
-                          const isPut = isOptionPick(r) && getOptionType(r) === 'PE'
-                          const sym = String(r.symbol || '').toUpperCase()
-                          const lp = livePrices[sym]
-                          let isLiveTick: boolean | undefined
-                          try {
-                            if (lp && typeof lp.updated_at === 'string') {
-                              const ts = new Date(lp.updated_at).getTime()
-                              if (!Number.isNaN(ts)) isLiveTick = (Date.now() - ts) <= 20000
-                            }
-                          } catch {
-                            isLiveTick = undefined
-                          }
-
-                          return (
-                          <React.Fragment key={`sell-${r.symbol}-${i}`}>
-                            <tr>
-                              <td 
-                                style={{
-                                  padding:'10px 8px', 
-                                  fontWeight:600, 
-                                  cursor:'pointer',
-                                  color:'#2563eb',
-                                  textDecoration:'underline',
-                                  textDecorationStyle:'dotted',
-                                  textDecorationColor:'#93c5fd'
-                                }}
-                                onClick={()=>setChartView({symbol: r.symbol, analysis: r})}
-                                onMouseEnter={(e)=>{
-                                  const rect = e.currentTarget.getBoundingClientRect()
-                                  setTip({
-                                    x: rect.left + rect.width / 2,
-                                    y: rect.top - 8,
-                                    text: '📊 Click to view interactive chart',
-                                    type: 'chart'
-                                  })
-                                }}
-                                onMouseLeave={()=>setTip(null)}
-                              >
-                                {r.symbol}
-                              </td>
-                              <td style={{padding:'10px 8px'}}>
-                                <span 
-                                  style={{fontWeight:600, color:getScoreColor(r.score_blend), cursor:'pointer', fontSize:14}} 
-                                  onClick={()=>setExplainPick(explainPick===r.symbol? null : r.symbol)}
-                                  onMouseEnter={(e)=>{
-                                    const rect = e.currentTarget.getBoundingClientRect()
-                                    setTip({
-                                      x: rect.left + rect.width / 2,
-                                      y: rect.top - 8,
-                                      text: '🤖 Click to see agent breakdown',
-                                      type: 'score'
-                                    })
-                                  }}
-                                  onMouseLeave={()=>setTip(null)}
-                                >
-                                  {r.score_blend}%
-                                </span>
-                              </td>
-                              <td style={{padding:'10px 8px', fontWeight:600, color:'#0f172a'}}>
-                                <span style={{display:'inline-flex', alignItems:'center', gap:8, whiteSpace:'nowrap'}}>
-                                  <span>
-                                    {typeof r.current_price === 'number'
-                                      ? `₹${Number(r.current_price).toFixed(2)}`
-                                      : (typeof r.last_price === 'number'
-                                          ? `₹${Number(r.last_price).toFixed(2)}`
-                                          : '-')}
-                                  </span>
-                                  {typeof isLiveTick === 'boolean' && (
-                                    <span
-                                      style={{
-                                        fontSize: 10,
-                                        fontWeight: 800,
-                                        padding: '2px 8px',
-                                        borderRadius: 999,
-                                        border: '1px solid ' + (isLiveTick ? '#86efac' : '#cbd5e1'),
-                                        background: isLiveTick ? '#dcfce7' : '#f1f5f9',
-                                        color: isLiveTick ? '#166534' : '#475569',
-                                      }}
-                                    >
-                                      {isLiveTick ? 'LIVE' : 'DELAYED'}
-                                    </span>
-                                  )}
-                                </span>
-                              </td>
-                              <td style={{padding:'10px 8px'}}>
-                                <div style={{display:'flex', alignItems:'center', gap:6}}>
-                                  <span style={{
-                                    padding:'4px 10px',
-                                    borderRadius:6,
-                                    fontSize:12,
-                                    fontWeight:600,
-                                    whiteSpace:'nowrap',
-                                    display:'inline-block',
-                                    background: isPut ? '#fef2f2' : '#dcfce7',
-                                    color: isPut ? '#991b1b' : '#166534'
-                                  }}>
-                                    {recommendation}
-                                  </span>
-                                </div>
-                              </td>
-                              <td 
-                                style={{
-                                  padding:'10px 8px', 
-                                  color:'#475569', 
-                                  fontSize:13,
-                                  lineHeight:1.5
-                                }}
-                              >
-                                {r.key_findings || (() => {
-                                  const scores = r.scores || {}
-                                  const findings: string[] = []
-                                  if (scores.technical >= 70) findings.push('strong technical setup')
-                                  else if (scores.technical >= 60) findings.push('positive technicals')
-                                  if (scores.sentiment >= 70) findings.push('bullish sentiment')
-                                  if (scores.options >= 70) findings.push('strong options flow')
-                                  if (scores.pattern >= 70) findings.push('favorable patterns')
-                                  if (scores.global >= 65) findings.push('supportive global markets')
-                                  if (scores.risk <= 40) findings.push('manageable risk')
-                                  const text = findings.length > 0 ? findings.slice(0,2).join(', ') + (findings.length > 2 ? '...' : '') : (r.rationale || 'Multi-agent analysis complete')
-                                  return text.charAt(0).toUpperCase() + text.slice(1)
-                                })()}
-                              </td>
-                              <td style={{padding:'10px 8px', textAlign:'center'}}>
-                                <button 
-                                  onClick={()=>onAnalyze(r)} 
-                                  style={{
-                                    padding:'6px 16px', 
-                                    fontSize:13, 
-                                    borderRadius:999, 
-                                    border:'none', 
-                                    background:'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)', 
-                                    color:'#fff', 
-                                    fontWeight:600, 
-                                    cursor:'pointer',
-                                    boxShadow:'0 2px 8px rgba(34, 197, 94, 0.35)'
-                                  }}
-                                >
-                                  Analyze
-                                </button>
-                              </td>
-                            </tr>
-                            {explainPick === r.symbol && (
-                              <tr>
-                                <td colSpan={6} style={{padding:'12px', background:'#f9fafb', borderTop:'1px solid #e5e7eb'}}>
-                                  {r.agents && r.agents.length > 0 && (() => {
-                                    const utilityAgents = ['trade_strategy', 'auto_monitoring', 'personalization']
-                                    const scoringAgents = r.agents.filter((a: any) => !utilityAgents.includes(a.agent))
-                                    const agentVotes = scoringAgents.map((a: any) => ({
-                                      name: a.agent || 'unknown',
-                                      icon: '🤖',
-                                      vote: a.score >= 60 ? 'bullish' : a.score <= 40 ? 'bearish' : 'neutral',
-                                      confidence: a.confidence || 'Medium',
-                                      score: a.score || 50
-                                    }))
-                                    const bullishCount = agentVotes.filter((a: any) => a.vote === 'bullish').length
-                                    const consensus = bullishCount > agentVotes.length / 2 ? 'bullish' : 
-                                                     bullishCount < agentVotes.length / 3 ? 'bearish' : 'mixed'
-                                    const consensusStrength = Math.abs((bullishCount / agentVotes.length) - 0.5) * 200
-                                    return (
-                                      <div style={{marginBottom: 16}}>
-                                        <AgentConsensus
-                                          symbol={r.symbol}
-                                          agents={agentVotes}
-                                          consensus={consensus}
-                                          consensusStrength={consensusStrength}
-                                        />
-                                      </div>
-                                    )
-                                  })()}
-                                  <div style={{display:'grid', gap:12}}>
-                                    <div>
-                                      <div style={{fontSize:12, fontWeight:600, marginBottom:6}}>Confidence:</div>
-                                      <div style={{display:'flex', alignItems:'center', gap:8}}>
-                                        <div style={{flex:1, height:8, background:'#e5e7eb', borderRadius:4, overflow:'hidden'}}>
-                                          <div style={{
-                                            width: `${r.score_blend}%`,
-                                            height:'100%',
-                                            background: getScoreColor(r.score_blend),
-                                            transition: 'width 0.3s'
-                                          }} />
-                                        </div>
-                                        <span style={{fontSize:13, fontWeight:600, color: getScoreColor(r.score_blend)}}>
-                                          {r.score_blend}% {r.score_blend >= 70 ? 'High' : r.score_blend >= 50 ? 'Medium' : r.score_blend >= 30 ? 'Low' : 'Very Low'}
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </td>
-                              </tr>
-                            )}
-                          </React.Fragment>
-                          )
-                        })}
-                      </React.Fragment>
-                    )}
-
-                    {buyPicks.length === 0 && sellPicks.length === 0 && (
-                      <tr>
-                        <td colSpan={6} style={{padding:'12px 8px', fontSize:13, color:'#64748b', textAlign:'center'}}>
-                          No directional Buy/Sell picks are available for this mode right now.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div style={{padding:16, textAlign:'center', fontSize:13, color:'#64748b'}}>
-                No picks are available right now. Try again during market hours or switch your trading mode.
-              </div>
-            )}
-          </div>
-
-          </section>
-          )}
-
-          {/* Recent Developments - Hidden per UI cleanup. Will be available as Widget in Preferences */}
-          {false && !showPicks && (
-          <section style={{padding:16, border:'1px solid #e5e7eb', borderRadius:8, background:'#fff'}}>
-            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8}}>
-              <div style={{fontWeight:600}}>Recent Developments</div>
-              <div style={{fontSize:11, color:'#64748b'}}>{eventsAsOf? `Updated ${formatIstTime(eventsAsOf)}`:''}</div>
-            </div>
-            <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(280px, 1fr))', gap:12}}>
-              {events.slice(0,4).length? events.slice(0,4).map((n:any, idx:number)=> (
-                <a 
-                  key={idx} 
-                  href={n.url || '#'} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  style={{padding:14, border:'1px solid #e5e7eb', borderRadius:10, textDecoration:'none', color:'inherit', cursor:n.url?'pointer':'default', transition:'all 0.2s', background:'#fff'}}
-                  onMouseEnter={e=>{ if(n.url) e.currentTarget.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)'; e.currentTarget.style.borderColor='#cbd5e1' }}
-                  onMouseLeave={e=>{ e.currentTarget.style.boxShadow='none'; e.currentTarget.style.borderColor='#e5e7eb' }}
-                >
-                  <div style={{display:'flex', alignItems:'center', gap:10, marginBottom:8}}>
-                    <div style={{width:32, height:32, borderRadius:'50%', background: String(n.source||'').toLowerCase().includes('nse') ? '#dcfce7' : '#dbeafe', display:'flex', alignItems:'center', justifyContent:'center', fontSize:14, fontWeight:600, color: String(n.source||'').toLowerCase().includes('nse') ? '#166534' : '#1e40af'}}>
-                      {String(n.source||'N')[0]}
-                    </div>
-                    <div style={{fontSize:11, color:'#64748b'}}>{n.ts? formatIstTime(n.ts): ''}</div>
-                  </div>
-                  <div>
-                    <div style={{fontWeight:600, fontSize:14, marginBottom:6}}>{n.title}</div>
-                    <div style={{fontSize:12, color:'#64748b', lineHeight:1.5, marginBottom:8}}>
-                      {String(n.summary || n.title).slice(0, 120)}{String(n.summary || n.title).length > 120 ? '...' : ''}
-                    </div>
-                    <div>
-                      {(() => {
-                        const src = String(n.source||'')
-                        const style: React.CSSProperties = { padding:'2px 6px', borderRadius:10 }
-                        if (src.toLowerCase().includes('nse')) { style.background='#e6f6ec'; style.color='#166534' }
-                        else if (src.toLowerCase().includes('yahoo')) { style.background='#eef2ff'; style.color='#3730a3' }
-                        else if (src.toLowerCase().includes('alpha')) { style.background='#fef3c7'; style.color='#92400e' }
-                        else if (src.toLowerCase().includes('finnhub')) { style.background='#f1f5f9'; style.color='#0f172a' }
-                        else { style.background='#e5e7eb'; style.color='#111827' }
-                        return <span style={style}>{n.source}</span>
-                      })()}
                     </div>
                   </div>
-                </a>
-              )): <div style={{fontSize:12, opacity:0.7}}>No events or announcements</div>}
-            </div>
-          </section>
-          )}
-          </div>
-        </div>
-
-        {/* Right rail: News & Top Picks Button */}
-        {!showPicks && !showPortfolio && !showWatchlist && (
-        <aside style={{width: isMobile ? '100%' : 300, display:'flex', flexDirection:'column', gap:12}}>
-          <button
-            onClick={() => onFetchPicks()}
-            disabled={showPicks || loadingPicks}
-            style={{
-              padding:'8px 10px',
-              borderRadius:8,
-              background: (showPicks || loadingPicks) ? '#6b7280' : 'linear-gradient(135deg, #0095FF 0%, #10C8A9 100%)',
-              color:'#fff',
-              border:'1px solid rgba(0,149,255,0.6)',
-              display:'flex',
-              alignItems:'center',
-              justifyContent:'space-between',
-              cursor: (showPicks || loadingPicks) ? 'not-allowed' : 'pointer',
-              opacity: (showPicks || loadingPicks) ? 0.7 : 1,
-              boxShadow: (showPicks || loadingPicks) ? 'none' : '0 4px 10px rgba(0,149,255,0.25)'
-            }}
-          >
-            <span>{loadingPicks ? '⏳ Loading...' : '★ Top Five Picks'}</span>
-            <span style={{fontSize:11, background:'#f1f5f9', color:'#0f172a', padding:'2px 6px', borderRadius:999}}>
-              {(() => {
-                try {
-                  const freshnessMins = primaryMode === 'Scalping' ? 10 : 60
-                  const now = new Date()
-
-                  const formatIfFresh = (iso: string): string => {
-                    if (!iso) return ''
-                    const d = new Date(iso)
-                    if (Number.isNaN(d.getTime())) return ''
-                    const diffMs = now.getTime() - d.getTime()
-                    const diffMins = Math.floor(diffMs / 60000)
-                    if (diffMins < 0 || diffMins > freshnessMins) return ''
-                    if (!isWithinLastTradingSession(iso)) return ''
-                    return formatIstTime(d)
-                  }
-
-                  // Prefer live picks timestamp
-                  let label = ''
-                  if (picksAsOf) {
-                    label = formatIfFresh(picksAsOf)
-                  }
-
-                  // Fallback to cached picks if live label is empty
-                  if (!label) {
-                    const cachedRaw = localStorage.getItem('arise_picks') || 'null'
-                    const p = JSON.parse(cachedRaw)
-                    if (p?.as_of) {
-                      label = formatIfFresh(p.as_of)
-                    }
-                  }
-
-                  return label || ''
-                } catch {}
-                return ''
-              })()}
-            </span>
-          </button>
-          <section style={{padding:12, border:'1px solid #e5e7eb', borderRadius:8, background:'#fff'}}>
-            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8}}>
-              <div style={{fontWeight:600}}>News</div>
-              <div style={{display:'flex', alignItems:'center', gap:10}}>
-                <div style={{fontSize:11, color:'#64748b'}}>{newsAsOf ? formatIstTime(newsAsOf) : ''}</div>
-                {isMobile && (
-                  <button
-                    type="button"
-                    onClick={() => setNewsExpanded(v => !v)}
-                    style={{
-                      border: 'none',
-                      background: 'transparent',
-                      color: '#1d4ed8',
-                      fontSize: 12,
-                      fontWeight: 800,
-                      cursor: 'pointer',
-                      padding: '6px 8px',
-                      borderRadius: 10,
-                    }}
-                  >
-                    {newsExpanded ? 'Less' : 'More'}
-                  </button>
                 )}
-              </div>
-            </div>
-            <div style={{maxHeight: isMobile ? (newsExpanded ? '60dvh' : 220) : 400, overflowY:'auto', display:'flex', flexDirection:'column', gap:8, paddingRight:4}}>
-              {(() => {
-                const cleaned = cleanNewsList(news)
-                const nonExchange = cleaned.filter((n:any) => {
-                  const src = String(n.source || '').toLowerCase()
-                  return !src.includes('nse') && !src.includes('bse')
-                })
-                if (!nonExchange.length) {
-                  return <div style={{fontSize:12, opacity:0.7}}>No news</div>
-                }
+                {showHeatMap && picks.length > 0 && (
+                  <div style={{ marginTop: 10 }}>
+                    <MarketHeatMap
+                      stocks={heatMapStocks}
+                      onStockClick={(symbol) => {
+                        const row = picks.find((p: any) => p.symbol === symbol)
+                        if (row) {
+                          setChartView({ symbol: row.symbol, analysis: row })
+                        } else {
+                          setChartView({ symbol })
+                        }
+                      }}
+                      universe={universe}
+                      modeLabel={primaryMode}
+                    />
+                  </div>
+                )}
+              </section>
+            )}
 
-                // Light diversification: avoid a wall of a single source.
-                // Prefer at most 3 MoneyControl headlines and at most 2 from
-                // any other single outlet in this compact rail.
-                const sourceCounts: Record<string, number> = {}
-                const diversified: any[] = []
-                const MAX_TOTAL = 5
+            {/* Top Five Picks Panel - replaces Market Brief when showPicks is true */}
+            {showPicks && (
+              <section
+                ref={topPicksDialogRef}
+                role={isMobile ? 'dialog' : undefined}
+                aria-modal={isMobile ? true : undefined}
+                aria-label={isMobile ? 'Top Five Picks' : undefined}
+                tabIndex={isMobile ? -1 : undefined}
+                style={{
+                  padding: isMobile
+                    ? 'calc(env(safe-area-inset-top) + 12px) 12px calc(env(safe-area-inset-bottom) + 12px) 12px'
+                    : 16,
+                  border: isMobile ? 'none' : '1px solid #e5e7eb',
+                  borderRadius: isMobile ? 0 : 12,
+                  background: '#fff',
+                  marginBottom: isMobile ? 0 : 16,
+                  boxShadow: isMobile ? 'none' : '0 1px 2px rgba(0,0,0,0.04)',
+                  position: isMobile ? 'fixed' : 'relative',
+                  inset: isMobile ? 0 : undefined,
+                  zIndex: isMobile ? LAYOUT_TOKENS.zIndex.sheet : undefined,
+                  overflowY: isMobile ? 'auto' : undefined,
+                  WebkitOverflowScrolling: isMobile ? 'touch' : undefined,
+                  overscrollBehavior: isMobile ? 'contain' : undefined,
+                }}>
+                <div
+                  {...swipeCloseTopPicks}
+                  style={{
+                    padding: '12px 0 8px 0',
+                    borderBottom: '1px solid #e5e7eb',
+                    marginBottom: 12,
+                    position: isMobile ? 'sticky' : 'static',
+                    top: isMobile ? 0 : undefined,
+                    background: '#fff',
+                    zIndex: 2,
+                  }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, gap: 12, flexWrap: 'wrap' }}>
+                    <div style={{ fontWeight: 600, fontSize: 18 }}>★ Top Five Picks</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                      <div style={{ fontSize: 12, color: '#64748b' }}>
+                        {loadingPicks
+                          ? `Agents are working… Refreshing ${primaryMode} recommendations for ${universe.toUpperCase()}`
+                          : (isIndiaMarketOpen && picksAsOf
+                            ? `Last updated ${dayjs(picksAsOf).fromNow()} (${formatIstTime(picksAsOf)})`
+                            : '')}
+                      </div>
+                      {isIndiaMarketOpen && (
+                        <button
+                          disabled={loadingPicks}
+                          onClick={() => onFetchPicks(true)}
+                          style={{
+                            border: '2px solid #3b82f6',
+                            background: loadingPicks ? '#9ca3af' : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                            borderRadius: 999,
+                            padding: '6px 14px',
+                            fontSize: 12,
+                            fontWeight: 600,
+                            color: '#fff',
+                            cursor: loadingPicks ? 'not-allowed' : 'pointer',
+                            boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            opacity: loadingPicks ? 0.7 : 1
+                          }}
+                        >
+                          🔄 Recalculate
+                        </button>
+                      )}
+                      <button
+                        ref={topPicksCloseRef}
+                        onClick={() => { setShowPicks(false); setShowHeatMap(true) }}
+                        title="Close Top Five Picks"
+                        aria-label="Close Top Five Picks"
+                        style={{
+                          border: '2px solid #ef4444',
+                          background: '#fff',
+                          borderRadius: 999,
+                          padding: '8px 12px',
+                          fontSize: 13,
+                          fontWeight: 800,
+                          color: '#b91c1c',
+                          cursor: 'pointer',
+                          boxShadow: '0 2px 10px rgba(239, 68, 68, 0.18)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                          minHeight: isMobile ? 44 : 34,
+                          userSelect: 'none'
+                        }}
+                      >
+                        <span style={{
+                          width: 18,
+                          height: 18,
+                          borderRadius: 999,
+                          border: '2px solid #ef4444',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          lineHeight: 1,
+                          fontSize: 12,
+                          fontWeight: 900
+                        }}>×</span>
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                  {picksAsOf && picks.length > 0 && (!isIndiaMarketOpen || isPreviousSessionData) && (
+                    <div style={{ fontSize: 11, color: '#92400e', maxWidth: 420 }}>
+                      {!isIndiaMarketOpen
+                        ? "Markets are closed. These recommendations are based on data from the last trading session (around 3:15 PM). They'll refresh automatically when markets reopen."
+                        : "These recommendations are from the last trading session. Fresh picks will appear automatically once the agents complete a new run for today."}
+                    </div>
+                  )}
+                  {/* Mode Selector */}
+                  <div style={{ marginTop: 10 }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, borderBottom: '1px solid #e5e7eb', paddingBottom: 8, marginBottom: 8 }}>
+                      {(availableModes && availableModes.length ? availableModes : DEFAULT_AVAILABLE_MODES)
+                        .filter(mode => mode.value !== 'Commodity')
+                        .map(mode => {
+                          const isActive = primaryMode === mode.value
+                          return (
+                            <button
+                              key={mode.value}
+                              onClick={() => {
+                                if (primaryMode === mode.value) return
+                                const newMode = mode.value
+                                setPrimaryMode(newMode)
+                                try { localStorage.setItem('arise_primary_mode', newMode) } catch { }
+                              }}
+                              onMouseEnter={(e) => {
+                                const rect = e.currentTarget.getBoundingClientRect()
+                                setTip({
+                                  x: rect.left + rect.width / 2,
+                                  y: rect.top - 8,
+                                  text: mode.description,
+                                  type: 'mode'
+                                })
+                              }}
+                              onMouseLeave={() => setTip(null)}
+                              style={{
+                                border: 'none',
+                                background: isActive ? '#eff6ff' : 'transparent',
+                                padding: '6px 10px 10px 10px',
+                                borderRadius: 6,
+                                borderBottom: isActive ? '3px solid #2563eb' : '3px solid transparent',
+                                cursor: 'pointer',
+                                minWidth: 90
+                              }}
+                            >
+                              <div style={{ fontSize: 13, fontWeight: isActive ? 700 : 500, color: isActive ? '#1d4ed8' : '#4b5563' }}>
+                                {mode.display_name}
+                              </div>
+                              <div style={{ fontSize: 11, color: '#6b7280' }}>
+                                {mode.horizon}
+                              </div>
+                            </button>
+                          )
+                        })}
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center' }}>
+                      {[
+                        { value: 'NIFTY50', label: 'Nifty 50', disabled: false },
+                        { value: 'BANKNIFTY', label: 'Bank Nifty', disabled: false },
+                        { value: 'NIFTY100', label: 'Nifty 100 (coming soon)', disabled: true },
+                        { value: 'NIFTY500', label: 'Nifty 500 (coming soon)', disabled: true },
+                      ].map(item => {
+                        const isActive = universe === item.value
+                        const isDisabled = item.disabled
+                        return (
+                          <button
+                            key={item.value}
+                            type="button"
+                            onClick={() => {
+                              if (isDisabled || universe === item.value) return
+                              const u = item.value
+                              setUniverse(u)
+                              try { localStorage.setItem('arise_universe', u) } catch { }
+                              onFetchPicks()
+                            }}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 6,
+                              padding: '6px 10px',
+                              borderRadius: 999,
+                              border: isActive ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                              background: isActive ? '#eff6ff' : '#f9fafb',
+                              cursor: isDisabled ? 'not-allowed' : 'pointer',
+                              opacity: isDisabled ? 0.5 : 1,
+                              fontSize: 12,
+                              color: isActive ? '#1d4ed8' : '#0f172a'
+                            }}
+                          >
+                            <span
+                              style={{
+                                width: 12,
+                                height: 12,
+                                borderRadius: 999,
+                                border: '2px solid ' + (isActive ? '#2563eb' : '#cbd5e1'),
+                                background: isActive ? '#2563eb' : '#fff'
+                              }}
+                            />
+                            <span>{item.label}</span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
 
-                for (const n of nonExchange) {
-                  const src = String(n.source || '')
-                  const lower = src.toLowerCase() || 'other'
-                  let cap = 2
-                  if (lower.includes('moneycontrol')) cap = 3
+                {picksSystemMessage && (
+                  <div style={{
+                    marginBottom: 10,
+                    padding: '8px 10px',
+                    borderRadius: 8,
+                    background: '#fef3c7',
+                    border: '1px solid #facc15',
+                    fontSize: 12,
+                    color: '#92400e'
+                  }}>
+                    {picksSystemMessage}
+                  </div>
+                )}
 
-                  const count = sourceCounts[lower] || 0
-                  if (count >= cap) continue
+                <div style={{ padding: 10 }}>
+                  {loadingPicks && picks.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: 40, color: '#64748b' }}>
+                      <div style={{ fontSize: 32, marginBottom: 12 }}>⏳</div>
+                      <div style={{ fontSize: 14 }}>
+                        {`Agents are working… Generating fresh ${primaryMode} Top Five Picks for ${universe.toUpperCase()}. `}
+                        {!picksAsOf
+                          ? 'The first run of the day can take up to about a minute while data loads. Later runs will be much faster.'
+                          : primaryMode === 'Scalping'
+                            ? 'This usually takes under a minute in Scalping mode.'
+                            : 'This usually completes in a few seconds once today\'s data is cached.'}
+                      </div>
+                    </div>
+                  ) : picks.length ? (
+                    <div style={{ overflowX: 'auto' }}>
+                      <table style={{ width: '100%', minWidth: '930px', fontSize: 13, borderCollapse: 'separate', borderSpacing: 0 }}>
+                        <thead>
+                          <tr style={{ textAlign: 'left', color: '#64748b', fontSize: 12, fontWeight: 600 }}>
+                            <th style={{ padding: '10px 8px', width: '95px' }}>Symbol</th>
+                            <th style={{ padding: '10px 8px', width: '75px' }}>Score</th>
+                            <th style={{ padding: '10px 8px', width: '115px' }}>Current Price</th>
+                            <th style={{ padding: '10px 8px', width: '130px' }}>Recommendation</th>
+                            <th style={{ padding: '10px 8px' }}>Key Findings</th>
+                            <th style={{ padding: '10px 8px', width: '95px', textAlign: 'center' }}>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {buyPicks.length > 0 && (
+                            <React.Fragment>
+                              <tr>
+                                <td colSpan={6} style={{ padding: '8px 8px', fontWeight: 600, fontSize: 13, color: '#166534', background: '#ecfdf5' }}>
+                                  {(primaryMode || '').toLowerCase() === 'options' ? 'Top Five Call Picks' : 'Top Five Buy Picks'}
+                                </td>
+                              </tr>
+                              {buyPicks.map((r: any, i: number) => {
+                                const score = typeof r.score_blend === 'number' ? r.score_blend : 0
+                                const dir = classifyPickDirection(score, primaryMode)
+                                const baseRec = dir ? dir.label : (r.recommendation || 'Buy')
+                                const recommendation = formatRecommendationLabel(r, baseRec, dir)
+                                const isPut = isOptionPick(r) && getOptionType(r) === 'PE'
 
-                  diversified.push(n)
-                  sourceCounts[lower] = count + 1
-                  if (diversified.length >= MAX_TOTAL) break
-                }
+                                const sym = String(r.symbol || '').toUpperCase()
+                                const lp = livePrices[sym]
+                                let isLiveTick: boolean | undefined
+                                try {
+                                  if (lp && typeof lp.updated_at === 'string') {
+                                    const ts = new Date(lp.updated_at).getTime()
+                                    if (!Number.isNaN(ts)) isLiveTick = (Date.now() - ts) <= 20000
+                                  }
+                                } catch {
+                                  isLiveTick = undefined
+                                }
 
-                const items = diversified.length ? diversified : nonExchange.slice(0, 5)
+                                return (
+                                  <React.Fragment key={`buy-${r.symbol}-${i}`}>
+                                    <tr>
+                                      <td
+                                        style={{
+                                          padding: '10px 8px',
+                                          fontWeight: 600,
+                                          cursor: 'pointer',
+                                          color: '#2563eb',
+                                          textDecoration: 'underline',
+                                          textDecorationStyle: 'dotted',
+                                          textDecorationColor: '#93c5fd'
+                                        }}
+                                        onClick={() => setChartView({ symbol: r.symbol, analysis: r })}
+                                        onMouseEnter={(e) => {
+                                          const rect = e.currentTarget.getBoundingClientRect()
+                                          setTip({
+                                            x: rect.left + rect.width / 2,
+                                            y: rect.top - 8,
+                                            text: '📊 Click to view interactive chart',
+                                            type: 'chart'
+                                          })
+                                        }}
+                                        onMouseLeave={() => setTip(null)}
+                                      >
+                                        {r.symbol}
+                                      </td>
+                                      <td style={{ padding: '10px 8px' }}>
+                                        <span
+                                          style={{ fontWeight: 600, color: getScoreColor(r.score_blend), cursor: 'pointer', fontSize: 14 }}
+                                          onClick={() => setExplainPick(explainPick === r.symbol ? null : r.symbol)}
+                                          onMouseEnter={(e) => {
+                                            const rect = e.currentTarget.getBoundingClientRect()
+                                            setTip({
+                                              x: rect.left + rect.width / 2,
+                                              y: rect.top - 8,
+                                              text: '🤖 Click to see agent breakdown',
+                                              type: 'score'
+                                            })
+                                          }}
+                                          onMouseLeave={() => setTip(null)}
+                                        >
+                                          {r.score_blend}%
+                                        </span>
+                                      </td>
+                                      <td style={{ padding: '10px 8px', fontWeight: 600, color: '#0f172a' }}>
+                                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap' }}>
+                                          <span>
+                                            {typeof r.current_price === 'number'
+                                              ? `₹${Number(r.current_price).toFixed(2)}`
+                                              : (typeof r.last_price === 'number'
+                                                ? `₹${Number(r.last_price).toFixed(2)}`
+                                                : '-')}
+                                          </span>
+                                          {typeof isLiveTick === 'boolean' && (
+                                            <span
+                                              style={{
+                                                fontSize: 10,
+                                                fontWeight: 800,
+                                                padding: '2px 8px',
+                                                borderRadius: 999,
+                                                border: '1px solid ' + (isLiveTick ? '#86efac' : '#cbd5e1'),
+                                                background: isLiveTick ? '#dcfce7' : '#f1f5f9',
+                                                color: isLiveTick ? '#166534' : '#475569',
+                                              }}
+                                            >
+                                              {isLiveTick ? 'LIVE' : 'DELAYED'}
+                                            </span>
+                                          )}
+                                        </span>
+                                      </td>
+                                      <td style={{ padding: '10px 8px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                          <span style={{
+                                            padding: '4px 10px',
+                                            borderRadius: 6,
+                                            fontSize: 12,
+                                            fontWeight: 600,
+                                            whiteSpace: 'nowrap',
+                                            display: 'inline-block',
+                                            background: isPut ? '#fef2f2' : '#dcfce7',
+                                            color: isPut ? '#991b1b' : '#166534'
+                                          }}>
+                                            {recommendation}
+                                          </span>
+                                        </div>
+                                      </td>
+                                      <td
+                                        style={{
+                                          padding: '10px 8px',
+                                          color: '#475569',
+                                          fontSize: 13,
+                                          lineHeight: 1.5
+                                        }}
+                                      >
+                                        {r.key_findings || (() => {
+                                          const scores = r.scores || {}
+                                          const findings: string[] = []
+                                          if (scores.technical >= 70) findings.push('strong technical setup')
+                                          else if (scores.technical >= 60) findings.push('positive technicals')
+                                          if (scores.sentiment >= 70) findings.push('bullish sentiment')
+                                          if (scores.options >= 70) findings.push('strong options flow')
+                                          if (scores.pattern >= 70) findings.push('favorable patterns')
+                                          if (scores.global >= 65) findings.push('supportive global markets')
+                                          if (scores.risk <= 40) findings.push('manageable risk')
+                                          const text = findings.length > 0 ? findings.slice(0, 2).join(', ') + (findings.length > 2 ? '...' : '') : (r.rationale || 'Multi-agent analysis complete')
+                                          return text.charAt(0).toUpperCase() + text.slice(1)
+                                        })()}
+                                      </td>
+                                      <td style={{ padding: '10px 8px', textAlign: 'center' }}>
+                                        <button
+                                          onClick={() => onAnalyze(r)}
+                                          style={{
+                                            padding: '6px 16px',
+                                            fontSize: 13,
+                                            borderRadius: 999,
+                                            border: 'none',
+                                            background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                                            color: '#fff',
+                                            fontWeight: 600,
+                                            cursor: 'pointer',
+                                            boxShadow: '0 2px 8px rgba(34, 197, 94, 0.35)'
+                                          }}
+                                        >
+                                          Analyze
+                                        </button>
+                                      </td>
+                                    </tr>
+                                    {explainPick === r.symbol && (
+                                      <tr>
+                                        <td colSpan={6} style={{ padding: '12px', background: '#f9fafb', borderTop: '1px solid #e5e7eb' }}>
+                                          {r.agents && r.agents.length > 0 && (() => {
+                                            const utilityAgents = ['trade_strategy', 'auto_monitoring', 'personalization']
+                                            const scoringAgents = r.agents.filter((a: any) => !utilityAgents.includes(a.agent))
+                                            const agentVotes = scoringAgents.map((a: any) => ({
+                                              name: a.agent || 'unknown',
+                                              icon: '🤖',
+                                              vote: a.score >= 60 ? 'bullish' : a.score <= 40 ? 'bearish' : 'neutral',
+                                              confidence: a.confidence || 'Medium',
+                                              score: a.score || 50
+                                            }))
+                                            const bullishCount = agentVotes.filter((a: any) => a.vote === 'bullish').length
+                                            const consensus = bullishCount > agentVotes.length / 2 ? 'bullish' :
+                                              bullishCount < agentVotes.length / 3 ? 'bearish' : 'mixed'
+                                            const consensusStrength = Math.abs((bullishCount / agentVotes.length) - 0.5) * 200
+                                            return (
+                                              <div style={{ marginBottom: 16 }}>
+                                                <AgentConsensus
+                                                  symbol={r.symbol}
+                                                  agents={agentVotes}
+                                                  consensus={consensus}
+                                                  consensusStrength={consensusStrength}
+                                                />
+                                              </div>
+                                            )
+                                          })()}
+                                          <div style={{ display: 'grid', gap: 12 }}>
+                                            <div>
+                                              <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 6 }}>Confidence:</div>
+                                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                                <div style={{ flex: 1, height: 8, background: '#e5e7eb', borderRadius: 4, overflow: 'hidden' }}>
+                                                  <div style={{
+                                                    width: `${r.score_blend}%`,
+                                                    height: '100%',
+                                                    background: getScoreColor(r.score_blend),
+                                                    transition: 'width 0.3s'
+                                                  }} />
+                                                </div>
+                                                <span style={{ fontSize: 13, fontWeight: 600, color: getScoreColor(r.score_blend) }}>
+                                                  {r.score_blend}% {r.score_blend >= 70 ? 'High' : r.score_blend >= 50 ? 'Medium' : r.score_blend >= 30 ? 'Low' : 'Very Low'}
+                                                </span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    )}
+                                  </React.Fragment>
+                                )
+                              })}
+                            </React.Fragment>
+                          )}
 
-                return items.map((n:any, idx:number) => {
-                  const src = String(n.source || '')
-                  let bg = '#e5e7eb'
-                  let fg = '#111827'
-                  const lower = src.toLowerCase()
-                  if (lower.includes('nse')) { bg = '#e6f6ec'; fg = '#166534' }
-                  else if (lower.includes('yahoo')) { bg = '#eef2ff'; fg = '#3730a3' }
-                  else if (lower.includes('alpha')) { bg = '#fef3c7'; fg = '#92400e' }
-                  else if (lower.includes('finnhub')) { bg = '#f1f5f9'; fg = '#0f172a' }
+                          {sellPicks.length > 0 && (
+                            <React.Fragment>
+                              <tr>
+                                <td colSpan={6} style={{ padding: '8px 8px', fontWeight: 600, fontSize: 13, color: '#991b1b', background: '#fef2f2' }}>
+                                  {(primaryMode || '').toLowerCase() === 'options' ? 'Top Five Put Picks' : 'Top Five Sell Picks'}
+                                </td>
+                              </tr>
+                              {sellPicks.map((r: any, i: number) => {
+                                const score = typeof r.score_blend === 'number' ? r.score_blend : 0
+                                const dir = classifyPickDirection(score, primaryMode)
+                                const baseRec = dir ? dir.label : (r.recommendation || 'Sell')
+                                const recommendation = formatRecommendationLabel(r, baseRec, dir)
+                                const isPut = isOptionPick(r) && getOptionType(r) === 'PE'
+                                const sym = String(r.symbol || '').toUpperCase()
+                                const lp = livePrices[sym]
+                                let isLiveTick: boolean | undefined
+                                try {
+                                  if (lp && typeof lp.updated_at === 'string') {
+                                    const ts = new Date(lp.updated_at).getTime()
+                                    if (!Number.isNaN(ts)) isLiveTick = (Date.now() - ts) <= 20000
+                                  }
+                                } catch {
+                                  isLiveTick = undefined
+                                }
 
-                  return (
+                                return (
+                                  <React.Fragment key={`sell-${r.symbol}-${i}`}>
+                                    <tr>
+                                      <td
+                                        style={{
+                                          padding: '10px 8px',
+                                          fontWeight: 600,
+                                          cursor: 'pointer',
+                                          color: '#2563eb',
+                                          textDecoration: 'underline',
+                                          textDecorationStyle: 'dotted',
+                                          textDecorationColor: '#93c5fd'
+                                        }}
+                                        onClick={() => setChartView({ symbol: r.symbol, analysis: r })}
+                                        onMouseEnter={(e) => {
+                                          const rect = e.currentTarget.getBoundingClientRect()
+                                          setTip({
+                                            x: rect.left + rect.width / 2,
+                                            y: rect.top - 8,
+                                            text: '📊 Click to view interactive chart',
+                                            type: 'chart'
+                                          })
+                                        }}
+                                        onMouseLeave={() => setTip(null)}
+                                      >
+                                        {r.symbol}
+                                      </td>
+                                      <td style={{ padding: '10px 8px' }}>
+                                        <span
+                                          style={{ fontWeight: 600, color: getScoreColor(r.score_blend), cursor: 'pointer', fontSize: 14 }}
+                                          onClick={() => setExplainPick(explainPick === r.symbol ? null : r.symbol)}
+                                          onMouseEnter={(e) => {
+                                            const rect = e.currentTarget.getBoundingClientRect()
+                                            setTip({
+                                              x: rect.left + rect.width / 2,
+                                              y: rect.top - 8,
+                                              text: '🤖 Click to see agent breakdown',
+                                              type: 'score'
+                                            })
+                                          }}
+                                          onMouseLeave={() => setTip(null)}
+                                        >
+                                          {r.score_blend}%
+                                        </span>
+                                      </td>
+                                      <td style={{ padding: '10px 8px', fontWeight: 600, color: '#0f172a' }}>
+                                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap' }}>
+                                          <span>
+                                            {typeof r.current_price === 'number'
+                                              ? `₹${Number(r.current_price).toFixed(2)}`
+                                              : (typeof r.last_price === 'number'
+                                                ? `₹${Number(r.last_price).toFixed(2)}`
+                                                : '-')}
+                                          </span>
+                                          {typeof isLiveTick === 'boolean' && (
+                                            <span
+                                              style={{
+                                                fontSize: 10,
+                                                fontWeight: 800,
+                                                padding: '2px 8px',
+                                                borderRadius: 999,
+                                                border: '1px solid ' + (isLiveTick ? '#86efac' : '#cbd5e1'),
+                                                background: isLiveTick ? '#dcfce7' : '#f1f5f9',
+                                                color: isLiveTick ? '#166534' : '#475569',
+                                              }}
+                                            >
+                                              {isLiveTick ? 'LIVE' : 'DELAYED'}
+                                            </span>
+                                          )}
+                                        </span>
+                                      </td>
+                                      <td style={{ padding: '10px 8px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                          <span style={{
+                                            padding: '4px 10px',
+                                            borderRadius: 6,
+                                            fontSize: 12,
+                                            fontWeight: 600,
+                                            whiteSpace: 'nowrap',
+                                            display: 'inline-block',
+                                            background: isPut ? '#fef2f2' : '#dcfce7',
+                                            color: isPut ? '#991b1b' : '#166534'
+                                          }}>
+                                            {recommendation}
+                                          </span>
+                                        </div>
+                                      </td>
+                                      <td
+                                        style={{
+                                          padding: '10px 8px',
+                                          color: '#475569',
+                                          fontSize: 13,
+                                          lineHeight: 1.5
+                                        }}
+                                      >
+                                        {r.key_findings || (() => {
+                                          const scores = r.scores || {}
+                                          const findings: string[] = []
+                                          if (scores.technical >= 70) findings.push('strong technical setup')
+                                          else if (scores.technical >= 60) findings.push('positive technicals')
+                                          if (scores.sentiment >= 70) findings.push('bullish sentiment')
+                                          if (scores.options >= 70) findings.push('strong options flow')
+                                          if (scores.pattern >= 70) findings.push('favorable patterns')
+                                          if (scores.global >= 65) findings.push('supportive global markets')
+                                          if (scores.risk <= 40) findings.push('manageable risk')
+                                          const text = findings.length > 0 ? findings.slice(0, 2).join(', ') + (findings.length > 2 ? '...' : '') : (r.rationale || 'Multi-agent analysis complete')
+                                          return text.charAt(0).toUpperCase() + text.slice(1)
+                                        })()}
+                                      </td>
+                                      <td style={{ padding: '10px 8px', textAlign: 'center' }}>
+                                        <button
+                                          onClick={() => onAnalyze(r)}
+                                          style={{
+                                            padding: '6px 16px',
+                                            fontSize: 13,
+                                            borderRadius: 999,
+                                            border: 'none',
+                                            background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                                            color: '#fff',
+                                            fontWeight: 600,
+                                            cursor: 'pointer',
+                                            boxShadow: '0 2px 8px rgba(34, 197, 94, 0.35)'
+                                          }}
+                                        >
+                                          Analyze
+                                        </button>
+                                      </td>
+                                    </tr>
+                                    {explainPick === r.symbol && (
+                                      <tr>
+                                        <td colSpan={6} style={{ padding: '12px', background: '#f9fafb', borderTop: '1px solid #e5e7eb' }}>
+                                          {r.agents && r.agents.length > 0 && (() => {
+                                            const utilityAgents = ['trade_strategy', 'auto_monitoring', 'personalization']
+                                            const scoringAgents = r.agents.filter((a: any) => !utilityAgents.includes(a.agent))
+                                            const agentVotes = scoringAgents.map((a: any) => ({
+                                              name: a.agent || 'unknown',
+                                              icon: '🤖',
+                                              vote: a.score >= 60 ? 'bullish' : a.score <= 40 ? 'bearish' : 'neutral',
+                                              confidence: a.confidence || 'Medium',
+                                              score: a.score || 50
+                                            }))
+                                            const bullishCount = agentVotes.filter((a: any) => a.vote === 'bullish').length
+                                            const consensus = bullishCount > agentVotes.length / 2 ? 'bullish' :
+                                              bullishCount < agentVotes.length / 3 ? 'bearish' : 'mixed'
+                                            const consensusStrength = Math.abs((bullishCount / agentVotes.length) - 0.5) * 200
+                                            return (
+                                              <div style={{ marginBottom: 16 }}>
+                                                <AgentConsensus
+                                                  symbol={r.symbol}
+                                                  agents={agentVotes}
+                                                  consensus={consensus}
+                                                  consensusStrength={consensusStrength}
+                                                />
+                                              </div>
+                                            )
+                                          })()}
+                                          <div style={{ display: 'grid', gap: 12 }}>
+                                            <div>
+                                              <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 6 }}>Confidence:</div>
+                                              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                                <div style={{ flex: 1, height: 8, background: '#e5e7eb', borderRadius: 4, overflow: 'hidden' }}>
+                                                  <div style={{
+                                                    width: `${r.score_blend}%`,
+                                                    height: '100%',
+                                                    background: getScoreColor(r.score_blend),
+                                                    transition: 'width 0.3s'
+                                                  }} />
+                                                </div>
+                                                <span style={{ fontSize: 13, fontWeight: 600, color: getScoreColor(r.score_blend) }}>
+                                                  {r.score_blend}% {r.score_blend >= 70 ? 'High' : r.score_blend >= 50 ? 'Medium' : r.score_blend >= 30 ? 'Low' : 'Very Low'}
+                                                </span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    )}
+                                  </React.Fragment>
+                                )
+                              })}
+                            </React.Fragment>
+                          )}
+
+                          {buyPicks.length === 0 && sellPicks.length === 0 && (
+                            <tr>
+                              <td colSpan={6} style={{ padding: '12px 8px', fontSize: 13, color: '#64748b', textAlign: 'center' }}>
+                                No directional Buy/Sell picks are available for this mode right now.
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div style={{ padding: 16, textAlign: 'center', fontSize: 13, color: '#64748b' }}>
+                      No picks are available right now. Try again during market hours or switch your trading mode.
+                    </div>
+                  )}
+                </div>
+
+              </section>
+            )}
+
+            {/* Recent Developments - Hidden per UI cleanup. Will be available as Widget in Preferences */}
+            {false && !showPicks && (
+              <section style={{ padding: 16, border: '1px solid #e5e7eb', borderRadius: 8, background: '#fff' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <div style={{ fontWeight: 600 }}>Recent Developments</div>
+                  <div style={{ fontSize: 11, color: '#64748b' }}>{eventsAsOf ? `Updated ${formatIstTime(eventsAsOf)}` : ''}</div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
+                  {events.slice(0, 4).length ? events.slice(0, 4).map((n: any, idx: number) => (
                     <a
                       key={idx}
                       href={n.url || '#'}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{
-                        fontSize:12,
-                        lineHeight:1.3,
-                        textDecoration:'none',
-                        color:'inherit',
-                        cursor:n.url ? 'pointer' : 'default',
-                        padding:4,
-                        borderRadius:4,
-                        transition:'background 0.15s'
-                      }}
-                      onMouseEnter={e => { if (n.url) e.currentTarget.style.background = '#f9fafb' }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
+                      style={{ padding: 14, border: '1px solid #e5e7eb', borderRadius: 10, textDecoration: 'none', color: 'inherit', cursor: n.url ? 'pointer' : 'default', transition: 'all 0.2s', background: '#fff' }}
+                      onMouseEnter={e => { if (n.url) e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)'; e.currentTarget.style.borderColor = '#cbd5e1' }}
+                      onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = '#e5e7eb' }}
                     >
-                      <div style={{fontWeight:500}}>
-                        {n.title} {n.url && <span style={{fontSize:10, color:'#3b82f6'}}>↗</span>}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: String(n.source || '').toLowerCase().includes('nse') ? '#dcfce7' : '#dbeafe', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 600, color: String(n.source || '').toLowerCase().includes('nse') ? '#166534' : '#1e40af' }}>
+                          {String(n.source || 'N')[0]}
+                        </div>
+                        <div style={{ fontSize: 11, color: '#64748b' }}>{n.ts ? formatIstTime(n.ts) : ''}</div>
                       </div>
-                      <div style={{color:'#64748b', marginTop:2}}>
-                        <span style={{padding:'2px 6px', borderRadius:10, display:'inline-block', background:bg, color:fg}}>
-                          {src}
-                        </span>
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 6 }}>{n.title}</div>
+                        <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5, marginBottom: 8 }}>
+                          {String(n.summary || n.title).slice(0, 120)}{String(n.summary || n.title).length > 120 ? '...' : ''}
+                        </div>
+                        <div>
+                          {(() => {
+                            const src = String(n.source || '')
+                            const style: React.CSSProperties = { padding: '2px 6px', borderRadius: 10 }
+                            if (src.toLowerCase().includes('nse')) { style.background = '#e6f6ec'; style.color = '#166534' }
+                            else if (src.toLowerCase().includes('yahoo')) { style.background = '#eef2ff'; style.color = '#3730a3' }
+                            else if (src.toLowerCase().includes('alpha')) { style.background = '#fef3c7'; style.color = '#92400e' }
+                            else if (src.toLowerCase().includes('finnhub')) { style.background = '#f1f5f9'; style.color = '#0f172a' }
+                            else { style.background = '#e5e7eb'; style.color = '#111827' }
+                            return <span style={style}>{n.source}</span>
+                          })()}
+                        </div>
                       </div>
                     </a>
-                  )
-                })
-              })()}
-            </div>
-          </section>
-        </aside>
+                  )) : <div style={{ fontSize: 12, opacity: 0.7 }}>No events or announcements</div>}
+                </div>
+              </section>
+            )}
+          </div>
+        </div>
+
+        {/* Right rail: News & Top Picks Button */}
+        {!showPicks && !showPortfolio && !showWatchlist && (
+          <aside style={{ width: isMobile ? '100%' : 300, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <button
+              onClick={() => onFetchPicks()}
+              disabled={showPicks || loadingPicks}
+              style={{
+                padding: '8px 10px',
+                borderRadius: 8,
+                background: (showPicks || loadingPicks) ? '#6b7280' : 'linear-gradient(135deg, #0095FF 0%, #10C8A9 100%)',
+                color: '#fff',
+                border: '1px solid rgba(0,149,255,0.6)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                cursor: (showPicks || loadingPicks) ? 'not-allowed' : 'pointer',
+                opacity: (showPicks || loadingPicks) ? 0.7 : 1,
+                boxShadow: (showPicks || loadingPicks) ? 'none' : '0 4px 10px rgba(0,149,255,0.25)'
+              }}
+            >
+              <span>{loadingPicks ? '⏳ Loading...' : '★ Top Five Picks'}</span>
+              <span style={{ fontSize: 11, background: '#f1f5f9', color: '#0f172a', padding: '2px 6px', borderRadius: 999 }}>
+                {(() => {
+                  try {
+                    const freshnessMins = primaryMode === 'Scalping' ? 10 : 60
+                    const now = new Date()
+
+                    const formatIfFresh = (iso: string): string => {
+                      if (!iso) return ''
+                      const d = new Date(iso)
+                      if (Number.isNaN(d.getTime())) return ''
+                      const diffMs = now.getTime() - d.getTime()
+                      const diffMins = Math.floor(diffMs / 60000)
+                      if (diffMins < 0 || diffMins > freshnessMins) return ''
+                      if (!isWithinLastTradingSession(iso)) return ''
+                      return formatIstTime(d)
+                    }
+
+                    // Prefer live picks timestamp
+                    let label = ''
+                    if (picksAsOf) {
+                      label = formatIfFresh(picksAsOf)
+                    }
+
+                    // Fallback to cached picks if live label is empty
+                    if (!label) {
+                      const cachedRaw = localStorage.getItem('arise_picks') || 'null'
+                      const p = JSON.parse(cachedRaw)
+                      if (p?.as_of) {
+                        label = formatIfFresh(p.as_of)
+                      }
+                    }
+
+                    return label || ''
+                  } catch { }
+                  return ''
+                })()}
+              </span>
+            </button>
+            {
+              !isMobile &&
+              <News
+                news={news}
+                newsAsOf={newsAsOf}
+                newsExpanded={newsExpanded}
+                setNewsExpanded={setNewsExpanded}
+              />
+            }
+          </aside>
         )}
       </div>
 
       {/* Compact Trading Strategy Modal - Fits on One Page */}
       {analyze && (
-        <div style={{position:'fixed', inset:0, background:'rgba(0,0,0,0.35)', display:'flex', alignItems:'center', justifyContent:'center', padding:20, zIndex:1000}} onClick={()=>setAnalyze(null)}>
-          <div style={{width:'min(900px, 90vw)', maxHeight:'90vh', overflowY:'auto', background:'#fff', borderRadius:12, padding:16, boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}} onClick={e=>e.stopPropagation()}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, zIndex: 1000 }} onClick={() => setAnalyze(null)}>
+          <div style={{ width: 'min(900px, 90vw)', maxHeight: '90vh', overflowY: 'auto', background: '#fff', borderRadius: 12, padding: 16, boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }} onClick={e => e.stopPropagation()}>
             {/* Compact Header */}
-            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10, paddingBottom:8, borderBottom:'2px solid #e5e7eb'}}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, paddingBottom: 8, borderBottom: '2px solid #e5e7eb' }}>
               <div>
-                <div style={{display:'flex', alignItems:'center', gap:8}}>
-                  <span style={{fontSize:24}}>⚡</span>
-                  <div style={{fontWeight:700, fontSize:20, color:'#0f172a'}}>Trading Strategy: {analyze.symbol}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 24 }}>⚡</span>
+                  <div style={{ fontWeight: 700, fontSize: 20, color: '#0f172a' }}>Trading Strategy: {analyze.symbol}</div>
                 </div>
               </div>
-              <button onClick={()=>setAnalyze(null)} style={{border:'none', background:'transparent', fontSize:24, cursor:'pointer', color:'#64748b'}}>&times;</button>
+              <button onClick={() => setAnalyze(null)} style={{ border: 'none', background: 'transparent', fontSize: 24, cursor: 'pointer', color: '#64748b' }}>&times;</button>
             </div>
-            
+
             {analyze.plan ? (
               <TradeStrategyPanel
                 symbol={analyze.symbol}
@@ -4663,8 +4574,8 @@ export default function App(){
                 sessionId={sessionId}
               />
             ) : (
-              <div style={{fontSize:13, color:'#64748b', padding:30, textAlign:'center'}}>
-                <div style={{fontSize:40, marginBottom:12}}>⏳</div>
+              <div style={{ fontSize: 13, color: '#64748b', padding: 30, textAlign: 'center' }}>
+                <div style={{ fontSize: 40, marginBottom: 12 }}>⏳</div>
                 <div>Generating strategy...</div>
               </div>
             )}
@@ -4676,45 +4587,45 @@ export default function App(){
       {showRlMetrics && (
         <div
           style={{
-            position:'fixed',
-            inset:0,
-            background:'rgba(0,0,0,0.35)',
-            display:'flex',
-            alignItems:'center',
-            justifyContent:'center',
-            padding:20,
-            zIndex:1001,
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.35)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 20,
+            zIndex: 1001,
           }}
-          onClick={()=>setShowRlMetrics(false)}
+          onClick={() => setShowRlMetrics(false)}
         >
           <div
             style={{
-              width:'min(900px, 90vw)',
-              maxHeight:'90vh',
-              overflowY:'auto',
-              background:'linear-gradient(135deg, #eef2ff 0%, #ecfeff 100%)',
-              borderRadius:16,
-              border:'2px solid #4f46e5',
-              padding:24,
+              width: 'min(900px, 90vw)',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              background: 'linear-gradient(135deg, #eef2ff 0%, #ecfeff 100%)',
+              borderRadius: 16,
+              border: '2px solid #4f46e5',
+              padding: 24,
             }}
-            onClick={e=>e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
-            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16}}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div>
-                <div style={{display:'flex', alignItems:'center', gap:10, marginBottom:4}}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
                   <SquareActivity size={24} color="#4f46e5" />
-                  <div style={{fontWeight:700, fontSize:22, color:'#1e293b'}}>RL Exit Profiles & Bandit Metrics</div>
+                  <div style={{ fontWeight: 700, fontSize: 22, color: '#1e293b' }}>RL Exit Profiles & Bandit Metrics</div>
                 </div>
-                <div style={{fontSize:13, color:'#475569'}}>Monitor how the RL loop is learning per mode: trades, returns, drawdowns, win rate, and best profiles.</div>
+                <div style={{ fontSize: 13, color: '#475569' }}>Monitor how the RL loop is learning per mode: trades, returns, drawdowns, win rate, and best profiles.</div>
               </div>
               <button
-                onClick={()=>setShowRlMetrics(false)}
+                onClick={() => setShowRlMetrics(false)}
                 style={{
-                  border:'none',
-                  background:'transparent',
-                  fontSize:28,
-                  cursor:'pointer',
-                  color:'#4b5563',
+                  border: 'none',
+                  background: 'transparent',
+                  fontSize: 28,
+                  cursor: 'pointer',
+                  color: '#4b5563',
                 }}
               >
                 &times;
@@ -4722,57 +4633,57 @@ export default function App(){
             </div>
 
             {loadingRlMetrics && (
-              <div style={{padding:16, textAlign:'center', color:'#1e293b', fontSize:14}}>Loading RL metrics...</div>
+              <div style={{ padding: 16, textAlign: 'center', color: '#1e293b', fontSize: 14 }}>Loading RL metrics...</div>
             )}
 
             {!loadingRlMetrics && rlMetricsError && (
-              <div style={{padding:12, marginBottom:12, borderRadius:8, background:'#fef2f2', border:'1px solid #fecaca', color:'#b91c1c', fontSize:13}}>
+              <div style={{ padding: 12, marginBottom: 12, borderRadius: 8, background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', fontSize: 13 }}>
                 {rlMetricsError}
               </div>
             )}
 
             {!loadingRlMetrics && !rlMetricsError && (!rlMetricsData || !rlMetricsData.policy) && (
-              <div style={{padding:16, fontSize:14, color:'#1e293b'}}>
+              <div style={{ padding: 16, fontSize: 14, color: '#1e293b' }}>
                 No ACTIVE RL policy or metrics found yet. The nightly RL job will populate metrics after it runs for a few sessions.
               </div>
             )}
 
             {!loadingRlMetrics && !rlMetricsError && rlMetricsData && rlMetricsData.policy && (
-              <div style={{display:'flex', flexDirection:'column', gap:16}}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {/* Daily performance summary */}
                 {Array.isArray(rlDailyData) && rlDailyData.length > 0 && (
-                  <div style={{padding:12, borderRadius:10, background:'#f9fafb', border:'1px solid #e5e7eb'}}>
-                    <div style={{fontWeight:600, fontSize:14, color:'#111827', marginBottom:6}}>
+                  <div style={{ padding: 12, borderRadius: 10, background: '#f9fafb', border: '1px solid #e5e7eb' }}>
+                    <div style={{ fontWeight: 600, fontSize: 14, color: '#111827', marginBottom: 6 }}>
                       Recent Daily Performance (per mode)
                     </div>
-                    <div style={{fontSize:11, color:'#6b7280', marginBottom:8}}>
+                    <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 8 }}>
                       One row per trade date × mode. Alpha is avg return %, drawdown is avg max drawdown %.
                     </div>
-                    <div style={{overflowX:'auto'}}>
-                      <table style={{width:'100%', borderCollapse:'collapse', fontSize:11}}>
+                    <div style={{ overflowX: 'auto' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
                         <thead>
-                          <tr style={{background:'#e5e7eb'}}>
-                            <th style={{textAlign:'left', padding:'6px 8px', borderBottom:'1px solid #d1d5db'}}>Date</th>
-                            <th style={{textAlign:'left', padding:'6px 8px', borderBottom:'1px solid #d1d5db'}}>Mode</th>
-                            <th style={{textAlign:'right', padding:'6px 8px', borderBottom:'1px solid #d1d5db'}}>Trades</th>
-                            <th style={{textAlign:'right', padding:'6px 8px', borderBottom:'1px solid #d1d5db'}}>Alpha %</th>
-                            <th style={{textAlign:'right', padding:'6px 8px', borderBottom:'1px solid #d1d5db'}}>Drawdown %</th>
-                            <th style={{textAlign:'right', padding:'6px 8px', borderBottom:'1px solid #d1d5db'}}>Win Rate %</th>
-                            <th style={{textAlign:'right', padding:'6px 8px', borderBottom:'1px solid #d1d5db'}}>Hit Target %</th>
-                            <th style={{textAlign:'right', padding:'6px 8px', borderBottom:'1px solid #d1d5db'}}>Hit Stop %</th>
+                          <tr style={{ background: '#e5e7eb' }}>
+                            <th style={{ textAlign: 'left', padding: '6px 8px', borderBottom: '1px solid #d1d5db' }}>Date</th>
+                            <th style={{ textAlign: 'left', padding: '6px 8px', borderBottom: '1px solid #d1d5db' }}>Mode</th>
+                            <th style={{ textAlign: 'right', padding: '6px 8px', borderBottom: '1px solid #d1d5db' }}>Trades</th>
+                            <th style={{ textAlign: 'right', padding: '6px 8px', borderBottom: '1px solid #d1d5db' }}>Alpha %</th>
+                            <th style={{ textAlign: 'right', padding: '6px 8px', borderBottom: '1px solid #d1d5db' }}>Drawdown %</th>
+                            <th style={{ textAlign: 'right', padding: '6px 8px', borderBottom: '1px solid #d1d5db' }}>Win Rate %</th>
+                            <th style={{ textAlign: 'right', padding: '6px 8px', borderBottom: '1px solid #d1d5db' }}>Hit Target %</th>
+                            <th style={{ textAlign: 'right', padding: '6px 8px', borderBottom: '1px solid #d1d5db' }}>Hit Stop %</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {rlDailyData!.map((d:any, idx:number) => (
-                            <tr key={idx} style={{background: idx % 2 === 0 ? '#ffffff' : '#f9fafb'}}>
-                              <td style={{padding:'6px 8px', borderBottom:'1px solid #e5e7eb'}}>{d.date}</td>
-                              <td style={{padding:'6px 8px', borderBottom:'1px solid #e5e7eb'}}>{d.mode}</td>
-                              <td style={{padding:'6px 8px', borderBottom:'1px solid #e5e7eb', textAlign:'right'}}>{d.trades}</td>
-                              <td style={{padding:'6px 8px', borderBottom:'1px solid #e5e7eb', textAlign:'right'}}>{d.avg_ret_close_pct.toFixed(2)}</td>
-                              <td style={{padding:'6px 8px', borderBottom:'1px solid #e5e7eb', textAlign:'right'}}>{d.avg_max_drawdown_pct.toFixed(2)}</td>
-                              <td style={{padding:'6px 8px', borderBottom:'1px solid #e5e7eb', textAlign:'right'}}>{d.win_rate.toFixed(1)}</td>
-                              <td style={{padding:'6px 8px', borderBottom:'1px solid #e5e7eb', textAlign:'right'}}>{d.hit_target_rate.toFixed(1)}</td>
-                              <td style={{padding:'6px 8px', borderBottom:'1px solid #e5e7eb', textAlign:'right'}}>{d.hit_stop_rate.toFixed(1)}</td>
+                          {rlDailyData!.map((d: any, idx: number) => (
+                            <tr key={idx} style={{ background: idx % 2 === 0 ? '#ffffff' : '#f9fafb' }}>
+                              <td style={{ padding: '6px 8px', borderBottom: '1px solid #e5e7eb' }}>{d.date}</td>
+                              <td style={{ padding: '6px 8px', borderBottom: '1px solid #e5e7eb' }}>{d.mode}</td>
+                              <td style={{ padding: '6px 8px', borderBottom: '1px solid #e5e7eb', textAlign: 'right' }}>{d.trades}</td>
+                              <td style={{ padding: '6px 8px', borderBottom: '1px solid #e5e7eb', textAlign: 'right' }}>{d.avg_ret_close_pct.toFixed(2)}</td>
+                              <td style={{ padding: '6px 8px', borderBottom: '1px solid #e5e7eb', textAlign: 'right' }}>{d.avg_max_drawdown_pct.toFixed(2)}</td>
+                              <td style={{ padding: '6px 8px', borderBottom: '1px solid #e5e7eb', textAlign: 'right' }}>{d.win_rate.toFixed(1)}</td>
+                              <td style={{ padding: '6px 8px', borderBottom: '1px solid #e5e7eb', textAlign: 'right' }}>{d.hit_target_rate.toFixed(1)}</td>
+                              <td style={{ padding: '6px 8px', borderBottom: '1px solid #e5e7eb', textAlign: 'right' }}>{d.hit_stop_rate.toFixed(1)}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -4782,11 +4693,11 @@ export default function App(){
                 )}
 
                 {/* Policy summary */}
-                <div style={{padding:12, borderRadius:10, background:'#e0f2fe', border:'1px solid #bae6fd'}}>
-                  <div style={{fontSize:14, color:'#0f172a'}}>
+                <div style={{ padding: 12, borderRadius: 10, background: '#e0f2fe', border: '1px solid #bae6fd' }}>
+                  <div style={{ fontSize: 14, color: '#0f172a' }}>
                     <strong>Active Policy:</strong> {rlMetricsData.policy.name} ({rlMetricsData.policy.policy_id})
                   </div>
-                  <div style={{fontSize:12, color:'#475569', marginTop:4}}>
+                  <div style={{ fontSize: 12, color: '#475569', marginTop: 4 }}>
                     Status: <strong>{rlMetricsData.policy.status}</strong>
                     {rlMetricsData.policy.activated_at && (
                       <>
@@ -4798,19 +4709,19 @@ export default function App(){
 
                 {/* Per-mode exit profile metrics */}
                 {Array.isArray(rlMetricsData.modes) && rlMetricsData.modes.length === 0 && (
-                  <div style={{padding:16, fontSize:14, color:'#1e293b'}}>
+                  <div style={{ padding: 16, fontSize: 14, color: '#1e293b' }}>
                     Policy is active but no exit profile metrics have been recorded yet. Once nightly RL runs with enough data, modes will appear here.
                   </div>
                 )}
 
                 {Array.isArray(rlMetricsData.modes) && rlMetricsData.modes.map((m: any) => (
-                  <div key={m.mode} style={{borderRadius:12, border:'1px solid #c7d2fe', background:'#eff6ff', padding:14}}>
-                    <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8}}>
+                  <div key={m.mode} style={{ borderRadius: 12, border: '1px solid #c7d2fe', background: '#eff6ff', padding: 14 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                       <div>
-                        <div style={{fontWeight:600, fontSize:15, color:'#1e293b'}}>
+                        <div style={{ fontWeight: 600, fontSize: 15, color: '#1e293b' }}>
                           Mode: {m.mode}
                         </div>
-                        <div style={{fontSize:12, color:'#475569', marginTop:2}}>
+                        <div style={{ fontSize: 12, color: '#475569', marginTop: 2 }}>
                           {m.sample && m.sample.start_date && m.sample.end_date ? (
                             <>
                               Sample window: <strong>{m.sample.start_date}</strong> → <strong>{m.sample.end_date}</strong>
@@ -4828,43 +4739,43 @@ export default function App(){
                           )}
                         </div>
                       </div>
-                      <div style={{fontSize:12, color:'#4b5563', textAlign:'right'}}>
+                      <div style={{ fontSize: 12, color: '#4b5563', textAlign: 'right' }}>
                         <div><strong>Bandit contexts:</strong> {m.bandit?.contexts ?? 0}</div>
                         <div><strong>Bandit actions:</strong> {m.bandit?.actions ?? 0}</div>
                       </div>
                     </div>
 
                     {Array.isArray(m.profiles) && m.profiles.length > 0 ? (
-                      <div style={{overflowX:'auto', marginTop:8}}>
-                        <table style={{width:'100%', borderCollapse:'collapse', fontSize:12}}>
+                      <div style={{ overflowX: 'auto', marginTop: 8 }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
                           <thead>
-                            <tr style={{background:'#dbeafe'}}>
-                              <th style={{textAlign:'left', padding:'6px 8px', borderBottom:'1px solid #bfdbfe'}}>Profile</th>
-                              <th style={{textAlign:'right', padding:'6px 8px', borderBottom:'1px solid #bfdbfe'}}>Trades</th>
-                              <th style={{textAlign:'right', padding:'6px 8px', borderBottom:'1px solid #bfdbfe'}}>Avg Return %</th>
-                              <th style={{textAlign:'right', padding:'6px 8px', borderBottom:'1px solid #bfdbfe'}}>Max Drawdown %</th>
-                              <th style={{textAlign:'right', padding:'6px 8px', borderBottom:'1px solid #bfdbfe'}}>Win Rate %</th>
-                              <th style={{textAlign:'right', padding:'6px 8px', borderBottom:'1px solid #bfdbfe'}}>Hit Target %</th>
-                              <th style={{textAlign:'right', padding:'6px 8px', borderBottom:'1px solid #bfdbfe'}}>Hit Stop %</th>
-                              <th style={{textAlign:'right', padding:'6px 8px', borderBottom:'1px solid #bfdbfe'}}>Score</th>
+                            <tr style={{ background: '#dbeafe' }}>
+                              <th style={{ textAlign: 'left', padding: '6px 8px', borderBottom: '1px solid #bfdbfe' }}>Profile</th>
+                              <th style={{ textAlign: 'right', padding: '6px 8px', borderBottom: '1px solid #bfdbfe' }}>Trades</th>
+                              <th style={{ textAlign: 'right', padding: '6px 8px', borderBottom: '1px solid #bfdbfe' }}>Avg Return %</th>
+                              <th style={{ textAlign: 'right', padding: '6px 8px', borderBottom: '1px solid #bfdbfe' }}>Max Drawdown %</th>
+                              <th style={{ textAlign: 'right', padding: '6px 8px', borderBottom: '1px solid #bfdbfe' }}>Win Rate %</th>
+                              <th style={{ textAlign: 'right', padding: '6px 8px', borderBottom: '1px solid #bfdbfe' }}>Hit Target %</th>
+                              <th style={{ textAlign: 'right', padding: '6px 8px', borderBottom: '1px solid #bfdbfe' }}>Hit Stop %</th>
+                              <th style={{ textAlign: 'right', padding: '6px 8px', borderBottom: '1px solid #bfdbfe' }}>Score</th>
                             </tr>
                           </thead>
                           <tbody>
                             {m.profiles.map((p: any) => {
                               const isBest = !!p.is_best
                               return (
-                                <tr key={p.id} style={{background: isBest ? '#fef9c3' : 'transparent'}}>
-                                  <td style={{padding:'6px 8px', borderBottom:'1px solid #e5e7eb', fontWeight: isBest ? 600 : 400}}>
+                                <tr key={p.id} style={{ background: isBest ? '#fef9c3' : 'transparent' }}>
+                                  <td style={{ padding: '6px 8px', borderBottom: '1px solid #e5e7eb', fontWeight: isBest ? 600 : 400 }}>
                                     {p.id}
-                                    {isBest && <span style={{marginLeft:6, fontSize:11, color:'#92400e'}}>BEST</span>}
+                                    {isBest && <span style={{ marginLeft: 6, fontSize: 11, color: '#92400e' }}>BEST</span>}
                                   </td>
-                                  <td style={{padding:'6px 8px', borderBottom:'1px solid #e5e7eb', textAlign:'right'}}>{p.trades}</td>
-                                  <td style={{padding:'6px 8px', borderBottom:'1px solid #e5e7eb', textAlign:'right'}}>{p.avg_ret_close_pct.toFixed(2)}</td>
-                                  <td style={{padding:'6px 8px', borderBottom:'1px solid #e5e7eb', textAlign:'right'}}>{p.avg_max_drawdown_pct.toFixed(2)}</td>
-                                  <td style={{padding:'6px 8px', borderBottom:'1px solid #e5e7eb', textAlign:'right'}}>{p.win_rate.toFixed(1)}</td>
-                                  <td style={{padding:'6px 8px', borderBottom:'1px solid #e5e7eb', textAlign:'right'}}>{p.hit_target_rate.toFixed(1)}</td>
-                                  <td style={{padding:'6px 8px', borderBottom:'1px solid #e5e7eb', textAlign:'right'}}>{p.hit_stop_rate.toFixed(1)}</td>
-                                  <td style={{padding:'6px 8px', borderBottom:'1px solid #e5e7eb', textAlign:'right'}}>{p.score.toFixed(2)}</td>
+                                  <td style={{ padding: '6px 8px', borderBottom: '1px solid #e5e7eb', textAlign: 'right' }}>{p.trades}</td>
+                                  <td style={{ padding: '6px 8px', borderBottom: '1px solid #e5e7eb', textAlign: 'right' }}>{p.avg_ret_close_pct.toFixed(2)}</td>
+                                  <td style={{ padding: '6px 8px', borderBottom: '1px solid #e5e7eb', textAlign: 'right' }}>{p.avg_max_drawdown_pct.toFixed(2)}</td>
+                                  <td style={{ padding: '6px 8px', borderBottom: '1px solid #e5e7eb', textAlign: 'right' }}>{p.win_rate.toFixed(1)}</td>
+                                  <td style={{ padding: '6px 8px', borderBottom: '1px solid #e5e7eb', textAlign: 'right' }}>{p.hit_target_rate.toFixed(1)}</td>
+                                  <td style={{ padding: '6px 8px', borderBottom: '1px solid #e5e7eb', textAlign: 'right' }}>{p.hit_stop_rate.toFixed(1)}</td>
+                                  <td style={{ padding: '6px 8px', borderBottom: '1px solid #e5e7eb', textAlign: 'right' }}>{p.score.toFixed(2)}</td>
                                 </tr>
                               )
                             })}
@@ -4872,7 +4783,7 @@ export default function App(){
                         </table>
                       </div>
                     ) : (
-                      <div style={{marginTop:8, fontSize:12, color:'#6b7280'}}>
+                      <div style={{ marginTop: 8, fontSize: 12, color: '#6b7280' }}>
                         No exit profile metrics recorded yet for this mode.
                       </div>
                     )}
@@ -4906,7 +4817,7 @@ export default function App(){
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
-              try { (e as any).nativeEvent?.stopImmediatePropagation?.() } catch {}
+              try { (e as any).nativeEvent?.stopImmediatePropagation?.() } catch { }
               setShowWinningTrades(false)
             }}
             style={{
@@ -5135,8 +5046,8 @@ export default function App(){
                       mode === 'All'
                         ? null
                         : (availableModes || DEFAULT_AVAILABLE_MODES).find(
-                            (m) => String(m.value).toLowerCase() === mode.toLowerCase(),
-                          )
+                          (m) => String(m.value).toLowerCase() === mode.toLowerCase(),
+                        )
 
                     const tooltip =
                       mode === 'All'
@@ -5250,11 +5161,11 @@ export default function App(){
                 const avgReturn =
                   filteredRecs.length > 0
                     ? (
-                        filteredRecs.reduce(
-                          (sum: number, r: any) => sum + r.return_pct,
-                          0,
-                        ) / filteredRecs.length
-                      ).toFixed(2)
+                      filteredRecs.reduce(
+                        (sum: number, r: any) => sum + r.return_pct,
+                        0,
+                      ) / filteredRecs.length
+                    ).toFixed(2)
                     : '0.00'
 
                 // Choose benchmark: per-day when a specific date is selected, else window-level benchmark_return
@@ -5635,12 +5546,12 @@ export default function App(){
                       const statusColor = statusRaw.includes('TP') || statusRaw.includes('TARGET')
                         ? '#16a34a'
                         : statusRaw.includes('STOP')
-                        ? '#ef4444'
-                        : statusRaw.includes('CLOSED')
-                        ? '#64748b'
-                        : statusRaw.includes('CONTEXT')
-                        ? '#f97316'
-                        : '#3b82f6'
+                          ? '#ef4444'
+                          : statusRaw.includes('CLOSED')
+                            ? '#64748b'
+                            : statusRaw.includes('CONTEXT')
+                              ? '#f97316'
+                              : '#3b82f6'
 
                       const daysHeld = (() => {
                         try {
@@ -5877,8 +5788,7 @@ export default function App(){
                                     }
                                     if (newsHeadlineCount != null) {
                                       parts.push(
-                                        `${newsHeadlineCount} news item${
-                                          newsHeadlineCount === 1 ? '' : 's'
+                                        `${newsHeadlineCount} news item${newsHeadlineCount === 1 ? '' : 's'
                                         }`,
                                       )
                                     }
@@ -6158,15 +6068,15 @@ export default function App(){
                             {(() => {
                               const baseRet =
                                 typeof row.return_pct === 'number' &&
-                                Number.isFinite(row.return_pct)
+                                  Number.isFinite(row.return_pct)
                                   ? row.return_pct
                                   : 0
                               const baseColor =
                                 baseRet > 0
                                   ? '#16a34a'
                                   : baseRet < 0
-                                  ? '#ef4444'
-                                  : '#64748b'
+                                    ? '#ef4444'
+                                    : '#64748b'
 
                               return (
                                 <span
@@ -6672,35 +6582,35 @@ export default function App(){
 
       {/* Trading Preferences Modal */}
       {prefsOpen && (
-        <div style={{position:'fixed', inset:0, background:'rgba(0,0,0,0.4)', display:'flex', alignItems:'center', justifyContent:'center', padding:20, zIndex:1000}} onClick={()=>setPrefsOpen(false)}>
-          <div style={{width:'min(600px, 90vw)', maxHeight:'90vh', overflowY:'auto', background:'#fff', borderRadius:16, padding:28, boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}} onClick={e=>e.stopPropagation()}>
-            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24}}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, zIndex: 1000 }} onClick={() => setPrefsOpen(false)}>
+          <div style={{ width: 'min(600px, 90vw)', maxHeight: '90vh', overflowY: 'auto', background: '#fff', borderRadius: 16, padding: 28, boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
               <div>
-                <div style={{fontWeight:700, fontSize:22, color:'#1e293b', marginBottom:4}}>⚙️ Trading Preferences</div>
-                <div style={{fontSize:13, color:'#64748b'}}>Customize your trading strategy and risk profile</div>
+                <div style={{ fontWeight: 700, fontSize: 22, color: '#1e293b', marginBottom: 4 }}>⚙️ Trading Preferences</div>
+                <div style={{ fontSize: 13, color: '#64748b' }}>Customize your trading strategy and risk profile</div>
               </div>
-              <button onClick={()=>setPrefsOpen(false)} style={{border:'none', background:'transparent', fontSize:28, cursor:'pointer', color:'#64748b'}}>&times;</button>
+              <button onClick={() => setPrefsOpen(false)} style={{ border: 'none', background: 'transparent', fontSize: 28, cursor: 'pointer', color: '#64748b' }}>&times;</button>
             </div>
 
             {/* Risk Profile */}
-            <div style={{marginBottom:28}}>
-              <div style={{fontSize:14, fontWeight:600, color:'#1e293b', marginBottom:12}}>Risk Profile</div>
-              <div style={{display:'flex', gap:12}}>
+            <div style={{ marginBottom: 28 }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: '#1e293b', marginBottom: 12 }}>Risk Profile</div>
+              <div style={{ display: 'flex', gap: 12 }}>
                 {(['Conservative', 'Moderate', 'Aggressive'] as const).map(r => (
                   <button
                     key={r}
-                    onClick={()=>{setRisk(r); try{localStorage.setItem('arise_risk', r)}catch{}}}
+                    onClick={() => { setRisk(r); try { localStorage.setItem('arise_risk', r) } catch { } }}
                     style={{
-                      flex:1,
-                      padding:'12px',
-                      borderRadius:10,
-                      border: risk===r ? '2px solid #3b82f6' : '1px solid #e5e7eb',
-                      background: risk===r ? '#eff6ff' : '#fff',
-                      cursor:'pointer',
-                      fontSize:13,
-                      fontWeight:600,
-                      color: risk===r ? '#1e40af' : '#64748b',
-                      transition:'all 0.2s'
+                      flex: 1,
+                      padding: '12px',
+                      borderRadius: 10,
+                      border: risk === r ? '2px solid #3b82f6' : '1px solid #e5e7eb',
+                      background: risk === r ? '#eff6ff' : '#fff',
+                      cursor: 'pointer',
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: risk === r ? '#1e40af' : '#64748b',
+                      transition: 'all 0.2s'
                     }}
                   >
                     {r}
@@ -6710,104 +6620,104 @@ export default function App(){
             </div>
 
             {/* Primary Trading Mode */}
-            <div style={{marginBottom:28}}>
-              <div style={{fontSize:14, fontWeight:600, color:'#1e293b', marginBottom:8}}>
-                Primary Trading Mode <span style={{fontSize:11, fontWeight:400, color:'#ef4444'}}>*Required</span>
+            <div style={{ marginBottom: 28 }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: '#1e293b', marginBottom: 8 }}>
+                Primary Trading Mode <span style={{ fontSize: 11, fontWeight: 400, color: '#ef4444' }}>*Required</span>
               </div>
-              <div style={{fontSize:12, color:'#64748b', marginBottom:12}}>
+              <div style={{ fontSize: 12, color: '#64748b', marginBottom: 12 }}>
                 Select ONE primary mode for focused strategy generation. This determines your trade horizon and targets.
               </div>
-              <div style={{display:'flex', flexDirection:'column', gap:10}}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {availableModes
                   .filter(mode => mode.value !== 'Commodity')
                   .map(mode => (
-                  <label key={mode.value} style={{
-                    display:'flex',
-                    alignItems:'start',
-                    padding:12,
-                    border: primaryMode===mode.value ? '2px solid #3b82f6' : '1px solid #e5e7eb',
-                    borderRadius:10,
-                    background: primaryMode===mode.value ? '#eff6ff' : '#f9fafb',
-                    cursor:'pointer',
-                    transition:'all 0.2s'
-                  }}>
-                    <input
-                      type="radio"
-                      name="primary_mode"
-                      value={mode.value}
-                      checked={primaryMode === mode.value}
-                      onChange={(e) => {
-                        setPrimaryMode(e.target.value)
-                        // Remove from auxiliary if was there
-                        setAuxiliaryModes(aux => aux.filter(m => m !== e.target.value))
-                        try{localStorage.setItem('arise_primary_mode', e.target.value)}catch{}
-                      }}
-                      style={{marginTop:2, marginRight:10}}
-                    />
-                    <div style={{flex:1}}>
-                      <div style={{display:'flex', alignItems:'center', gap:6, marginBottom:4}}>
-                        <span style={{fontSize:18}}>{mode.icon}</span>
-                        <span style={{fontWeight:600, fontSize:14, color:'#1e293b'}}>{mode.display_name}</span>
-                        <span style={{fontSize:11, color:'#64748b'}}>({mode.horizon})</span>
+                    <label key={mode.value} style={{
+                      display: 'flex',
+                      alignItems: 'start',
+                      padding: 12,
+                      border: primaryMode === mode.value ? '2px solid #3b82f6' : '1px solid #e5e7eb',
+                      borderRadius: 10,
+                      background: primaryMode === mode.value ? '#eff6ff' : '#f9fafb',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}>
+                      <input
+                        type="radio"
+                        name="primary_mode"
+                        value={mode.value}
+                        checked={primaryMode === mode.value}
+                        onChange={(e) => {
+                          setPrimaryMode(e.target.value)
+                          // Remove from auxiliary if was there
+                          setAuxiliaryModes(aux => aux.filter(m => m !== e.target.value))
+                          try { localStorage.setItem('arise_primary_mode', e.target.value) } catch { }
+                        }}
+                        style={{ marginTop: 2, marginRight: 10 }}
+                      />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                          <span style={{ fontSize: 18 }}>{mode.icon}</span>
+                          <span style={{ fontWeight: 600, fontSize: 14, color: '#1e293b' }}>{mode.display_name}</span>
+                          <span style={{ fontSize: 11, color: '#64748b' }}>({mode.horizon})</span>
+                        </div>
+                        <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5 }}>{mode.description}</div>
                       </div>
-                      <div style={{fontSize:12, color:'#64748b', lineHeight:1.5}}>{mode.description}</div>
-                    </div>
-                  </label>
-                ))}
+                    </label>
+                  ))}
               </div>
             </div>
 
             {/* Auxiliary Modes */}
-            <div style={{marginBottom:28}}>
-              <div style={{fontSize:14, fontWeight:600, color:'#1e293b', marginBottom:8}}>
-                Auxiliary Modes <span style={{fontSize:11, fontWeight:400, color:'#64748b'}}>Optional (max 2)</span>
+            <div style={{ marginBottom: 28 }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: '#1e293b', marginBottom: 8 }}>
+                Auxiliary Modes <span style={{ fontSize: 11, fontWeight: 400, color: '#64748b' }}>Optional (max 2)</span>
               </div>
-              <div style={{fontSize:12, color:'#64748b', marginBottom:12}}>
+              <div style={{ fontSize: 12, color: '#64748b', marginBottom: 12 }}>
                 Add slight influence from other trading styles to fine-tune agent weights.
               </div>
-              <div style={{display:'flex', flexDirection:'column', gap:8}}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {availableModes
                   .filter(mode => mode.value !== primaryMode && mode.value !== 'Commodity')
                   .map(mode => (
                     <label key={mode.value} style={{
-                      display:'flex',
-                      alignItems:'center',
-                      padding:10,
-                      border:'1px solid #e5e7eb',
-                      borderRadius:8,
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: 10,
+                      border: '1px solid #e5e7eb',
+                      borderRadius: 8,
                       background: auxiliaryModes.includes(mode.value) ? '#f0fdf4' : '#f9fafb',
                       opacity: auxiliaryModes.length >= 2 && !auxiliaryModes.includes(mode.value) ? 0.5 : 1,
                       cursor: auxiliaryModes.length >= 2 && !auxiliaryModes.includes(mode.value) ? 'not-allowed' : 'pointer',
-                      transition:'all 0.2s'
+                      transition: 'all 0.2s'
                     }}>
                       <input
                         type="checkbox"
                         checked={auxiliaryModes.includes(mode.value)}
                         disabled={auxiliaryModes.length >= 2 && !auxiliaryModes.includes(mode.value)}
                         onChange={(e) => {
-                          const updated = e.target.checked ? 
-                            [...auxiliaryModes, mode.value] : 
+                          const updated = e.target.checked ?
+                            [...auxiliaryModes, mode.value] :
                             auxiliaryModes.filter(m => m !== mode.value)
                           setAuxiliaryModes(updated)
-                          try{localStorage.setItem('arise_auxiliary_modes', JSON.stringify(updated))}catch{}
+                          try { localStorage.setItem('arise_auxiliary_modes', JSON.stringify(updated)) } catch { }
                         }}
-                        style={{marginRight:10}}
+                        style={{ marginRight: 10 }}
                       />
-                      <span style={{fontSize:16, marginRight:8}}>{mode.icon}</span>
-                      <span style={{fontSize:13, fontWeight:500, color:'#1e293b'}}>{mode.display_name}</span>
+                      <span style={{ fontSize: 16, marginRight: 8 }}>{mode.icon}</span>
+                      <span style={{ fontSize: 13, fontWeight: 500, color: '#1e293b' }}>{mode.display_name}</span>
                     </label>
                   ))
                 }
               </div>
               {auxiliaryModes.length >= 2 && (
                 <div style={{
-                  marginTop:10,
-                  padding:'8px 12px',
-                  background:'#fef3c7',
-                  border:'1px solid #fcd34d',
-                  borderRadius:6,
-                  fontSize:11,
-                  color:'#92400e'
+                  marginTop: 10,
+                  padding: '8px 12px',
+                  background: '#fef3c7',
+                  border: '1px solid #fcd34d',
+                  borderRadius: 6,
+                  fontSize: 11,
+                  color: '#92400e'
                 }}>
                   ⚠️ Maximum 2 auxiliary modes. Uncheck one to add another.
                 </div>
@@ -6815,9 +6725,9 @@ export default function App(){
             </div>
 
             {/* Save Button */}
-            <div style={{display:'flex', gap:12}}>
+            <div style={{ display: 'flex', gap: 12 }}>
               <button
-                onClick={async ()=>{
+                onClick={async () => {
                   try {
                     // Sync with backend
                     await updateMemory({
@@ -6839,15 +6749,15 @@ export default function App(){
                   }
                 }}
                 style={{
-                  flex:1,
-                  padding:'10px 20px',
-                  borderRadius:10,
-                  background:'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                  color:'#fff',
-                  fontSize:14,
-                  fontWeight:600,
-                  cursor:'pointer',
-                  boxShadow:'0 4px 12px rgba(59, 130, 246, 0.3)'
+                  flex: 1,
+                  padding: '10px 20px',
+                  borderRadius: 10,
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                  color: '#fff',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
                 }}
               >
                 ✓ Save Preferences
@@ -6876,62 +6786,63 @@ export default function App(){
             const maxY = vh - margin
             y = Math.min(Math.max(y, minY), maxY)
           }
-        } catch {}
+        } catch { }
 
         const isChart = tip.type === 'chart'
         const isScore = tip.type === 'score'
         const isMode = tip.type === 'mode'
 
         return (
-        <div style={{
-          position:'fixed',
-          left:x,
-          top:y,
-          transform:'translate(-50%, -100%)',
-          background: isChart
-            ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-            : isScore
-            ? 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
-            : isMode
-            ? '#0f172a'
-            : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-          color: isMode ? '#e5e7eb' : '#fff',
-          padding: isMode ? '10px 14px' : '8px 14px',
-          borderRadius:8,
-          fontSize: isMode ? 11 : 12,
-          fontWeight:600,
-          whiteSpace: isMode ? 'normal' : 'nowrap',
-          maxWidth: isMode ? 260 : undefined,
-          lineHeight: isMode ? 1.4 : 1.2,
-          pointerEvents:'none',
-          zIndex:9999,
-          boxShadow:'0 8px 20px rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.15)',
-          border:'2px solid rgba(255,255,255,0.3)',
-          backdropFilter:'blur(8px)',
-          animation:'tooltipFadeIn 0.2s ease-out'
-        }}>
-          {tip.text}
-          {/* Tooltip Arrow */}
           <div style={{
-            position:'absolute',
-            bottom:-6,
-            left:'50%',
-            transform:'translateX(-50%)',
-            width:0,
-            height:0,
-            borderLeft:'6px solid transparent',
-            borderRight:'6px solid transparent',
-            borderTop: isChart
-              ? '6px solid #764ba2'
+            position: 'fixed',
+            left: x,
+            top: y,
+            transform: 'translate(-50%, -100%)',
+            background: isChart
+              ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
               : isScore
-              ? '6px solid #f5576c'
-              : isMode
-              ? '6px solid #0f172a'
-              : '6px solid #00f2fe'
-          }} />
-        </div>
-        )})()}
-      
+                ? 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+                : isMode
+                  ? '#0f172a'
+                  : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+            color: isMode ? '#e5e7eb' : '#fff',
+            padding: isMode ? '10px 14px' : '8px 14px',
+            borderRadius: 8,
+            fontSize: isMode ? 11 : 12,
+            fontWeight: 600,
+            whiteSpace: isMode ? 'normal' : 'nowrap',
+            maxWidth: isMode ? 260 : undefined,
+            lineHeight: isMode ? 1.4 : 1.2,
+            pointerEvents: 'none',
+            zIndex: 9999,
+            boxShadow: '0 8px 20px rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.15)',
+            border: '2px solid rgba(255,255,255,0.3)',
+            backdropFilter: 'blur(8px)',
+            animation: 'tooltipFadeIn 0.2s ease-out'
+          }}>
+            {tip.text}
+            {/* Tooltip Arrow */}
+            <div style={{
+              position: 'absolute',
+              bottom: -6,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: 0,
+              height: 0,
+              borderLeft: '6px solid transparent',
+              borderRight: '6px solid transparent',
+              borderTop: isChart
+                ? '6px solid #764ba2'
+                : isScore
+                  ? '6px solid #f5576c'
+                  : isMode
+                    ? '6px solid #0f172a'
+                    : '6px solid #00f2fe'
+            }} />
+          </div>
+        )
+      })()}
+
       {/* ProactiveChat removed - using single ARIS chat interface only */}
 
       {/* Scalping Monitor */}
@@ -6951,18 +6862,18 @@ export default function App(){
       {/* Subtle FYNTRIX watermark */}
       <div
         style={{
-          position:'fixed',
-          right:6,
-          bottom:4,
-          fontSize:9,
-          color:'#9ca3af',
-          opacity:0.45,
-          pointerEvents:'none',
-          userSelect:'none',
-          zIndex:5,
-          display:'flex',
-          alignItems:'center',
-          gap:4,
+          position: 'fixed',
+          right: 6,
+          bottom: 4,
+          fontSize: 9,
+          color: '#9ca3af',
+          opacity: 0.45,
+          pointerEvents: 'none',
+          userSelect: 'none',
+          zIndex: 5,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 4,
         }}
       >
         <FyntrixLogo fontSize={9} fontWeight={700} />
@@ -7189,7 +7100,7 @@ export default function App(){
                 onClick={() => {
                   try {
                     localStorage.setItem('arise_disclosure_accepted_v1', '1')
-                  } catch {}
+                  } catch { }
                   setDisclosureAccepted(true)
                   setShowDisclosure(false)
                 }}
@@ -7416,15 +7327,15 @@ export default function App(){
                 <div style={{ fontSize: 14, fontWeight: 700, color: '#1e293b', marginBottom: 12 }}>
                   User Information
                 </div>
-                
+
                 {(() => {
                   const userData = getUserData()
                   if (!userData) {
                     return (
-                      <div style={{ 
-                        padding: 12, 
-                        background: '#fef2f2', 
-                        border: '1px solid #fecaca', 
+                      <div style={{
+                        padding: 12,
+                        background: '#fef2f2',
+                        border: '1px solid #fecaca',
                         borderRadius: 8,
                         textAlign: 'center'
                       }}>
@@ -7436,8 +7347,8 @@ export default function App(){
                   }
 
                   return (
-                    <div style={{ 
-                      display: 'grid', 
+                    <div style={{
+                      display: 'grid',
                       gap: 12,
                       background: '#f8fafc',
                       padding: 12,
@@ -7549,10 +7460,10 @@ export default function App(){
               </div> */}
 
               {/* Logout Button */}
-              <div style={{ 
-                marginTop: 16, 
-                paddingTop: 16, 
-                borderTop: '1px solid #e2e8f0', 
+              <div style={{
+                marginTop: 16,
+                paddingTop: 16,
+                borderTop: '1px solid #e2e8f0',
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: 'space-around'
@@ -7576,7 +7487,7 @@ export default function App(){
                 >
                   Edit Account Details
                 </button>
-                
+
                 <button
                   onClick={() => setIsLogoutConfirmOpen(true)}
                   style={{
