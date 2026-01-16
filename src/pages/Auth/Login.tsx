@@ -209,7 +209,7 @@ export default function Login() {
             marginLeft: 'auto',
             marginRight: 'auto'
           }}>
-            Sign in to access your AI-powered trading dashboard
+            Sign in to access your AI Trading Platform
           </p>
         </div>
 

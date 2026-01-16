@@ -246,12 +246,12 @@ export default function CreateAccount() {
             marginLeft: 'auto',
             marginRight: 'auto'
           }}>
-            Join FYNTRIX and start AI-powered trading today
+            Join FYNTRIX and start with an AI Trading Platform today
           </p>
         </div>
 
-        {/* Features */}
-        {isMobile && (
+        {/* Features - Hidden on mobile for cleaner look */}
+        {!isMobile && (
           <div style={{
             display: 'flex',
             gap: 16,
