@@ -3,8 +3,10 @@ import { getFlows, getMarketSummary, getNews, getMiniSeries, postChat, getAgents
 import { BRANDING } from '../branding'
 import { FyntrixLogo } from '../components/FyntrixLogo'
 import { News } from '../components/Home/News'
+import { PreferencesModal } from '../components/PreferencesModal'
+import { WatchlistModal } from '../components/WatchlistModal'
 import { computeSentimentRiskLevel } from '../sentimentRisk'
-import { LayoutGrid, SlidersHorizontal, BriefcaseBusiness, Image, SquareActivity, Trophy, Copy, Bell, MessageCircle, Megaphone, User, Brain, MoreHorizontal, LogOut, Mail, CheckCircle } from 'lucide-react'
+import { LayoutGrid, SlidersHorizontal, BriefcaseBusiness, Image, SquareActivity, Trophy, Copy, Bell, MessageCircle, Megaphone, User, Brain, MoreHorizontal, LogOut, Mail, CheckCircle, Menu } from 'lucide-react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { ChartView } from '../components/ChartView'
@@ -204,7 +206,7 @@ We encourage all investors to use the information on the site as a resource only
 
 type ChatLayout = 'left-fixed' | 'bottom-docked'
 
-type MobileNavTab = 'home' | 'picks' | 'chat' | 'winners' | 'watchlist'
+type MobileNavTab = 'portfolio' | 'watchlist' | 'home' | 'winners' | 'more'
 
 export default function App() {
   try { dayjs.extend(relativeTime) } catch { }
@@ -338,6 +340,7 @@ export default function App() {
   }, [showWinningTrades, winningTradesAvailableDates])
 
   const [isSupportChatOpen, setIsSupportChatOpen] = useState(false)
+  const [isAboutMenuOpen, setIsAboutMenuOpen] = useState(false)
   const [isAccountOpen, setIsAccountOpen] = useState(false)
   const [isMoreOpen, setIsMoreOpen] = useState(false)
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false)
@@ -358,6 +361,12 @@ export default function App() {
   const [loadingPortfolio, setLoadingPortfolio] = useState(false)
   const [watchlistMonitor, setWatchlistMonitor] = useState<any | null>(null)
   const [loadingWatchlist, setLoadingWatchlist] = useState(false)
+  const [loadingWatchlistEntriesAll, setLoadingWatchlistEntriesAll] = useState(false)
+  const [watchlistEntriesAll, setWatchlistEntriesAll] = useState<any[]>([])
+  const [watchlistShowAllEntries, setWatchlistShowAllEntries] = useState(false)
+  const [watchlistExpanded, setWatchlistExpanded] = useState<Record<string, boolean>>({})
+  const [watchlistMutatingId, setWatchlistMutatingId] = useState<string | null>(null)
+  const [watchlistTooltip, setWatchlistTooltip] = useState<{ text: string; x: number; y: number } | null>(null)
   const [showScalpingMonitor, setShowScalpingMonitor] = useState(false) // Scalping Monitor
   const [scalpingMonitorRefreshToken, setScalpingMonitorRefreshToken] = useState(0)
   const [scalpingWsExits, setScalpingWsExits] = useState<any[]>([])
@@ -697,7 +706,7 @@ export default function App() {
   useEffect(() => {
     if (!isMobile) return
     if (showPicks) {
-      setActiveMobileTab('picks')
+      setActiveMobileTab('home')
       return
     }
     if (showWinningTrades) {
@@ -745,6 +754,14 @@ export default function App() {
 
   const chatInputElRef = useRef<HTMLInputElement | null>(null)
   const [chatKeyboardInset, setChatKeyboardInset] = useState(0)
+
+  // Watchlist refs
+  const watchlistDialogRef = useRef<HTMLDivElement>(null)
+  const watchlistCloseRef = useRef<HTMLButtonElement>(null)
+  const watchlistScrollElRef = useRef<HTMLDivElement>(null)
+  const watchlistScrollTopRef = useRef<number>(0)
+  const watchlistRestoreScrollRef = useRef<boolean>(false)
+  const arisChatSectionRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!isMobile) {
@@ -1060,6 +1077,48 @@ export default function App() {
       setLoadingWatchlist(false)
     }
   }, [])
+
+  const fetchWatchlistEntriesAll = React.useCallback(async () => {
+    try {
+      setLoadingWatchlistEntriesAll(true)
+      // API call to fetch all watchlist entries would go here
+      // For now, using monitor data
+      if (watchlistMonitor) {
+        setWatchlistEntriesAll(watchlistMonitor.entries || [])
+      }
+    } catch (err) {
+      reportError(err, { feature: 'watchlist', action: 'load_entries' })
+    } finally {
+      setLoadingWatchlistEntriesAll(false)
+    }
+  }, [watchlistMonitor])
+
+  const mutateWatchlistStatus = React.useCallback(async (id: string, status: string) => {
+    try {
+      setWatchlistMutatingId(id)
+      // API call to mutate watchlist status would go here
+      console.log(`Mutating watchlist ${id} to ${status}`)
+    } catch (err) {
+      reportError(err, { feature: 'watchlist', action: 'mutate_status' })
+    } finally {
+      setWatchlistMutatingId(null)
+    }
+  }, [])
+
+  const setChartReturnTo = React.useCallback((returnTo: 'watchlist' | null) => {
+    // This would be implemented to track where to return after chart
+    console.log('Set chart return to:', returnTo)
+  }, [])
+
+  const closeWatchlist = React.useCallback(() => {
+    setShowWatchlist(false)
+  }, [])
+
+  const swipeCloseWatchlist = React.useCallback(() => {
+    if (isMobile) {
+      closeWatchlist()
+    }
+  }, [isMobile, closeWatchlist])
 
   const unsubscribeSymbols = React.useCallback((symbols: string[]) => {
     const upper = symbols.map(s => String(s || '').toUpperCase()).filter(Boolean)
@@ -2650,24 +2709,70 @@ export default function App() {
             </div>
           </div>
           {isMobile ? (
-            <button
-              title="More"
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: 12,
-                background: 'rgba(15,23,42,0.95)',
-                border: '1px solid rgba(148,163,184,0.9)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                transition: 'background 0.15s ease, transform 0.1s ease, boxShadow 0.15s ease'
-              }}
-              onClick={() => setIsMoreOpen(true)}
-            >
-              <MoreHorizontal size={18} color="#e5e7eb" />
-            </button>
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                {accountProfile.name && (
+                  <div
+                    title={accountProfile.name}
+                    style={{
+                      maxWidth: 140,
+                      padding: '4px 10px',
+                      borderRadius: 999,
+                      background: 'rgba(15,23,42,0.75)',
+                      border: '1px solid rgba(148,163,184,0.55)',
+                      color: '#e5e7eb',
+                      fontSize: 12,
+                      fontWeight: 700,
+                      lineHeight: 1,
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {accountProfile.name}
+                  </div>
+                )}
+                <button
+                  title={accountProfile.name ? `Account: ${accountProfile.name}` : 'Account'}
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 999,
+                    background: 'rgba(15,23,42,0.95)',
+                    border: '1px solid rgba(148,163,184,0.9)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    transition: 'background 0.15s ease, transform 0.1s ease, boxShadow 0.15s ease'
+                  }}
+                  onClick={() => setIsAccountOpen(true)}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(30,64,175,0.95)'; e.currentTarget.style.boxShadow = '0 3px 8px rgba(37,99,235,0.5)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,23,42,0.95)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)' }}
+                >
+                  <User size={16} color="#e5e7eb" />
+                </button>
+              </div>
+
+              <button
+                title="More"
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 12,
+                  background: 'rgba(15,23,42,0.95)',
+                  border: '1px solid rgba(148,163,184,0.9)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  transition: 'background 0.15s ease, transform 0.1s ease, boxShadow 0.15s ease'
+                }}
+                onClick={() => setIsMoreOpen(true)}
+              >
+                <Menu size={18} color="#e5e7eb" />
+              </button>
+            </>
           ) : (
             <>
               <button
@@ -2728,49 +2833,7 @@ export default function App() {
               >
                 <Megaphone size={16} color="#e5e7eb" />
               </button>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                {accountProfile.name && (
-                  <div
-                    title={accountProfile.name}
-                    style={{
-                      maxWidth: 140,
-                      padding: '4px 10px',
-                      borderRadius: 999,
-                      background: 'rgba(15,23,42,0.75)',
-                      border: '1px solid rgba(148,163,184,0.55)',
-                      color: '#e5e7eb',
-                      fontSize: 12,
-                      fontWeight: 700,
-                      lineHeight: 1,
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
-                  >
-                    {accountProfile.name}
-                  </div>
-                )}
-                <button
-                  title={accountProfile.name ? `Account: ${accountProfile.name}` : 'Account'}
-                  style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 999,
-                    background: 'rgba(15,23,42,0.95)',
-                    border: '1px solid rgba(148,163,184,0.9)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    transition: 'background 0.15s ease, transform 0.1s ease, boxShadow 0.15s ease'
-                  }}
-                  onClick={() => setIsAccountOpen(true)}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(30,64,175,0.95)'; e.currentTarget.style.boxShadow = '0 3px 8px rgba(37,99,235,0.5)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,23,42,0.95)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)' }}
-                >
-                  <User size={16} color="#e5e7eb" />
-                </button>
-              </div>
+
             </>
           )}
         </div>
@@ -2876,41 +2939,41 @@ export default function App() {
                     await openRl()
                   },
                 },
-                {
-                  title: 'Disclosure',
-                  onClick: () => {
-                    setIsMoreOpen(false)
-                    setShowDisclosure(true)
-                  },
-                },
-                {
-                  title: 'Account',
-                  onClick: () => {
-                    setIsMoreOpen(false)
-                    setIsAccountOpen(true)
-                  },
-                },
-                {
-                  title: 'Support',
-                  onClick: () => {
-                    setIsMoreOpen(false)
-                    setIsSupportChatOpen(true)
-                  },
-                },
-                {
-                  title: 'Company',
-                  onClick: () => {
-                    setIsMoreOpen(false)
-                    setShowCompany(true)
-                  },
-                },
-                {
-                  title: 'Products',
-                  onClick: () => {
-                    setIsMoreOpen(false)
-                    setShowProducts(true)
-                  },
-                },
+                // {
+                //   title: 'Disclosure',
+                //   onClick: () => {
+                //     setIsMoreOpen(false)
+                //     setShowDisclosure(true)
+                //   },
+                // },
+                // {
+                //   title: 'Account',
+                //   onClick: () => {
+                //     setIsMoreOpen(false)
+                //     setIsAccountOpen(true)
+                //   },
+                // },
+                // {
+                //   title: 'Support',
+                //   onClick: () => {
+                //     setIsMoreOpen(false)
+                //     setIsSupportChatOpen(true)
+                //   },
+                // },
+                // {
+                //   title: 'Company',
+                //   onClick: () => {
+                //     setIsMoreOpen(false)
+                //     setShowCompany(true)
+                //   },
+                // },
+                // {
+                //   title: 'Products',
+                //   onClick: () => {
+                //     setIsMoreOpen(false)
+                //     setShowProducts(true)
+                //   },
+                // },
               ].map((item) => (
                 <button
                   key={item.title}
@@ -3353,79 +3416,6 @@ export default function App() {
                     })()
                   )}
 
-                  {showWatchlist && (
-                    (() => {
-                      if (loadingWatchlist) {
-                        return <div style={{ fontSize: 12, color: '#64748b', padding: 8 }}>Loading watchlist snapshot…</div>
-                      }
-
-                      const data = watchlistMonitor
-                      if (!data || !Array.isArray(data.entries) || data.entries.length === 0) {
-                        return (
-                          <div style={{ fontSize: 12, color: '#64748b', padding: 8 }}>
-                            No active watchlist entries.
-                            <br />
-                            Use Set Alert from Charts or Trade Strategy to add symbols.
-                          </div>
-                        )
-                      }
-
-                      const summary = data.summary || {}
-
-                      return (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                          <div style={{ borderRadius: 8, border: '1px solid #e5e7eb', padding: 8, background: '#f9fafb' }}>
-                            <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 4 }}>
-                              Snapshot as of {data.as_of ? formatIstTime(data.as_of) : '–'}
-                            </div>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 11 }}>
-                              <div style={{ flex: '1 1 45%' }}>
-                                <div style={{ color: '#4b5563' }}>Entries</div>
-                                <div style={{ fontWeight: 600 }}>{summary.entries ?? data.entries.length}</div>
-                              </div>
-                              <div style={{ flex: '1 1 45%' }}>
-                                <div style={{ color: '#4b5563' }}>Avg Health</div>
-                                <div style={{ fontWeight: 600 }}>{summary.avg_health_score ?? 100}</div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                            <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 2 }}>Watchlist</div>
-                            {data.entries.map((w: any, idx: number) => {
-                              const urgency = String(w.urgency || 'LOW').toUpperCase()
-                              let urgencyColor = '#10b981'
-                              if (urgency === 'CRITICAL') urgencyColor = '#ef4444'
-                              else if (urgency === 'HIGH') urgencyColor = '#f97316'
-                              else if (urgency === 'MEDIUM') urgencyColor = '#eab308'
-                              const dist = typeof w.distance_to_entry_pct === 'number' ? w.distance_to_entry_pct : 0
-                              const distColor = dist > 0 ? '#dc2626' : dist < 0 ? '#16a34a' : '#6b7280'
-                              return (
-                                <div key={idx} style={{ borderRadius: 8, border: '1px solid #e5e7eb', padding: 8, background: '#ffffff' }}>
-                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                                    <div style={{ fontWeight: 600, fontSize: 13 }}>{w.symbol}</div>
-                                    <div style={{ fontSize: 11, padding: '2px 6px', borderRadius: 999, border: `1px solid ${urgencyColor}40`, color: urgencyColor }}>
-                                      {urgency}
-                                    </div>
-                                  </div>
-                                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#4b5563' }}>
-                                    <div>
-                                      <div>{w.timeframe || '—'}</div>
-                                      <div>Desired ₹{w.desired_entry != null ? Number(w.desired_entry).toFixed(2) : '—'}</div>
-                                    </div>
-                                    <div style={{ textAlign: 'right' }}>
-                                      <div>₹{Number(w.current_price || 0).toFixed(2)} <span style={{ fontSize: 10, color: '#9ca3af' }}>({w.price_source || 'tick'})</span></div>
-                                      <div style={{ color: distColor }}>{dist.toFixed(2)}%</div>
-                                    </div>
-                                  </div>
-                                </div>
-                              )
-                            })}
-                          </div>
-                        </div>
-                      )
-                    })()
-                  )}
                 </div>
               </section>
             )}
@@ -6581,191 +6571,51 @@ export default function App() {
       )}
 
       {/* Trading Preferences Modal */}
-      {prefsOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, zIndex: 1000 }} onClick={() => setPrefsOpen(false)}>
-          <div style={{ width: 'min(600px, 90vw)', maxHeight: '90vh', overflowY: 'auto', background: '#fff', borderRadius: 16, padding: 28, boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }} onClick={e => e.stopPropagation()}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-              <div>
-                <div style={{ fontWeight: 700, fontSize: 22, color: '#1e293b', marginBottom: 4 }}>⚙️ Trading Preferences</div>
-                <div style={{ fontSize: 13, color: '#64748b' }}>Customize your trading strategy and risk profile</div>
-              </div>
-              <button onClick={() => setPrefsOpen(false)} style={{ border: 'none', background: 'transparent', fontSize: 28, cursor: 'pointer', color: '#64748b' }}>&times;</button>
-            </div>
+      <PreferencesModal
+        prefsOpen={prefsOpen}
+        setPrefsOpen={setPrefsOpen}
+        risk={risk}
+        setRisk={setRisk}
+        primaryMode={primaryMode}
+        setPrimaryMode={setPrimaryMode}
+        availableModes={availableModes}
+        updateMemory={updateMemory}
+        showPicks={showPicks}
+        onFetchPicks={onFetchPicks}
+        reportError={reportError}
+      />
 
-            {/* Risk Profile */}
-            <div style={{ marginBottom: 28 }}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: '#1e293b', marginBottom: 12 }}>Risk Profile</div>
-              <div style={{ display: 'flex', gap: 12 }}>
-                {(['Conservative', 'Moderate', 'Aggressive'] as const).map(r => (
-                  <button
-                    key={r}
-                    onClick={() => { setRisk(r); try { localStorage.setItem('arise_risk', r) } catch { } }}
-                    style={{
-                      flex: 1,
-                      padding: '12px',
-                      borderRadius: 10,
-                      border: risk === r ? '2px solid #3b82f6' : '1px solid #e5e7eb',
-                      background: risk === r ? '#eff6ff' : '#fff',
-                      cursor: 'pointer',
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: risk === r ? '#1e40af' : '#64748b',
-                      transition: 'all 0.2s'
-                    }}
-                  >
-                    {r}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Primary Trading Mode */}
-            <div style={{ marginBottom: 28 }}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: '#1e293b', marginBottom: 8 }}>
-                Primary Trading Mode <span style={{ fontSize: 11, fontWeight: 400, color: '#ef4444' }}>*Required</span>
-              </div>
-              <div style={{ fontSize: 12, color: '#64748b', marginBottom: 12 }}>
-                Select ONE primary mode for focused strategy generation. This determines your trade horizon and targets.
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {availableModes
-                  .filter(mode => mode.value !== 'Commodity')
-                  .map(mode => (
-                    <label key={mode.value} style={{
-                      display: 'flex',
-                      alignItems: 'start',
-                      padding: 12,
-                      border: primaryMode === mode.value ? '2px solid #3b82f6' : '1px solid #e5e7eb',
-                      borderRadius: 10,
-                      background: primaryMode === mode.value ? '#eff6ff' : '#f9fafb',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s'
-                    }}>
-                      <input
-                        type="radio"
-                        name="primary_mode"
-                        value={mode.value}
-                        checked={primaryMode === mode.value}
-                        onChange={(e) => {
-                          setPrimaryMode(e.target.value)
-                          // Remove from auxiliary if was there
-                          setAuxiliaryModes(aux => aux.filter(m => m !== e.target.value))
-                          try { localStorage.setItem('arise_primary_mode', e.target.value) } catch { }
-                        }}
-                        style={{ marginTop: 2, marginRight: 10 }}
-                      />
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                          <span style={{ fontSize: 18 }}>{mode.icon}</span>
-                          <span style={{ fontWeight: 600, fontSize: 14, color: '#1e293b' }}>{mode.display_name}</span>
-                          <span style={{ fontSize: 11, color: '#64748b' }}>({mode.horizon})</span>
-                        </div>
-                        <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5 }}>{mode.description}</div>
-                      </div>
-                    </label>
-                  ))}
-              </div>
-            </div>
-
-            {/* Auxiliary Modes */}
-            <div style={{ marginBottom: 28 }}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: '#1e293b', marginBottom: 8 }}>
-                Auxiliary Modes <span style={{ fontSize: 11, fontWeight: 400, color: '#64748b' }}>Optional (max 2)</span>
-              </div>
-              <div style={{ fontSize: 12, color: '#64748b', marginBottom: 12 }}>
-                Add slight influence from other trading styles to fine-tune agent weights.
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {availableModes
-                  .filter(mode => mode.value !== primaryMode && mode.value !== 'Commodity')
-                  .map(mode => (
-                    <label key={mode.value} style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      padding: 10,
-                      border: '1px solid #e5e7eb',
-                      borderRadius: 8,
-                      background: auxiliaryModes.includes(mode.value) ? '#f0fdf4' : '#f9fafb',
-                      opacity: auxiliaryModes.length >= 2 && !auxiliaryModes.includes(mode.value) ? 0.5 : 1,
-                      cursor: auxiliaryModes.length >= 2 && !auxiliaryModes.includes(mode.value) ? 'not-allowed' : 'pointer',
-                      transition: 'all 0.2s'
-                    }}>
-                      <input
-                        type="checkbox"
-                        checked={auxiliaryModes.includes(mode.value)}
-                        disabled={auxiliaryModes.length >= 2 && !auxiliaryModes.includes(mode.value)}
-                        onChange={(e) => {
-                          const updated = e.target.checked ?
-                            [...auxiliaryModes, mode.value] :
-                            auxiliaryModes.filter(m => m !== mode.value)
-                          setAuxiliaryModes(updated)
-                          try { localStorage.setItem('arise_auxiliary_modes', JSON.stringify(updated)) } catch { }
-                        }}
-                        style={{ marginRight: 10 }}
-                      />
-                      <span style={{ fontSize: 16, marginRight: 8 }}>{mode.icon}</span>
-                      <span style={{ fontSize: 13, fontWeight: 500, color: '#1e293b' }}>{mode.display_name}</span>
-                    </label>
-                  ))
-                }
-              </div>
-              {auxiliaryModes.length >= 2 && (
-                <div style={{
-                  marginTop: 10,
-                  padding: '8px 12px',
-                  background: '#fef3c7',
-                  border: '1px solid #fcd34d',
-                  borderRadius: 6,
-                  fontSize: 11,
-                  color: '#92400e'
-                }}>
-                  ⚠️ Maximum 2 auxiliary modes. Uncheck one to add another.
-                </div>
-              )}
-            </div>
-
-            {/* Save Button */}
-            <div style={{ display: 'flex', gap: 12 }}>
-              <button
-                onClick={async () => {
-                  try {
-                    // Sync with backend
-                    await updateMemory({
-                      session_id: 'local',
-                      data: {
-                        risk,
-                        primary_mode: primaryMode,
-                        auxiliary_modes: auxiliaryModes
-                      }
-                    })
-                    setPrefsOpen(false)
-                    // Refresh picks if they're showing
-                    if (showPicks) {
-                      onFetchPicks()
-                    }
-                  } catch (err) {
-                    reportError(err, { feature: 'preferences', action: 'save' })
-                    alert('Failed to save preferences. Please try again.')
-                  }
-                }}
-                style={{
-                  flex: 1,
-                  padding: '10px 20px',
-                  borderRadius: 10,
-                  background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                  color: '#fff',
-                  fontSize: 14,
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
-                }}
-              >
-                ✓ Save Preferences
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Watchlist Modal */}
+      <WatchlistModal
+        showWatchlist={showWatchlist}
+        isMobile={isMobile}
+        watchlistMonitor={watchlistMonitor}
+        loadingWatchlist={loadingWatchlist}
+        loadingWatchlistEntriesAll={loadingWatchlistEntriesAll}
+        watchlistEntriesAll={watchlistEntriesAll}
+        watchlistShowAllEntries={watchlistShowAllEntries}
+        watchlistExpanded={watchlistExpanded}
+        watchlistMutatingId={watchlistMutatingId}
+        watchlistTooltip={watchlistTooltip}
+        livePrices={livePrices}
+        closeWatchlist={() => setShowWatchlist(false)}
+        fetchWatchlistMonitor={fetchWatchlistMonitor}
+        fetchWatchlistEntriesAll={fetchWatchlistEntriesAll}
+        setWatchlistShowAllEntries={setWatchlistShowAllEntries}
+        setWatchlistExpanded={setWatchlistExpanded}
+        mutateWatchlistStatus={mutateWatchlistStatus}
+        setWatchlistTooltip={setWatchlistTooltip}
+        setChartView={setChartView}
+        setChartReturnTo={setChartReturnTo}
+        setChatInput={setChatInput}
+        watchlistDialogRef={watchlistDialogRef}
+        watchlistCloseRef={watchlistCloseRef}
+        watchlistScrollElRef={watchlistScrollElRef}
+        swipeCloseWatchlist={swipeCloseWatchlist}
+        arisChatSectionRef={arisChatSectionRef}
+        watchlistScrollTopRef={watchlistScrollTopRef}
+        watchlistRestoreScrollRef={watchlistRestoreScrollRef}
+      />
 
       {/* Enhanced Styled Tooltip */}
       {tip && (() => {
@@ -6859,6 +6709,153 @@ export default function App() {
       {/* Exit Notifications */}
       <ExitNotificationManager wsExits={scalpingWsExits} />
 
+      {/* About Menu Modal */}
+      {isAboutMenuOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.4)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 20,
+            zIndex: 1000,
+          }}
+          onClick={() => setIsAboutMenuOpen(false)}
+        >
+          <div
+            style={{
+              width: 'min(320px, 90vw)',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              background: '#fff',
+              borderRadius: 16,
+              padding: 24,
+              boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 20, color: '#1e293b', marginBottom: 4 }}>ℹ️ About</div>
+                <div style={{ fontSize: 13, color: '#64748b' }}>Fyntrix Trading Platform</div>
+              </div>
+              <button
+                onClick={() => setIsAboutMenuOpen(false)}
+                style={{
+                  border: 'none',
+                  background: 'transparent',
+                  fontSize: 28,
+                  cursor: 'pointer',
+                  color: '#64748b',
+                }}
+              >
+                &times;
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <button
+                onClick={() => {
+                  setIsAboutMenuOpen(false)
+                  setShowCompany(true)
+                }}
+                style={{
+                  padding: '12px 16px',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: 8,
+                  background: '#fff',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = '#f9fafb'
+                  e.currentTarget.style.borderColor = '#3b82f6'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = '#fff'
+                  e.currentTarget.style.borderColor = '#e5e7eb'
+                }}
+              >
+                <BriefcaseBusiness size={18} color="#1e293b" />
+                <div style={{ textAlign: 'left' }}>
+                  <div style={{ fontWeight: 600, fontSize: 14, color: '#1e293b' }}>Company</div>
+                  <div style={{ fontSize: 12, color: '#64748b' }}>Learn about our company</div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => {
+                  setIsAboutMenuOpen(false)
+                  setShowProducts(true)
+                }}
+                style={{
+                  padding: '12px 16px',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: 8,
+                  background: '#fff',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = '#f9fafb'
+                  e.currentTarget.style.borderColor = '#3b82f6'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = '#fff'
+                  e.currentTarget.style.borderColor = '#e5e7eb'
+                }}
+              >
+                <LayoutGrid size={18} color="#1e293b" />
+                <div style={{ textAlign: 'left' }}>
+                  <div style={{ fontWeight: 600, fontSize: 14, color: '#1e293b' }}>Products</div>
+                  <div style={{ fontSize: 12, color: '#64748b' }}>Explore our features</div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => {
+                  setIsAboutMenuOpen(false)
+                  setShowDisclosure(true)
+                }}
+                style={{
+                  padding: '12px 16px',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: 8,
+                  background: '#fff',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = '#f9fafb'
+                  e.currentTarget.style.borderColor = '#3b82f6'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = '#fff'
+                  e.currentTarget.style.borderColor = '#e5e7eb'
+                }}
+              >
+                <Copy size={18} color="#1e293b" />
+                <div style={{ textAlign: 'left' }}>
+                  <div style={{ fontWeight: 600, fontSize: 14, color: '#1e293b' }}>Disclosure</div>
+                  <div style={{ fontSize: 12, color: '#64748b' }}>View terms and disclaimer</div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Subtle FYNTRIX watermark */}
       <div
         style={{
@@ -6876,7 +6873,7 @@ export default function App() {
           gap: 4,
         }}
       >
-        <FyntrixLogo fontSize={9} fontWeight={700} />
+        <FyntrixLogo />
         <span>· Licensed to {BRANDING.licensee}</span>
       </div>
 
@@ -7539,24 +7536,77 @@ export default function App() {
           className="safe-area-bottom"
           style={{
             position: 'fixed',
+            bottom: 0,
             left: 0,
             right: 0,
-            bottom: 0,
-            height: LAYOUT_TOKENS.bottomNavHeight,
-            background: '#f5faff',
-            borderTop: '1px solid rgba(15,23,42,0.1)',
-            zIndex: 300,
+            background: '#ffffff',
+            borderTop: '1px solid #e5e7eb',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-around',
-            padding: '6px 10px',
-            boxSizing: 'border-box',
+            padding: '8px 0',
+            zIndex: 100,
           }}
         >
           <button
             onClick={() => {
+              setActiveMobileTab('portfolio')
+              setShowPortfolio(true)
+              setShowWatchlist(false)
+              setShowPicks(false)
+              setShowHeatMap(false)
+            }}
+            style={{
+              flex: 1,
+              border: 'none',
+              background: 'transparent',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 4,
+              padding: '10px 0',
+              cursor: 'pointer',
+            }}
+          >
+            <div style={{ position: 'relative', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <BriefcaseBusiness size={18} color={activeMobileTab === 'portfolio' ? '#1d4ed8' : '#0f172a'} />
+            </div>
+            <span style={{ fontSize: 11, fontWeight: activeMobileTab === 'portfolio' ? 900 : 700, color: activeMobileTab === 'portfolio' ? '#1d4ed8' : '#0f172a' }}>Portfolio</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveMobileTab('watchlist')
+              setShowWatchlist(true)
+              setShowPortfolio(false)
+              setShowPicks(false)
+              setShowHeatMap(false)
+            }}
+            style={{
+              flex: 1,
+              border: 'none',
+              background: 'transparent',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 4,
+              padding: '10px 0',
+              cursor: 'pointer',
+            }}
+          >
+            <div style={{ position: 'relative', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Image size={18} color={activeMobileTab === 'watchlist' ? '#1d4ed8' : '#0f172a'} />
+            </div>
+            <span style={{ fontSize: 11, fontWeight: activeMobileTab === 'watchlist' ? 900 : 700, color: activeMobileTab === 'watchlist' ? '#1d4ed8' : '#0f172a' }}>Watchlist</span>
+          </button>
+
+          <button
+            onClick={() => {
               setActiveMobileTab('home')
-              handleHomeClick()
+              setShowPortfolio(false)
+              setShowWatchlist(false)
+              setShowPicks(false)
+              setShowHeatMap(true)
             }}
             style={{
               flex: 1,
@@ -7579,56 +7629,8 @@ export default function App() {
 
           <button
             onClick={() => {
-              setActiveMobileTab('picks')
-              onFetchPicks()
-            }}
-            style={{
-              flex: 1,
-              border: 'none',
-              background: 'transparent',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 4,
-              padding: '10px 0',
-              cursor: 'pointer',
-            }}
-          >
-            <div style={{ position: 'relative', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Copy size={18} color={activeMobileTab === 'picks' ? '#1d4ed8' : '#0f172a'} />
-            </div>
-            <span style={{ fontSize: 11, fontWeight: activeMobileTab === 'picks' ? 900 : 700, color: activeMobileTab === 'picks' ? '#1d4ed8' : '#0f172a' }}>Picks</span>
-          </button>
-
-          <button
-            onClick={() => {
-              setActiveMobileTab('chat')
-              openChat()
-            }}
-            style={{
-              flex: 1,
-              border: 'none',
-              background: 'transparent',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 4,
-              padding: '10px 0',
-              cursor: 'pointer',
-            }}
-          >
-            <div style={{ position: 'relative', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <MessageCircle size={18} color={activeMobileTab === 'chat' ? '#1d4ed8' : '#0f172a'} />
-            </div>
-            <span style={{ fontSize: 11, fontWeight: activeMobileTab === 'chat' ? 900 : 700, color: activeMobileTab === 'chat' ? '#1d4ed8' : '#0f172a' }}>Chat</span>
-          </button>
-
-          <button
-            onClick={() => {
               setActiveMobileTab('winners')
-              openWinners()
+              setShowWinningTrades(true)
             }}
             style={{
               flex: 1,
@@ -7665,11 +7667,8 @@ export default function App() {
 
           <button
             onClick={() => {
-              setActiveMobileTab('watchlist')
-              setShowWatchlist(true)
-              setShowPortfolio(false)
-              setShowPicks(false)
-              setShowHeatMap(false)
+              setActiveMobileTab('more')
+              setIsMoreOpen(true)
             }}
             style={{
               flex: 1,
@@ -7685,33 +7684,9 @@ export default function App() {
             }}
           >
             <div style={{ position: 'relative', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Image size={18} color={activeMobileTab === 'watchlist' ? '#1d4ed8' : '#0f172a'} />
-              {watchlistCount > 0 && (
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: -2,
-                    right: -2,
-                    minWidth: 16,
-                    height: 16,
-                    padding: '0 4px',
-                    borderRadius: 999,
-                    background: '#ef4444',
-                    color: '#fff',
-                    fontSize: 10,
-                    fontWeight: 900,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 0 0 2px #f5faff',
-                    lineHeight: '16px',
-                  }}
-                >
-                  {watchlistCount > 99 ? '99+' : String(watchlistCount)}
-                </span>
-              )}
+              <Menu size={18} color={activeMobileTab === 'more' ? '#1d4ed8' : '#0f172a'} />
             </div>
-            <span style={{ fontSize: 11, fontWeight: activeMobileTab === 'watchlist' ? 900 : 700, color: activeMobileTab === 'watchlist' ? '#1d4ed8' : '#0f172a' }}>Watch</span>
+            <span style={{ fontSize: 11, fontWeight: activeMobileTab === 'more' ? 900 : 700, color: activeMobileTab === 'more' ? '#1d4ed8' : '#0f172a' }}>More</span>
           </button>
         </div>
       )}
