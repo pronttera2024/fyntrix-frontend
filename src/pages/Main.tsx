@@ -5,6 +5,7 @@ import { FyntrixLogo } from '../components/FyntrixLogo'
 import { News } from '../components/Home/News'
 import { PreferencesModal } from '../components/PreferencesModal'
 import { WatchlistModal } from '../components/WatchlistModal'
+import { AccountDropdown } from '../components/AccountDropdown'
 import { computeSentimentRiskLevel } from '../sentimentRisk'
 import { LayoutGrid, SlidersHorizontal, BriefcaseBusiness, Image, SquareActivity, Trophy, Copy, Bell, MessageCircle, Megaphone, User, Brain, MoreHorizontal, LogOut, Mail, CheckCircle, Menu } from 'lucide-react'
 import dayjs from 'dayjs'
@@ -342,6 +343,7 @@ export default function App() {
   const [isSupportChatOpen, setIsSupportChatOpen] = useState(false)
   const [isAboutMenuOpen, setIsAboutMenuOpen] = useState(false)
   const [isAccountOpen, setIsAccountOpen] = useState(false)
+  const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false)
   const [isMoreOpen, setIsMoreOpen] = useState(false)
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false)
   const [accountProfile, setAccountProfile] = useState<{ name: string; account_id: string }>(() => {
@@ -450,7 +452,6 @@ export default function App() {
   const wsRef = useRef<WebSocket | null>(null)
   const subscribedSymbolsRef = useRef<Set<string>>(new Set())
   const symbolRefCountsRef = useRef<Record<string, number>>({})
-
   // Trade Strategy cache (in-memory + persisted in localStorage)
   const strategyCacheRef = useRef<Record<string, TradeStrategyCacheEntry>>({})
   const strategyCacheLoadedRef = useRef(false)
@@ -828,7 +829,7 @@ export default function App() {
       if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return
 
       if (e.key === 'Escape') {
-        setPrefsOpen(false); setShowPortfolio(false); setShowWatchlist(false); setShowAgents(false); setShowPicks(false); setAnalyze(null); setTip(null); setChartView(null); setShowScalpingMonitor(false);
+        setPrefsOpen(false); setShowPortfolio(false); setShowWatchlist(false); setShowAgents(false); setShowPicks(false); setAnalyze(null); setTip(null); setChartView(null); setShowScalpingMonitor(false); setIsAccountDropdownOpen(false);
         if (disclosureAccepted) setShowDisclosure(false)
       }
       // P = Toggle Picks drawer
@@ -839,37 +840,27 @@ export default function App() {
       // / = Focus Fyntrix chat
       else if (e.key === '/') {
         e.preventDefault()
-        const input = document.querySelector('input[placeholder="Ask Fyntrix…"]') as HTMLInputElement
-        if (input) input.focus()
-      }
-      // I = Toggle Intraday mode
-      else if (e.key === 'i' || e.key === 'I') {
-        setModes(m => { const updated = { ...m, Intraday: !m.Intraday }; try { localStorage.setItem('arise_modes', JSON.stringify(updated)) } catch { }; return updated })
-      }
-      // D = Toggle Swing mode (legacy: Delivery)
-      else if (e.key === 'd' || e.key === 'D') {
-        setModes(m => {
-          const current = m.Swing ?? m.Delivery ?? true
-          const updated: any = { ...m, Swing: !current }
-          delete updated.Delivery
-          try { localStorage.setItem('arise_modes', JSON.stringify(updated)) } catch { }
-          return updated
-        })
-      }
-      // O = Toggle Options mode
-      else if (e.key === 'o' || e.key === 'O') {
-        setModes(m => { const updated = { ...m, Options: !m.Options }; try { localStorage.setItem('arise_modes', JSON.stringify(updated)) } catch { }; return updated })
-      }
-      // F = Toggle Futures mode
-      else if (e.key === 'f' || e.key === 'F') {
-        setModes(m => { const updated = { ...m, Futures: !m.Futures }; try { localStorage.setItem('arise_modes', JSON.stringify(updated)) } catch { }; return updated })
+        openChat()
       }
     }
+
+    const onClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return
+
+      // Close account dropdown when clicking outside
+      if (isAccountDropdownOpen && !target.closest('[data-account-dropdown]')) {
+        setIsAccountDropdownOpen(false)
+      }
+    }
+
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('keydown', onKey)
+    window.addEventListener('click', onClick)
     return () => {
       window.removeEventListener('scroll', onScroll as any)
       window.removeEventListener('keydown', onKey)
+      window.removeEventListener('click', onClick)
     }
   }, [picks, disclosureAccepted])
 
@@ -2621,7 +2612,7 @@ export default function App() {
           boxShadow: 'none'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginLeft: isMobile ? 12 : 128, maxWidth: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: isMobile ? 12 : 128, maxWidth: '100%' }}>
           <FyntrixLogo fontSize={22} fontWeight={900} />
           <div
             style={{
@@ -2710,51 +2701,15 @@ export default function App() {
           </div>
           {isMobile ? (
             <>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                {accountProfile.name && (
-                  <div
-                    title={accountProfile.name}
-                    style={{
-                      maxWidth: 140,
-                      padding: '4px 10px',
-                      borderRadius: 999,
-                      background: 'rgba(15,23,42,0.75)',
-                      border: '1px solid rgba(148,163,184,0.55)',
-                      color: '#e5e7eb',
-                      fontSize: 12,
-                      fontWeight: 700,
-                      lineHeight: 1,
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
-                  >
-                    {accountProfile.name}
-                  </div>
-                )}
-                <button
-                  title={accountProfile.name ? `Account: ${accountProfile.name}` : 'Account'}
-                  style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: 999,
-                    background: 'rgba(15,23,42,0.95)',
-                    border: '1px solid rgba(148,163,184,0.9)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    transition: 'background 0.15s ease, transform 0.1s ease, boxShadow 0.15s ease'
-                  }}
-                  onClick={() => setIsAccountOpen(true)}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(30,64,175,0.95)'; e.currentTarget.style.boxShadow = '0 3px 8px rgba(37,99,235,0.5)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,23,42,0.95)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)' }}
-                >
-                  <User size={16} color="#e5e7eb" />
-                </button>
-              </div>
+              <AccountDropdown
+                isAccountDropdownOpen={isAccountDropdownOpen}
+                setIsAccountDropdownOpen={setIsAccountDropdownOpen}
+                setIsAccountOpen={setIsAccountOpen}
+                setIsLogoutConfirmOpen={setIsLogoutConfirmOpen}
+                accountProfile={accountProfile}
+              />
 
-              <button
+              {/* <button
                 title="More"
                 style={{
                   width: 36,
@@ -2771,7 +2726,7 @@ export default function App() {
                 onClick={() => setIsMoreOpen(true)}
               >
                 <Menu size={18} color="#e5e7eb" />
-              </button>
+              </button> */}
             </>
           ) : (
             <>
@@ -2833,7 +2788,7 @@ export default function App() {
               >
                 <Megaphone size={16} color="#e5e7eb" />
               </button>
-
+              
             </>
           )}
         </div>
@@ -7468,8 +7423,8 @@ export default function App() {
                 <button
                   onClick={() => setIsAccountOpen(true)}
                   style={{
-                    width: '40%',
-                    padding: '12px 16px',
+                    width: '100%',
+                    padding: '8px',
                     borderRadius: 10,
                     background: '#1d4ed8',
                     color: '#fff',
@@ -7483,37 +7438,6 @@ export default function App() {
                   }}
                 >
                   Edit Account Details
-                </button>
-
-                <button
-                  onClick={() => setIsLogoutConfirmOpen(true)}
-                  style={{
-                    width: '40%',
-                    padding: '12px 16px',
-                    borderRadius: 10,
-                    border: '1px solid #dc2626',
-                    background: '#dc2626',
-                    color: '#fff',
-                    cursor: 'pointer',
-                    fontWeight: 700,
-                    fontSize: 14,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 8,
-                    transition: 'all 0.2s'
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.background = '#b91c1c'
-                    e.currentTarget.style.borderColor = '#b91c1c'
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.background = '#dc2626'
-                    e.currentTarget.style.borderColor = '#dc2626'
-                  }}
-                >
-                  <LogOut size={16} />
-                  Sign Out
                 </button>
               </div>
             </div>
@@ -7542,7 +7466,7 @@ export default function App() {
             background: '#ffffff',
             borderTop: '1px solid #e5e7eb',
             display: 'flex',
-            padding: '8px 0',
+            padding: '2px 0',
             zIndex: 100,
           }}
         >
@@ -7688,6 +7612,16 @@ export default function App() {
             </div>
             <span style={{ fontSize: 11, fontWeight: activeMobileTab === 'more' ? 900 : 700, color: activeMobileTab === 'more' ? '#1d4ed8' : '#0f172a' }}>More</span>
           </button>
+
+          <div style={{ position: 'relative' }}>
+            <AccountDropdown
+              isAccountDropdownOpen={isAccountDropdownOpen}
+              setIsAccountDropdownOpen={setIsAccountDropdownOpen}
+              setIsAccountOpen={setIsAccountOpen}
+              setIsLogoutConfirmOpen={setIsLogoutConfirmOpen}
+              accountProfile={accountProfile}
+            />
+          </div>
         </div>
       )}
     </div>
