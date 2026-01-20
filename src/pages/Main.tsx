@@ -3,10 +3,11 @@ import { getFlows, getMarketSummary, getNews, getMiniSeries, postChat, getAgents
 import { BRANDING } from '../branding'
 import { FyntrixLogo } from '../components/FyntrixLogo'
 import { News } from '../components/Home/News'
-import { PreferencesModal } from '../components/PreferencesModal'
-import { WatchlistModal } from '../components/WatchlistModal'
+import { PreferencesModal } from '../components/Home/PreferencesModal'
+import { WatchlistModal } from '../components/Home/WatchlistModal'
 import { AccountDropdown } from '../components/AccountDropdown'
-import { AIResearchChat } from '../components/AIResearchChat'
+import { AIResearchChat } from '../components/Home/AIResearchChat'
+import { MarketBrief } from '../components/MarketBrief'
 import { computeSentimentRiskLevel } from '../sentimentRisk'
 import { LayoutGrid, SlidersHorizontal, BriefcaseBusiness, Image, SquareActivity, Trophy, Copy, Bell, MessageCircle, Megaphone, User, Brain, MoreHorizontal, LogOut, Mail, CheckCircle, Menu } from 'lucide-react'
 import dayjs from 'dayjs'
@@ -3158,307 +3159,32 @@ export default function App() {
 
             {/* Market Brief with Cards - Hidden only when picks drawer is shown */}
             {!showPicks && !showPortfolio && !showWatchlist && (
-              <section style={{ padding: 12, border: '1px solid #e5e7eb', borderRadius: 12, background: '#fff', marginBottom: 12, boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12, gap: 12, flexWrap: 'wrap' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <span style={{ fontWeight: 600, fontSize: 16 }}>Market Brief</span>
-                    <div style={{ display: 'flex', gap: 12, borderBottom: '1px solid #e5e7eb', paddingBottom: 4 }}>
-                      {[
-                        { value: 'India' as const, label: 'India Markets', icon: '🇮🇳' },
-                        { value: 'Global' as const, label: 'World Markets', icon: '🌍' },
-                      ].map(tab => {
-                        const isActive = marketRegion === tab.value
-                        return (
-                          <button
-                            key={tab.value}
-                            type="button"
-                            onClick={() => {
-                              if (marketRegion === tab.value) return
-                              const r = tab.value
-                              setMarketRegion(r)
-                              try { localStorage.setItem('arise_market_region', r) } catch { }
-                            }}
-                            style={{
-                              border: 'none',
-                              background: 'transparent',
-                              padding: '2px 4px 6px 4px',
-                              borderBottom: isActive ? '3px solid #2563eb' : '3px solid transparent',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 6,
-                              fontSize: 13,
-                              color: isActive ? '#1d4ed8' : '#4b5563',
-                              fontWeight: isActive ? 600 : 500
-                            }}
-                          >
-                            <span style={{ fontSize: 14 }}>{tab.icon}</span>
-                            <span>{tab.label}</span>
-                          </button>
-                        )
-                      })}
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
-                    {(() => {
-                      // Determine market open status strictly from weekday + intraday time window
-                      const now = new Date()
-                      const nowIst = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
-                      const day = nowIst.getDay() // 0=Sun, 6=Sat
-                      const isWeekday = day >= 1 && day <= 5
-
-                      const hours = nowIst.getHours()
-                      const minutes = nowIst.getMinutes()
-                      const currentTime = hours * 60 + minutes // minutes since midnight
-                      const marketOpen = 9 * 60 + 15  // 9:15 AM = 555 minutes
-                      const marketClose = 15 * 60 + 30 // 3:30 PM = 930 minutes
-
-                      const isMarketOpen = isWeekday && currentTime >= marketOpen && currentTime <= marketClose
-
-                      const prevTradingCloseIst = () => {
-                        const closing = new Date(nowIst)
-                        // If it's a weekday and after 3:30 PM IST, last close is today.
-                        // Otherwise (pre-market / weekend), last close is previous trading day.
-                        if (!(isWeekday && currentTime >= marketClose)) {
-                          do {
-                            closing.setDate(closing.getDate() - 1)
-                          } while (closing.getDay() === 0 || closing.getDay() === 6)
-                        }
-                        closing.setHours(15, 30, 0, 0)
-                        return closing
-                      }
-
-                      // Determine appropriate timestamp:
-                      // - Market open: use backend-provided market.as_of (preferred), else now
-                      // - Market closed: always show last session close (never a future time)
-                      let asOf: Date
-                      if (isMarketOpen) {
-                        const raw = market && market.as_of ? new Date(market.as_of) : null
-                        asOf = raw && !Number.isNaN(raw.getTime()) ? raw : now
-                      } else {
-                        asOf = prevTradingCloseIst()
-                      }
-
-                      const datePart = formatIstDate(asOf)
-                      const timePart = formatIstTime(asOf)
-                      const ageMs = (() => {
-                        try {
-                          const t = asOf.getTime()
-                          return Number.isNaN(t) ? null : (Date.now() - t)
-                        } catch {
-                          return null
-                        }
-                      })()
-                      const isStale = isMarketOpen && typeof ageMs === 'number' && ageMs > 60_000
-                      const label = isMarketOpen
-                        ? isStale
-                          ? `Stale · last update ${datePart}, ${timePart}`
-                          : `Data as of ${datePart}, ${timePart}`
-                        : `Last close · ${datePart}, ${timePart}`
-
-                      return (
-                        <React.Fragment>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <span style={{
-                              fontSize: 11,
-                              padding: '3px 8px',
-                              borderRadius: 999,
-                              background: !isMarketOpen ? '#fef3c7' : (isStale ? '#fee2e2' : '#dcfce7'),
-                              color: !isMarketOpen ? '#92400e' : (isStale ? '#991b1b' : '#166534'),
-                              fontWeight: 600
-                            }}>
-                              {!isMarketOpen ? '⏸️ Market Closed' : (isStale ? '🔴 Stale' : '🟢 Live')}
-                            </span>
-                            <span style={{
-                              fontSize: 11,
-                              color: '#64748b',
-                              whiteSpace: 'nowrap',
-                              maxWidth: 240,
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis'
-                            }}>{label}</span>
-                          </div>
-                        </React.Fragment>
-                      )
-                    })()}
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
-                      <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Nifty 50 Sentiment</span>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11, padding: '2px 8px', borderRadius: 999, background: '#f1f5f9', color: sentiment.color, border: '1px solid #e2e8f0' }}>
-                        <span style={{ display: 'inline-flex', gap: 1 }}>
-                          {Array.from({ length: 5 }).map((_, i) => {
-                            const active = (sentiment.score || 0) > ((i - 2) * 15)
-                            const bg = active ? sentiment.color : '#cbd5e1'
-                            return <span key={i} style={{ width: 3, height: 9, borderRadius: 2, background: bg }} />
-                          })}
-                        </span>
-                        <span style={{ fontWeight: 600 }}>{sentiment.label}</span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
-                  {tiles.length ? tiles.map(t => {
-                    const isPositive = (t.pct || 0) >= 0
-                    const trendColor = isPositive ? '#16a34a' : '#ef4444'
-                    return (
-                      <div key={t.name} style={{ minWidth: 150, flex: '0 0 auto', padding: 10, border: '1px solid #e5e7eb', borderRadius: 12, background: '#ffffff', boxShadow: '0 1px 3px rgba(15,23,42,0.05)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-                          <div>
-                            <div style={{ fontSize: 12, fontWeight: 700, color: '#0f172a', textTransform: 'uppercase', marginBottom: 1 }}>{t.name === 'GOLD' ? 'GOLD (IN $/OUNCE)' : t.name}</div>
-                          </div>
-                          {typeof t.pct === 'number' ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                              <span style={{ fontSize: 11, fontWeight: 600, color: trendColor, padding: '2px 8px', borderRadius: 999, background: (t.pct || 0) >= 0 ? '#ecfdf3' : '#fef2f2' }}>{(t.pct || 0) >= 0 ? '↑' : '↓'} {Math.abs(t.pct).toFixed(2)}%</span>
-                            </div>
-                          ) : (
-                            <div style={{ fontSize: 11, color: '#94a3b8' }}>-</div>
-                          )}
-                        </div>
-                        <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>{t.val}</div>
-                        <div style={{ height: 28, position: 'relative' }}>
-                          {(() => {
-                            // Smart key lookup - try exact match, then fallbacks for global markets
-                            let key = t.name
-                            if (key === 'USD/INR') key = 'USDINR'
-                            // Try exact match first
-                            let s = spark[key] || []
-                            // If not found and it's a global market, try alternative keys
-                            if (!s.length && marketRegion === 'Global') {
-                              if (key === 'FTSE 100') s = spark['LSE (FTSE 100)'] || spark['^FTSE'] || []
-                              else if (key === 'S&P 500') s = spark['S&P 500'] || spark['^GSPC'] || []
-                              else if (key === 'NASDAQ') s = spark['NASDAQ'] || spark['^IXIC'] || []
-                              else if (key === 'Hang Seng') s = spark['Hang Seng'] || spark['^HSI'] || []
-                            }
-                            if (!s.length) {
-                              return <div style={{ fontSize: 10, color: '#cbd5e1', textAlign: 'center', paddingTop: 12 }}>Chart loading...</div>
-                            }
-                            return (
-                              <svg width="100%" height={32} style={{ display: 'block' }} viewBox="0 0 180 40" preserveAspectRatio="none"
-                                onMouseMove={(e) => {
-                                  const last = s[s.length - 1]; const prev = s[s.length - 2] ?? last
-                                  const pct = prev ? ((last - prev) / prev * 100) : 0
-                                  if (tipTimer) clearTimeout(tipTimer)
-                                  const timer = setTimeout(() => {
-                                    const maxX = Math.max(0, (window.innerWidth || 0) - 200)
-                                    const maxY = Math.max(0, (window.innerHeight || 0) - 60)
-                                    const x = Math.min(e.clientX + 8, maxX)
-                                    const y = Math.min(e.clientY + 8, maxY)
-                                    setTip({ x, y, text: `Last ${last.toFixed(2)} · Prev ${prev.toFixed(2)} · ${(pct >= 0 ? '+' : '') + pct.toFixed(2)}%` })
-                                  }, 60)
-                                  setTipTimer(timer)
-                                }}
-                                onMouseLeave={() => { if (tipTimer) clearTimeout(tipTimer); setTip(null) }}>
-                                {(() => {
-                                  // Build a smooth sparkline based on the actual intraday series
-                                  const tilePct = t.pct ?? 0
-                                  const strokeColor = tilePct >= 0 ? '#22c55e' : '#f97373'
-                                  const areaFill = tilePct >= 0 ? '#dcfce7' : '#fee2e2'
-
-                                  const width = 180
-                                  const height = 40
-
-                                  const values = s
-                                  const n = values.length
-                                  if (n < 2) {
-                                    const midY = height - 10
-                                    const dFlat = `M0,${midY} L${width},${midY}`
-                                    return (
-                                      <path d={dFlat} stroke={strokeColor} strokeWidth={2} fill="none" strokeLinecap="round" strokeLinejoin="round" opacity={0.9} />
-                                    )
-                                  }
-
-                                  let min = Math.min(...values)
-                                  let max = Math.max(...values)
-                                  if (min === max) {
-                                    // Avoid divide-by-zero: expand a tiny band around the value
-                                    min = min - 1
-                                    max = max + 1
-                                  }
-                                  const span = max - min
-
-                                  const marginTop = 6
-                                  const marginBottom = 6
-                                  const usableHeight = height - marginTop - marginBottom
-
-                                  const points = values.map((v, idx) => {
-                                    const x = (idx / (n - 1)) * width
-                                    const norm = (v - min) / span // 0..1
-                                    const y = height - marginBottom - norm * usableHeight
-                                    return { x, y }
-                                  })
-
-                                  const baseY = height - marginBottom
-                                  let areaPath = `M${points[0].x},${baseY}`
-                                  for (let i = 0; i < points.length; i++) {
-                                    const p = points[i]
-                                    areaPath += ` L${p.x},${p.y}`
-                                  }
-                                  areaPath += ` L${points[points.length - 1].x},${baseY} Z`
-
-                                  // Quadratic smoothing between points for a soft curve
-                                  let d = `M${points[0].x},${points[0].y}`
-                                  for (let i = 1; i < points.length; i++) {
-                                    const prev = points[i - 1]
-                                    const curr = points[i]
-                                    const midX = (prev.x + curr.x) / 2
-                                    const midY = (prev.y + curr.y) / 2
-                                    d += ` Q${prev.x},${prev.y} ${midX},${midY}`
-                                  }
-                                  // Ensure we end exactly at the last point
-                                  const lastPoint = points[points.length - 1]
-                                  d += ` T${lastPoint.x},${lastPoint.y}`
-
-                                  return (
-                                    <>
-                                      <path d={areaPath} fill={areaFill} stroke="none" opacity={0.6} />
-                                      <path d={d} stroke={strokeColor} strokeWidth={2} fill="none" strokeLinecap="round" strokeLinejoin="round" opacity={0.95} />
-                                    </>
-                                  )
-                                })()}
-                              </svg>
-                            )
-                          })()}
-                        </div>
-                      </div>
-                    )
-                  }) : <div style={{ fontSize: 12, opacity: 0.7, padding: 20, textAlign: 'center' }}>Loading market data...</div>}
-                </div>
-                {!showPicks && insights.length > 0 && (
-                  <div style={{ marginTop: 10, marginBottom: 6, display: 'flex', justifyContent: 'center' }}>
-                    <div style={{ maxWidth: 520, width: '100%' }}>
-                      <InsightCards
-                        insights={insights}
-                        onInsightClick={(insight) => {
-                          if (insight.metadata && 'symbols' in insight.metadata) {
-                            setShowPicks(true)
-                          }
-                        }}
-                        onDismiss={(id) => {
-                          setInsights(insights.filter(i => i.id !== id))
-                          setDismissedInsightIds(prev => ({ ...prev, [id]: true }))
-                        }}
-                      />
-                    </div>
-                  </div>
-                )}
-                {showHeatMap && picks.length > 0 && (
-                  <div style={{ marginTop: 10 }}>
-                    <MarketHeatMap
-                      stocks={heatMapStocks}
-                      onStockClick={(symbol) => {
-                        const row = picks.find((p: any) => p.symbol === symbol)
-                        if (row) {
-                          setChartView({ symbol: row.symbol, analysis: row })
-                        } else {
-                          setChartView({ symbol })
-                        }
-                      }}
-                      universe={universe}
-                      modeLabel={primaryMode}
-                    />
-                  </div>
-                )}
-              </section>
+              <MarketBrief
+                showPicks={showPicks}
+                showPortfolio={showPortfolio}
+                showWatchlist={showWatchlist}
+                marketRegion={marketRegion}
+                setMarketRegion={setMarketRegion}
+                market={market}
+                sentiment={sentiment}
+                spark={spark}
+                tiles={tiles}
+                tip={tip}
+                setTip={setTip}
+                tipTimer={tipTimer}
+                setTipTimer={setTipTimer}
+                insights={insights}
+                setInsights={setInsights}
+                dismissedInsightIds={dismissedInsightIds}
+                setDismissedInsightIds={setDismissedInsightIds}
+                showHeatMap={showHeatMap}
+                heatMapStocks={heatMapStocks}
+                picks={picks}
+                setChartView={setChartView}
+                universe={universe}
+                primaryMode={primaryMode}
+                setShowPicks={setShowPicks}
+              />
             )}
 
             {/* Top Five Picks Panel - replaces Market Brief when showPicks is true */}

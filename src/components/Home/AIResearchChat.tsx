@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { MessageCircle, X } from 'lucide-react'
-import { reportError } from '../utils/errorReporting'
+import { reportError } from '../../utils/errorReporting'
 
 type ChatLayout = 'left-fixed' | 'bottom-docked'
 
