@@ -24,6 +24,7 @@ import type { Pick as AIPick } from '../types/picks'
 import { classifyPickDirection, formatRecommendationLabel, getOptionType, isOptionPick, type PickDirection } from '../utils/recommendation'
 // ProactiveChat removed - using single ARIS chat interface only
 import { SupportChatModal } from '../components/SupportChatModal'
+import { WinningTradesModal } from '../components/WinningTradesModal'
 import { reportError } from '../utils/errorReporting'
 import { formatIstDate, formatIstTime, isWithinLastTradingSessionIst as isWithinLastTradingSession, isWithinTodayIst } from '../utils/time'
 import { LAYOUT_TOKENS, useBreakpoint } from '../utils/responsive'
@@ -4248,7 +4249,26 @@ export default function App() {
       )}
 
       {/* Winning Trades Modal */}
-      {showWinningTrades && (
+      <WinningTradesModal
+        isOpen={showWinningTrades}
+        onClose={() => setShowWinningTrades(false)}
+        isMobile={isMobile}
+        winningTradesData={winningTradesData}
+        loadingWinningTrades={loadingWinningTrades}
+        winningTradesMode={winningTradesMode}
+        setWinningTradesMode={setWinningTradesMode}
+        winningTradesDate={winningTradesDate}
+        setWinningTradesDate={setWinningTradesDate}
+        winningTradesAvailableDates={winningTradesAvailableDates}
+        winningStrategiesData={winningStrategiesData}
+        availableModes={availableModes}
+        DEFAULT_AVAILABLE_MODES={DEFAULT_AVAILABLE_MODES}
+        tip={tip}
+        setTip={setTip}
+      />
+
+      {/* Old inline modal - to be removed */}
+      {false && showWinningTrades && (
         <div
           style={{
             position: 'fixed',
