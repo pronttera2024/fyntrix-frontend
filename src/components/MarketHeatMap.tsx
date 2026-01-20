@@ -115,22 +115,22 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
               </span>
             ) : null}
           </div>
-          <div className="text-xs text-slate-500">
-            Visual score distribution • {stocks.length} stocks • {universeLabel}
+          <div className="text-xs">
+            Visual score distribution <br />{stocks.length} stocks • {universeLabel}
           </div>
         </div>
-        <div className="text-xs text-slate-500 text-right">
-          <div>
-            🚀 Strong Buy ≥{strongBuyLabel} • ✅ Buy ≥{buyLabel}
+        <div className="text-xs text-right">
+          <div className="flex flex-col">
+            <span>🚀Strong Buy ≥ {strongBuyLabel}</span>
+            <span>✅Buy ≥ {buyLabel}</span>
           </div>
           {showShortLegend ? (
-            <div>
-              {isOptionsMode ? '📉 Buy Put' : '📉 Sell'}
-              {' '}≤{sellLabel} • {isOptionsMode ? '🛑 Strong Buy Put' : '🛑 Strong Sell'}
-              {' '}≤{strongSellLabel}
+            <div className="flex flex-col">
+              <span>{isOptionsMode ? '📉 Buy Put' : '📉 Sell'} ≤ {sellLabel}</span>
+              <span>{isOptionsMode ? '🛑 Strong Buy Put' : '🛑 Strong Sell'} ≤ {strongSellLabel}</span>
             </div>
           ) : (
-            <div>Long-only mode • no short/sell signals</div>
+            <div>Long-only mode <br /> no short/sell signals</div>
           )}
         </div>
       </div>
@@ -145,7 +145,7 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
             <div
               key={stock.symbol}
               onClick={() => onStockClick?.(stock.symbol)}
-              className="bg-white min-w-[48%] md:min-w-[18%] rounded-lg p-1.5 mt-1 gap-4 cursor-pointer transition-all duration-200 shadow-sm border border-gray-200 border-l-[3px] flex flex-col hover:shadow-lg hover:border-sky-500"
+              className="bg-white min-w-[60%] md:min-w-[20%] rounded-lg p-1.5 mt-1 gap-4 cursor-pointer transition-all duration-200 shadow-sm border border-gray-200 border-l-[3px] flex flex-col hover:shadow-lg hover:border-sky-500"
               style={{ borderLeftColor: colors.border }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)'
@@ -177,19 +177,19 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
 
               <div className="flex justify-between items-center gap-1">
                 <div
-                  className="flex items-center gap-0.5 text-lg font-bold mb-0.5"
+                  className="flex items-baseline gap-0.5 text-lg font-bold mb-0.5"
                   style={{ color: band === 'strong-buy' || band === 'buy' ? '#166534' : band === 'neutral' ? '#111827' : '#b91c1c' }}
                 >
                   {stock.score.toFixed(1)}%
                   {typeof stock.change === 'number' && (
-                        <div
-                          className="text-xs font-semibold flex items-center justify-start gap-0.5 mt-0.5"
-                          style={{ color: stock.change >= 0 ? '#16a34a' : '#ef4444' }}
-                        >
-                          <span>{stock.change >= 0 ? '▲' : '▼'}</span>
-                          <span>{Math.abs(stock.change).toFixed(2)}%</span>
-                        </div>
-                      )}
+                    <div
+                      className="text-xs font-semibold flex items-center justify-start gap-0.5 mt-0.5"
+                      style={{ color: stock.change >= 0 ? '#16a34a' : '#ef4444' }}
+                    >
+                      <span>{stock.change >= 0 ? '▲' : '▼'}</span>
+                      <span>{Math.abs(stock.change).toFixed(2)}%</span>
+                    </div>
+                  )}
                 </div>
                 {typeof stock.price === 'number' && Number.isFinite(stock.price) && (
                   <span className="inline-flex items-center gap-1.5 whitespace-nowrap">

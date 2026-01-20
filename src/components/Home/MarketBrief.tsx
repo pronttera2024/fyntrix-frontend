@@ -167,9 +167,9 @@ export const MarketBrief: React.FC<MarketBriefProps> = ({
                         const isStale = isMarketOpen && typeof ageMs === 'number' && ageMs > 60_000
                         const label = isMarketOpen
                             ? isStale
-                                ? `Last updated ${datePart}, ${timePart}`
+                                ? `Last updated: ${datePart}, ${timePart}`
                                 : `Data as of ${datePart}, ${timePart}`
-                            : `Last closed ${datePart}, ${timePart}`
+                            : `Last closed: ${datePart}, ${timePart}`
 
                         return (
                             <div className="flex w-full flex-row md:flex-col justify-between md:justify-start gap-1 md:gap-2">

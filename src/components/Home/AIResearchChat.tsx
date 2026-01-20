@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { MessageCircle, X } from 'lucide-react'
+import { BotMessageSquare, MessageCircle, X } from 'lucide-react'
 import { reportError } from '../../utils/errorReporting'
 
 type ChatLayout = 'left-fixed' | 'bottom-docked'
@@ -52,7 +52,7 @@ export const AIResearchChat: React.FC<AIResearchChatProps> = ({
   const chatMessagesRef = useRef<HTMLDivElement | null>(null)
   const chatInputElRef = useRef<HTMLInputElement | null>(null)
   const [isDragging, setIsDragging] = useState(false)
-  const [position, setPosition] = useState({ x: window.innerWidth - 76, y: window.innerHeight - 180 })
+  const [position, setPosition] = useState({ x: window.innerWidth - 160, y: window.innerHeight - 180 })
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
@@ -99,124 +99,60 @@ export const AIResearchChat: React.FC<AIResearchChatProps> = ({
       <button
         onClick={onToggleChat}
         onMouseDown={handleMouseDown}
+        className="fixed flex items-center justify-between gap-2 px-4 transition-all duration-200"
         style={{
-          position: 'fixed',
           left: position.x,
           top: position.y,
-          width: 56,
-          height: 56,
-          borderRadius: 999,
+          width: 150,
+          height: 50,
+          borderRadius: 25,
           background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
           border: '2px solid #ffffff',
           boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)',
           cursor: isDragging ? 'grabbing' : 'grab',
-          zIndex: 1000,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          transition: isDragging ? 'none' : 'all 0.2s ease',
           transform: isDragging ? 'scale(1.05)' : 'scale(1)'
         }}
       >
-        <MessageCircle size={24} color="#ffffff" />
+        {/* AI Strategist Icon */}
+        <div className="bg-white rounded-full">
+          <BotMessageSquare size={36} color="#3b82f6" />
+        </div>
+        <span className="text-sm font-semibold text-white whitespace-nowrap">
+          AI Strategist
+        </span>
       </button>
     )
   }
 
   // Desktop: Show full chat OR Mobile: Show chat when opened
   return (
-    <section style={{
-      background: '#ffffff',
-      borderRadius: 16,
-      border: '2px solid #e5e7eb',
-      marginBottom: 20,
-      boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-      overflow: 'hidden',
-      height: chat.length === 0
-        ? 200
-        : 380, // More compact when empty in bottom-docked mode
-      display: 'flex',
-      flexDirection: 'column',
-      transition: 'height 0.3s ease', // Smooth height transition
-      order: 2
-    }}>
+    <section className="bg-white rounded-2xl border-2 border-gray-200 mb-5 shadow-sm overflow-hidden flex flex-col transition-all duration-300 order-2"
+      style={{
+        height: chat.length === 0 ? 200 : 380
+      }}
+    >
       {/* Header with Clear Button */}
-      <div style={{
-        padding: '14px 20px',
-        borderBottom: '2px solid #e5e7eb',
-        background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between'
-      }}>
+      <div className="px-5 py-3.5 border-b-2 border-gray-200 bg-gradient-to-r from-blue-50 to-blue-100 flex items-center justify-between">
         <div>
-          <div style={{ fontWeight: 700, fontSize: 18, color: '#1e40af', marginBottom: 2 }}>
+          <div className="font-bold text-lg text-blue-800 mb-0.5">
             AI Research and Trade Strategist
           </div>
-          <div style={{ fontSize: 12, color: '#64748b', fontStyle: 'italic' }}>Ask me about markets, picks, or strategies</div>
+          <div className="text-xs text-slate-500 italic">Ask me about markets, picks, or strategies</div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className="flex items-center gap-2">
           {chat.length > 0 && (
             <button
               onClick={() => setChat([])}
-              style={{
-                padding: '8px 14px',
-                fontSize: 12,
-                fontWeight: 600,
-                borderRadius: 999,
-                border: '1px solid #cbd5e1',
-                background: '#f8fafc',
-                color: '#0f172a',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                boxShadow: '0 1px 3px rgba(15,23,42,0.15)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = '#e2e8f0'
-                e.currentTarget.style.transform = 'translateY(-1px)'
-                e.currentTarget.style.boxShadow = '0 3px 6px rgba(15,23,42,0.25)'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = '#f8fafc'
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = '0 1px 3px rgba(15,23,42,0.15)'
-              }}
+              className="px-3.5 py-2 text-xs font-semibold rounded-full border border-gray-300 bg-slate-50 text-slate-900 cursor-pointer transition-all duration-200 shadow-sm flex items-center gap-1.5 hover:bg-slate-200 hover:-translate-y-px hover:shadow-md"
             >
-              <span style={{ fontSize: 14 }}>🧹</span>
+              <span className="text-sm">🧹</span>
               <span>Clear chat</span>
             </button>
           )}
           {isMobile && (
             <button
               onClick={onToggleChat}
-              style={{
-                padding: '8px 14px',
-                fontSize: 12,
-                fontWeight: 600,
-                borderRadius: 999,
-                border: '1px solid #cbd5e1',
-                background: '#f8fafc',
-                color: '#0f172a',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                boxShadow: '0 1px 3px rgba(15,23,42,0.15)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = '#e2e8f0'
-                e.currentTarget.style.transform = 'translateY(-1px)'
-                e.currentTarget.style.boxShadow = '0 3px 6px rgba(15,23,42,0.25)'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = '#f8fafc'
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = '0 1px 3px rgba(15,23,42,0.15)'
-              }}
+              className="px-3.5 py-2 text-xs font-semibold rounded-full border border-gray-300 bg-slate-50 text-slate-900 cursor-pointer transition-all duration-200 shadow-sm flex items-center gap-1.5 hover:bg-slate-200 hover:-translate-y-px hover:shadow-md"
             >
               <X size={14} />
               <span>Close</span>
@@ -226,29 +162,13 @@ export const AIResearchChat: React.FC<AIResearchChatProps> = ({
       </div>
 
       {/* Chat Messages - Fixed height with FORCED scroll */}
-      <div style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: 0, // Critical for flex scrolling
-        overflow: 'hidden' // Contain scrollable child
-      }}>
+      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
         <div
           ref={(el) => {
             chatMessagesRef.current = el
           }}
-          style={{
-            flex: '1 1 auto',
-            height: '100%', // Explicit height
-            overflowY: 'auto',
-            overflowX: 'hidden',
-            overscrollBehavior: 'contain',
-            padding: '16px 20px',
-            background: '#f9fafb',
-            fontSize: 14,
-            WebkitOverflowScrolling: 'touch'
-          }}
-          className="aris-chat-messages"
+          className="flex-1 h-full overflow-y-auto overflow-x-hidden overscroll-contain px-5 py-4 bg-gray-50 text-sm aris-chat-messages"
+          style={{ WebkitOverflowScrolling: 'touch' }}
         >
           <style>{`
             /* Webkit browsers - Chrome, Edge, Safari */
@@ -287,48 +207,27 @@ export const AIResearchChat: React.FC<AIResearchChatProps> = ({
           `}</style>
           {/* Chat messages - streamlined without redundant labels */}
           {chat.length === 0 ? (
-            <div style={{ padding: '8px 16px', textAlign: 'center', color: '#94a3b8', fontSize: 12, fontStyle: 'italic' }}>
+            <div className="px-4 py-2 text-center text-slate-400 text-xs italic">
               Start a conversation by asking a question below
             </div>
           ) : (
             chat.map((m, i) => (
-              <div key={i} style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: m.role === 'user' ? 'flex-end' : 'flex-start',
-                marginBottom: 14
-              }}>
-                <div style={{
-                  padding: '12px 16px',
-                  borderRadius: 12,
-                  background: m.role === 'user' ? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' : '#ffffff',
-                  color: m.role === 'user' ? '#ffffff' : '#0f172a',
-                  maxWidth: '85%',
-                  lineHeight: 1.7,
-                  wordBreak: 'break-word',
-                  boxShadow: m.role === 'user' ? '0 2px 8px rgba(59, 130, 246, 0.3)' : '0 1px 3px rgba(0,0,0,0.1)',
-                  border: m.role === 'assistant' ? '1px solid #e5e7eb' : 'none'
-                }}>
+              <div key={i} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'} mb-3.5`}>
+                <div 
+                  className={`px-4 py-3 rounded-xl max-w-[85%] leading-relaxed break-words ${
+                    m.role === 'user' 
+                      ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg' 
+                      : 'bg-white text-slate-900 border border-gray-200 shadow-sm'
+                  }`}
+                >
                   {m.text}
                 </div>
               </div>
             ))
           )}
           {chatLoading && (
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'flex-start',
-              marginBottom: 8
-            }}>
-              <div style={{
-                padding: '8px 12px',
-                borderRadius: 999,
-                background: '#e5e7eb',
-                color: '#4b5563',
-                fontSize: 12,
-                fontStyle: 'italic'
-              }}>
+            <div className="flex flex-col items-start mb-2">
+              <div className="px-3 py-2 rounded-full bg-gray-200 text-gray-600 text-xs italic">
                 Fyntrix is thinking…
               </div>
             </div>
@@ -336,36 +235,17 @@ export const AIResearchChat: React.FC<AIResearchChatProps> = ({
         </div>
 
         {/* Input Area - Fixed at bottom */}
-        <div style={{
-          padding: '12px 16px',
-          borderTop: '1px solid #e5e7eb',
-          background: '#ffffff',
-          display: 'flex',
-          gap: 10,
-          paddingBottom: isMobile
-            ? `calc(env(safe-area-inset-bottom) + ${chatKeyboardInset}px + 12px)`
-            : undefined,
-        }}>
+        <div className={`px-4 py-3 border-t border-gray-200 bg-white flex gap-2.5 ${
+          isMobile ? `pb-[calc(env(safe-area-inset-bottom)+${chatKeyboardInset}px+12px)]` : ''
+        }`}>
           <input
             ref={chatInputElRef}
             value={chatInput}
             onChange={e => setChatInput(e.target.value)}
             onKeyPress={e => e.key === 'Enter' && !e.shiftKey && onSend()}
             placeholder="Ask Fyntrix…"
-            style={{
-              flex: 1,
-              padding: '10px 14px',
-              border: '1px solid #e5e7eb',
-              borderRadius: 8,
-              fontSize: 14,
-              fontFamily: 'system-ui, -apple-system, sans-serif',
-              outline: 'none',
-              transition: 'all 0.15s',
-              background: '#f9fafb'
-            }}
+            className="flex-1 px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm font-system outline-none transition-all duration-150 bg-gray-50 focus:border-blue-500 focus:bg-white"
             onFocus={e => {
-              e.target.style.borderColor = '#3b82f6'
-              e.target.style.background = '#ffffff'
               if (isMobile) {
                 try {
                   requestAnimationFrame(() => {
@@ -374,37 +254,15 @@ export const AIResearchChat: React.FC<AIResearchChatProps> = ({
                 } catch { }
               }
             }}
-            onBlur={e => {
-              e.target.style.borderColor = '#e5e7eb'
-              e.target.style.background = '#f9fafb'
-            }}
           />
           <button
             onClick={onSend}
             disabled={!chatInput.trim()}
-            style={{
-              padding: '10px 20px',
-              borderRadius: 8,
-              background: chatInput.trim() ? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' : '#e5e7eb',
-              color: chatInput.trim() ? '#ffffff' : '#94a3b8',
-              border: 'none',
-              fontWeight: 600,
-              fontSize: 13,
-              cursor: chatInput.trim() ? 'pointer' : 'not-allowed',
-              boxShadow: chatInput.trim() ? '0 2px 4px rgba(59, 130, 246, 0.2)' : 'none',
-              transition: 'all 0.15s',
-              minWidth: 70
-            }}
-            onMouseEnter={e => {
-              if (chatInput.trim()) {
-                e.currentTarget.style.transform = 'translateY(-1px)'
-                e.currentTarget.style.boxShadow = '0 3px 6px rgba(59, 130, 246, 0.3)'
-              }
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.transform = 'translateY(0)'
-              e.currentTarget.style.boxShadow = chatInput.trim() ? '0 2px 4px rgba(59, 130, 246, 0.2)' : 'none'
-            }}
+            className={`px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-150 min-w-[70px] ${
+              chatInput.trim() 
+                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-sm cursor-pointer hover:-translate-y-px hover:shadow-md' 
+                : 'bg-gray-200 text-slate-400 cursor-not-allowed'
+            }`}
           >
             Send
           </button>
