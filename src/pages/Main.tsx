@@ -2500,7 +2500,7 @@ export default function App() {
               <Trophy size={18} color="#0f172a" />
               <span style={{ fontSize: 12, fontWeight: 600, color: '#0f172a' }}>Winners</span>
             </button>
-            <button
+            {/* <button
               title="RL Metrics"
               onClick={async () => {
                 setShowRlMetrics(true)
@@ -2542,7 +2542,7 @@ export default function App() {
             >
               <Brain size={18} color="#0f172a" />
               <span style={{ fontSize: 12, fontWeight: 600, color: '#0f172a' }}>RL</span>
-            </button>
+            </button> */}
           </nav>
 
           {/* Primary Mode Display at Bottom */}
@@ -2876,23 +2876,23 @@ export default function App() {
 
             <div style={{ padding: 10, display: 'grid', gridTemplateColumns: '1fr', gap: 8, overflowY: 'auto', maxHeight: '70dvh', overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}>
               {[
-                {
-                  title: 'Preferences',
-                  onClick: () => {
-                    setIsMoreOpen(false)
-                    setPrefsOpen(true)
-                  },
-                },
-                {
-                  title: 'Portfolio',
-                  onClick: () => {
-                    setIsMoreOpen(false)
-                    setShowPortfolio(true)
-                    setShowWatchlist(false)
-                    setShowPicks(false)
-                    setShowHeatMap(false)
-                  },
-                },
+                // {
+                //   title: 'Preferences',
+                //   onClick: () => {
+                //     setIsMoreOpen(false)
+                //     setPrefsOpen(true)
+                //   },
+                // },
+                // {
+                //   title: 'Portfolio',
+                //   onClick: () => {
+                //     setIsMoreOpen(false)
+                //     setShowPortfolio(true)
+                //     setShowWatchlist(false)
+                //     setShowPicks(false)
+                //     setShowHeatMap(false)
+                //   },
+                // },
                 {
                   title: 'Scalping Monitor',
                   onClick: () => {
@@ -2900,13 +2900,13 @@ export default function App() {
                     setShowScalpingMonitor(true)
                   },
                 },
-                {
-                  title: 'RL Metrics',
-                  onClick: async () => {
-                    setIsMoreOpen(false)
-                    await openRl()
-                  },
-                },
+                // {
+                //   title: 'RL Metrics',
+                //   onClick: async () => {
+                //     setIsMoreOpen(false)
+                //     await openRl()
+                //   },
+                // },
                 // {
                 //   title: 'Disclosure',
                 //   onClick: () => {
@@ -2921,27 +2921,27 @@ export default function App() {
                 //     setIsAccountOpen(true)
                 //   },
                 // },
-                // {
-                //   title: 'Support',
-                //   onClick: () => {
-                //     setIsMoreOpen(false)
-                //     setIsSupportChatOpen(true)
-                //   },
-                // },
-                // {
-                //   title: 'Company',
-                //   onClick: () => {
-                //     setIsMoreOpen(false)
-                //     setShowCompany(true)
-                //   },
-                // },
-                // {
-                //   title: 'Products',
-                //   onClick: () => {
-                //     setIsMoreOpen(false)
-                //     setShowProducts(true)
-                //   },
-                // },
+                {
+                  title: 'Support',
+                  onClick: () => {
+                    setIsMoreOpen(false)
+                    setIsSupportChatOpen(true)
+                  },
+                },
+                {
+                  title: 'Company',
+                  onClick: () => {
+                    setIsMoreOpen(false)
+                    setShowCompany(true)
+                  },
+                },
+                {
+                  title: 'Products',
+                  onClick: () => {
+                    setIsMoreOpen(false)
+                    setShowProducts(true)
+                  },
+                },
               ].map((item) => (
                 <button
                   key={item.title}
