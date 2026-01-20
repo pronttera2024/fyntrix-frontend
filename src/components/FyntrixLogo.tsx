@@ -5,16 +5,12 @@ import shortLogo from '../../assets/FyntrixShortLogo.png'
 interface FyntrixLogoProps {
   width?: number
   height?: number
-  fontSize?: number
-  fontWeight?: number
   isMobile?: boolean
 }
 
 export const FyntrixLogo: React.FC<FyntrixLogoProps> = ({ 
-  width = 120, 
-  height = 40, 
-  fontSize = 18, 
-  fontWeight = 900,
+  width = shortLogo ? '30' : '120', 
+  height = 30, 
   isMobile = false
 }) => {
   return (

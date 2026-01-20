@@ -2621,7 +2621,7 @@ export default function App() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: isMobile ? 12 : 128, maxWidth: '100%' }}>
-          <FyntrixLogo fontSize={22} fontWeight={900} isMobile={isMobile} />
+          <FyntrixLogo isMobile={isMobile} />
           <div
             style={{
               fontSize: 12,
@@ -2629,7 +2629,9 @@ export default function App() {
               fontWeight: 500,
               fontStyle: 'italic',
               cursor: 'pointer',
-              whiteSpace: 'nowrap'
+              whiteSpace: 'nowrap',
+              position: 'relative',
+              animation: 'pulse 1s infinite',
             }}
             onClick={() => setShowAgents(true)}
             onMouseEnter={e => {
@@ -2641,8 +2643,15 @@ export default function App() {
               e.currentTarget.style.color = '#334155'
               e.currentTarget.style.textDecoration = 'none'
             }}
+            title="Click to learn more about our AI trading agents"
           >
             (trading assisted by AI agents)
+            <style>{`
+              @keyframes pulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.7; }
+              }
+            `}</style>
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -2877,13 +2886,13 @@ export default function App() {
 
             <div style={{ padding: 10, display: 'grid', gridTemplateColumns: '1fr', gap: 8, overflowY: 'auto', maxHeight: '70dvh', overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}>
               {[
-                // {
-                //   title: 'Preferences',
-                //   onClick: () => {
-                //     setIsMoreOpen(false)
-                //     setPrefsOpen(true)
-                //   },
-                // },
+                {
+                  title: 'Preferences',
+                  onClick: () => {
+                    setIsMoreOpen(false)
+                    setPrefsOpen(true)
+                  },
+                },
                 // {
                 //   title: 'Portfolio',
                 //   onClick: () => {
@@ -7008,7 +7017,7 @@ export default function App() {
             style={{
               flex: 1,
               border: 'none',
-              background: 'transparent',
+              background: activeMobileTab === 'portfolio' ? '#dbeafe' : 'transparent',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -7016,6 +7025,8 @@ export default function App() {
               gap: 4,
               padding: '10px 0',
               cursor: 'pointer',
+              borderRadius: 45,
+              margin: '0 2px',
             }}
           >
             <div style={{ position: 'relative', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -7035,7 +7046,7 @@ export default function App() {
             style={{
               flex: 1,
               border: 'none',
-              background: 'transparent',
+              background: activeMobileTab === 'watchlist' ? '#dbeafe' : 'transparent',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -7043,6 +7054,8 @@ export default function App() {
               gap: 4,
               padding: '10px 0',
               cursor: 'pointer',
+              borderRadius: 45,
+              margin: '0 2px',
             }}
           >
             <div style={{ position: 'relative', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -7062,7 +7075,7 @@ export default function App() {
             style={{
               flex: 1,
               border: 'none',
-              background: 'transparent',
+              background: activeMobileTab === 'home' ? '#dbeafe' : 'transparent',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -7070,6 +7083,8 @@ export default function App() {
               gap: 4,
               padding: '10px 0',
               cursor: 'pointer',
+              borderRadius: 45,
+              margin: '0 2px',
             }}
           >
             <div style={{ position: 'relative', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -7086,7 +7101,7 @@ export default function App() {
             style={{
               flex: 1,
               border: 'none',
-              background: 'transparent',
+              background: activeMobileTab === 'winners' ? '#dbeafe' : 'transparent',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -7094,6 +7109,8 @@ export default function App() {
               gap: 4,
               padding: '10px 0',
               cursor: 'pointer',
+              borderRadius: 45,
+              margin: '0 2px',
             }}
           >
             <div style={{ position: 'relative', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -7124,7 +7141,7 @@ export default function App() {
             style={{
               flex: 1,
               border: 'none',
-              background: 'transparent',
+              background: activeMobileTab === 'more' ? '#dbeafe' : 'transparent',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -7132,6 +7149,8 @@ export default function App() {
               gap: 4,
               padding: '10px 0',
               cursor: 'pointer',
+              borderRadius: 45,
+              margin: '0 2px',
             }}
           >
             <div style={{ position: 'relative', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
