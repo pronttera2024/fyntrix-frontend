@@ -239,10 +239,10 @@ export const TradeStrategyPanel: React.FC<TradeStrategyPanelProps> = ({
         )}
       </div>
 
-      <div className="flex flex-row gap-2">
+      <div className="flex flex-col md:flex-row gap-2">
         {/* Trade Action Banner */}
         <div
-          className="p-2 bg-white rounded-xl border border-gray-200 border-l-[3px] flex-1"
+          className="p-2 bg-white rounded-xl border border-gray-200 border-l-[3px] md:flex-1"
           style={{
             borderLeftColor: (recLabel || '').toLowerCase().includes('sell')
               ? '#ef4444'
@@ -280,18 +280,18 @@ export const TradeStrategyPanel: React.FC<TradeStrategyPanelProps> = ({
           </div>
         </div>
         {/* Entry Details - Comprehensive */}
-        <div className="p-2 bg-white rounded-xl border border-gray-200 border-l-[3px] border-l-blue-600 flex-1">
-          <div className="text-sm lg:text-sm font-bold text-blue-600 mb-2.5 flex items-center gap-2">
+        <div className="p-2 bg-white rounded-xl border border-gray-200 border-l-[3px] border-l-blue-600 md:flex-1">
+          <div className="text-sm lg:text-sm font-bold text-blue-600 mb-0.5 flex items-center">
             <span>🎯</span>
             <span>ENTRY STRATEGY</span>
           </div>
-          <div className="grid gap-2 lg:gap-2">
-            <div className="grid grid-cols-[120px_1fr] lg:grid-cols-[120px_1fr] gap-2 lg:gap-2 items-center">
-              <div className="text-xs text-slate-600 font-semibold">Entry Price:</div>
-              <div className="text-lg lg:text-lg font-bold text-green-600">{displayEntry}</div>
+          <div className="flex flex-col">
+            <div className="flex flex-row md:items-center justify-between">
+              <div className="text-sm md:text-xs text-slate-600 font-semibold">Entry Price:</div>
+              <div className="text-md md:text-md font-bold text-green-600">{displayEntry}</div>
             </div>
-            <div className="grid grid-cols-[120px_1fr] lg:grid-cols-[120px_1fr] gap-2 lg:gap-2 items-start">
-              <div className="text-xs text-slate-600 font-semibold">Entry Timing:</div>
+            <div className="flex flex-row md:items-start justify-between">
+              <div className="text-sm md:text-xs text-slate-600 font-semibold">Entry Timing:</div>
               <div className="text-xs text-slate-600 leading-6">
                 {plan.entry_timing || plan.entry?.timing || 'At current market price or on pullback to support zone. Consider entering in 2-3 tranches for better risk management.'}
               </div>
@@ -303,13 +303,14 @@ export const TradeStrategyPanel: React.FC<TradeStrategyPanelProps> = ({
 
 
 
+      <div className="flex flex-col md:flex-row gap-3">
       {/* Stop Loss Details - Comprehensive */}
-      <div className="p-3 lg:p-3 bg-white rounded-xl border border-gray-200 border-l-[3px] border-l-red-600">
+      <div className="flex-1 p-2 md:p-2 bg-white rounded-xl border border-gray-200 border-l-[3px] border-l-red-600">
         <div className="text-sm lg:text-sm font-bold text-red-600 mb-2.5 flex items-center gap-2">
           <span>🛡️</span>
           <span>STOP LOSS MANAGEMENT</span>
         </div>
-        <div className="grid gap-2.5 lg:gap-2.5">
+        <div className="flex flex-col gap-2.5 lg:gap-2.5">
           <div className="p-2 lg:p-2 bg-white rounded-md border border-red-200">
             <div className="text-xs text-red-800 font-semibold mb-1">Initial Stop Loss:</div>
             <div className="text-base lg:text-base font-bold text-red-600">{displayStop}</div>
@@ -333,12 +334,12 @@ export const TradeStrategyPanel: React.FC<TradeStrategyPanelProps> = ({
       </div>
 
       {/* Target Levels - Comprehensive */}
-      <div className="p-3 lg:p-3 bg-white rounded-xl border border-gray-200 border-l-[3px] border-l-green-600">
+      <div className="flex-1 p-2 lg:p-2 bg-white rounded-xl border border-gray-200 border-l-[3px] border-l-green-600">
         <div className="text-sm lg:text-sm font-bold text-green-600 mb-2.5 flex items-center gap-2">
           <span>🎯</span>
           <span>TARGET LEVELS & PROFIT BOOKING</span>
         </div>
-        <div className="grid gap-2 lg:gap-2">
+        <div className="flex flex-col gap-2 lg:gap-2">
           {(plan.targets || ['101', '102', '103']).map((target: any, idx: number) => {
             const targetPrice = typeof target === 'string' || typeof target === 'number' ? target : target.price
             const entryForGain = entryNum ?? parseNumber(plan.entry || '100') ?? 100
@@ -386,14 +387,16 @@ export const TradeStrategyPanel: React.FC<TradeStrategyPanelProps> = ({
           </div>
         </div>
       </div>
+      </div>
 
+      <div className="flex flex-col md:flex-row gap-3">
       {/* Position Sizing - Comprehensive */}
-      <div className="p-3 lg:p-3 bg-white rounded-xl border border-gray-200 border-l-[3px] border-l-amber-500">
+      <div className="flex-1 p-3 lg:p-3 bg-white rounded-xl border border-gray-200 border-l-[3px] border-l-amber-500">
         <div className="text-sm lg:text-sm font-bold text-amber-600 mb-2.5 flex items-center gap-2">
           <span>📏</span>
           <span>POSITION SIZING & CAPITAL ALLOCATION</span>
         </div>
-        <div className="grid gap-2.5 lg:gap-2.5">
+        <div className="flex flex-col gap-2.5 lg:gap-2.5">
           <div className="p-2.5 lg:p-2.5 bg-white rounded-lg border border-amber-200">
             <div className="text-xs text-amber-600 font-semibold mb-1.5">2% Risk Rule (Recommended):</div>
             <div className="text-xs text-amber-900 leading-6">
@@ -414,8 +417,9 @@ export const TradeStrategyPanel: React.FC<TradeStrategyPanelProps> = ({
         </div>
       </div>
 
-      {/* Risk:Reward & Time Horizon */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 lg:gap-2.5">
+      {/* Risk:Reward & Time Horizon - Right Column */}
+      <div className="flex-1 flex flex-row md:flex-col gap-3">
+        {/* Risk:Reward */}
         <div className="p-3 lg:p-3 bg-white rounded-xl border border-gray-200 border-l-[3px] border-l-yellow-600">
           <div className="text-sm lg:text-sm font-bold text-yellow-600 mb-2 flex items-center gap-2">
             <span>📊</span>
@@ -436,18 +440,20 @@ export const TradeStrategyPanel: React.FC<TradeStrategyPanelProps> = ({
           </div>
         </div>
 
+        {/* Time Horizon */}
         <div className="p-3 lg:p-3 bg-white rounded-xl border border-gray-200 border-l-[3px] border-l-orange-500">
           <div className="text-sm lg:text-sm font-bold text-orange-500 mb-2 flex items-center gap-2">
             <span>⏱️</span>
             <span>TIME HORIZON</span>
           </div>
           <div className="text-center p-2.5 lg:p-2.5">
-            <div className="text-2xl lg:text-2xl font-bold text-orange-500">
+            <div className="text-lg md:text-2xl font-bold text-orange-500">
               {getTimeHorizonLabel()}
             </div>
             <div className="text-xs text-orange-500 mt-1">Expected holding period</div>
           </div>
         </div>
+      </div>
       </div>
 
       {/* Invalidation Conditions */}
