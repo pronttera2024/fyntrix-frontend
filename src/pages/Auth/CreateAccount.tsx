@@ -643,12 +643,12 @@ export default function CreateAccount() {
               !formData.name ||
               !formData.phone ||
               !formData.acceptTerms ||
-              (showOtpField && !formData.otp)
+              (showOtpField && formData.otp.length !== 6)
             }
             style={{
               width: '100%',
               padding: '14px 24px',
-              background: isLoading || !formData.name || !formData.phone || !formData.acceptTerms || (showOtpField && !formData.otp)
+              background: isLoading || !formData.name || !formData.phone || !formData.acceptTerms || (showOtpField && formData.otp.length !== 6)
                 ? '#94a3b8'
                 : 'linear-gradient(135deg, #0095FF 0%, #10C8A9 100%)',
               color: '#fff',
@@ -656,9 +656,9 @@ export default function CreateAccount() {
               borderRadius: 12,
               fontSize: 15,
               fontWeight: 700,
-              cursor: isLoading || !formData.name || !formData.phone || !formData.acceptTerms || (showOtpField && !formData.otp) ? 'not-allowed' : 'pointer',
+              cursor: isLoading || !formData.name || !formData.phone || !formData.acceptTerms || (showOtpField && formData.otp.length !== 6) ? 'not-allowed' : 'pointer',
               transition: 'all 0.2s',
-              boxShadow: isLoading || !formData.name || !formData.phone || !formData.acceptTerms || (showOtpField && !formData.otp)
+              boxShadow: isLoading || !formData.name || !formData.phone || !formData.acceptTerms || (showOtpField && formData.otp.length !== 6)
                 ? 'none'
                 : '0 4px 12px rgba(0, 149, 255, 0.3)',
               display: 'flex',
@@ -670,7 +670,7 @@ export default function CreateAccount() {
             {isLoading ? (
               <>
                 <div style={{
-                  width: 16,
+/* ... */
                   height: 16,
                   border: '2px solid rgba(255, 255, 255, 0.3)',
                   borderTop: '2px solid #fff',

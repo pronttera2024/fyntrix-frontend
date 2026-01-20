@@ -429,11 +429,11 @@ export default function Login() {
           {/* Generate OTP / Login Button */}
           <button
             type="submit"
-            disabled={isLoading || phone.length !== 10 || (showOtpField && !otp)}
+            disabled={isLoading || phone.length !== 10 || (showOtpField && otp.length !== 6)}
             style={{
               width: '100%',
               padding: '14px 24px',
-              background: isLoading || phone.length !== 10 || (showOtpField && !otp)
+              background: isLoading || phone.length !== 10 || (showOtpField && otp.length !== 6)
                 ? '#94a3b8'
                 : 'linear-gradient(135deg, #0095FF 0%, #10C8A9 100%)',
               color: '#fff',
@@ -441,9 +441,9 @@ export default function Login() {
               borderRadius: 12,
               fontSize: 15,
               fontWeight: 700,
-              cursor: isLoading || phone.length !== 10 || (showOtpField && !otp) ? 'not-allowed' : 'pointer',
+              cursor: isLoading || phone.length !== 10 || (showOtpField && otp.length !== 6) ? 'not-allowed' : 'pointer',
               transition: 'all 0.2s',
-              boxShadow: isLoading || phone.length !== 10 || (showOtpField && !otp)
+              boxShadow: isLoading || phone.length !== 10 || (showOtpField && otp.length !== 6)
                 ? 'none'
                 : '0 4px 12px rgba(0, 149, 255, 0.3)',
               display: 'flex',

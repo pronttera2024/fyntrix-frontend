@@ -126,7 +126,7 @@ export const AccountDropdown: React.FC<AccountDropdownProps> = ({
               setIsLogoutConfirmOpen(true)
             }}
             style={{
-              width: '100%',
+              width: '90%',
               padding: '12px 16px',
               border: 'none',
               background: 'transparent',

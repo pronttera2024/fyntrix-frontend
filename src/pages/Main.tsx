@@ -9,7 +9,7 @@ import { AccountDropdown } from '../components/AccountDropdown'
 import { AIResearchChat } from '../components/Home/AIResearchChat'
 import { MarketBrief } from '../components/Home/MarketBrief'
 import { computeSentimentRiskLevel } from '../sentimentRisk'
-import { LayoutGrid, SlidersHorizontal, BriefcaseBusiness, Image, SquareActivity, Trophy, Copy, Bell, MessageCircle, Megaphone, User, Brain, MoreHorizontal, LogOut, Mail, CheckCircle, Menu } from 'lucide-react'
+import { LayoutGrid, SlidersHorizontal, BriefcaseBusiness, Image, SquareActivity, Trophy, Copy, Bell, MessageCircle, Megaphone, User, Brain, MoreHorizontal, LogOut, Mail, CheckCircle, Menu, Phone } from 'lucide-react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { ChartView } from '../components/ChartView'
@@ -2795,7 +2795,7 @@ export default function App() {
               >
                 <Megaphone size={16} color="#e5e7eb" />
               </button>
-               <AccountDropdown
+              <AccountDropdown
                 isAccountDropdownOpen={isAccountDropdownOpen}
                 setIsAccountDropdownOpen={setIsAccountDropdownOpen}
                 setIsAccountOpen={setIsAccountOpen}
@@ -6827,13 +6827,13 @@ export default function App() {
                       </div>
 
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <Mail size={16} color="#64748b" />
+                        {userData.email ? <Mail size={16} color="#64748b" /> : <Phone size={16} color="#64748b" />}
                         <div>
                           <div style={{ fontSize: 11, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                            Email
+                            {userData.email ? 'Email' : 'Phone'}
                           </div>
                           <div style={{ fontSize: 13, fontWeight: 600, color: '#1e293b' }}>
-                            {userData.email}
+                            {userData.email || userData.phone}
                           </div>
                         </div>
                       </div>
