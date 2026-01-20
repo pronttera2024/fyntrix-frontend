@@ -80,8 +80,7 @@ export const AccountDropdown: React.FC<AccountDropdownProps> = ({
           style={{
             position: 'absolute',
             top: '100%',
-            right: 0,
-            marginTop: 8,
+            right: 10,
             background: '#ffffff',
             border: '1px solid #e5e7eb',
             borderRadius: 12,
