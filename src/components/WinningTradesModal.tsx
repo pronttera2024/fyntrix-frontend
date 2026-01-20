@@ -32,6 +32,15 @@ const DEFAULT_AVAILABLE_MODES: any[] = [
   },
 ]
 
+const formatIndianPrice = (price: number) => {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(price)
+}
+
 interface WinningTradesModalProps {
   isOpen: boolean
   onClose: () => void
@@ -86,20 +95,10 @@ export const WinningTradesModal: React.FC<WinningTradesModalProps> = ({
 
   return (
     <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: isMobile ? '#ffffff' : 'rgba(0,0,0,0.35)',
-        display: 'flex',
-        alignItems: isMobile ? 'stretch' : 'center',
-        justifyContent: isMobile ? 'stretch' : 'center',
-        padding: isMobile ? 0 : 20,
-        zIndex: 1001,
-        overscrollBehavior: isMobile ? 'contain' : undefined,
-      }}
+      className="fixed inset-0 flex bg-white items-stretch justify-stretch p-0 md:bg-black/35 md:items-center md:justify-center md:p-5 z-[1001] md:overscroll-contain"
       onClick={onClose}
     >
-      <button
+      {/* <button
         ref={winnersCloseRef}
         type="button"
         onClick={(e) => {
@@ -110,93 +109,41 @@ export const WinningTradesModal: React.FC<WinningTradesModalProps> = ({
           } catch {}
           onClose()
         }}
-        style={{
-          position: 'fixed',
-          top: isMobile ? 'calc(env(safe-area-inset-top) + 12px)' : 16,
-          right: 16,
-          zIndex: 1010,
-          width: isMobile ? 44 : 40,
-          height: isMobile ? 44 : 40,
-          borderRadius: 10,
-          border: '1px solid rgba(148,163,184,0.6)',
-          background: 'rgba(255,255,255,0.95)',
-          color: '#0f172a',
-          fontSize: 26,
-          lineHeight: '26px',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontWeight: 900,
-        }}
+        className={`fixed z-[1010] flex items-center justify-center font-black cursor-pointer text-slate-900 border border-slate-400/60 bg-white/95 ${isMobile ? 'w-11 h-11 top-[calc(env(safe-area-inset-top)+12px)]' : 'w-10 h-10 top-4'} right-4 rounded-xl text-2xl leading-6`}
         aria-label="Close Winning Trades"
         title="Close (Esc)"
       >
         ×
-      </button>
+      </button> */}
       <div
         ref={winnersDialogRef}
         role="dialog"
         aria-modal={true}
         aria-label="Winning Trades"
         tabIndex={-1}
-        style={{
-          width: isMobile ? '100vw' : 'min(1000px, 90vw)',
-          height: isMobile ? '100dvh' : undefined,
-          maxHeight: isMobile ? '100dvh' : '90vh',
-          overflowY: 'auto',
-          background: '#ffffff',
-          borderRadius: isMobile ? 0 : 16,
-          padding: isMobile
-            ? 'calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 16px) 16px'
-            : 24,
-          border: isMobile ? 'none' : '1px solid #e2e8f0',
-          boxShadow: isMobile ? 'none' : '0 18px 50px rgba(2,6,23,0.18)',
-        }}
+        className="bg-white overflow-y-auto w-full h-dvh max-h-dvh rounded-none pt-[calc(env(safe-area-inset-top)+12px)] px-3 pb-[calc(env(safe-area-inset-bottom)+16px)] border-none shadow-none md:w-auto md:h-auto md:max-h-[90vh] md:min-w-[1000px] md:max-w-[90vw] md:rounded-2xl md:p-6 md:border md:border-slate-200 md:shadow-[0_18px_50px_rgba(2,6,23,0.18)]"
         onClick={(e) => e.stopPropagation()}
       >
         <div
           {...swipeCloseWinners}
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 20,
-            position: isMobile ? 'sticky' : 'static',
-            top: isMobile ? 0 : undefined,
-            background: '#ffffff',
-            zIndex: 2,
-          }}
+          className={`flex justify-between items-start mb-4 md:mb-5 sticky top-0 bg-white z-[2] md:static`}
         >
-          <div style={{ flex: 1 }}>
+          <div className="flex-1">
             <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-              }}
+              className="flex justify-between items-start"
             >
               <div>
                 <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12,
-                    marginBottom: 8,
-                  }}
+                  className={`flex items-center gap-2 mb-1.5 md:gap-3 md:mb-2`}
                 >
-                  <span style={{ fontSize: 32 }}>🏆</span>
+                  <span className="text-xl md:text-2xl">🏆</span>
                   <div
-                    style={{
-                      fontWeight: 700,
-                      fontSize: 24,
-                      color: '#0f172a',
-                    }}
+                    className={`font-bold text-lg md:text-2xl text-slate-900`}
                   >
                     Winning Trades
                   </div>
                 </div>
-                <div style={{ fontSize: 13, color: '#64748b' }}>
+                <div className="text-[11px] md:text-xs text-slate-500">
                   Track Alpha Generated Across Trading Modes
                 </div>
               </div>
@@ -249,45 +196,21 @@ export const WinningTradesModal: React.FC<WinningTradesModalProps> = ({
 
                   return (
                     <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-end',
-                        gap: 4,
-                        marginRight: 14,
-                      }}
+                      className={`flex flex-col items-end gap-1 mr-2 md:mr-3.5`}
                     >
                       <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 6,
-                          padding: '6px 12px',
-                          background: isMarketOpen ? '#dcfce7' : '#f1f5f9',
-                          borderRadius: 999,
-                          border: isMarketOpen ? '1px solid #bbf7d0' : '1px solid #e2e8f0',
-                        }}
+                        className={`flex items-center gap-1 px-2 py-1 md:gap-1.5 md:px-3 md:py-1.5 rounded-full border ${isMarketOpen ? 'bg-green-50 border-green-300' : 'bg-slate-100 border-slate-200'}`}
                       >
                         <div
-                          style={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: '50%',
-                            background: isMarketOpen ? '#16a34a' : '#94a3b8',
-                            animation: isMarketOpen ? 'pulse 2s infinite' : 'none',
-                          }}
+                          className={`w-2 h-2 rounded-full ${isMarketOpen ? 'bg-green-600 animate-pulse' : 'bg-slate-400'}`}
                         ></div>
                         <span
-                          style={{
-                            fontSize: 11,
-                            fontWeight: 700,
-                            color: isMarketOpen ? '#166534' : '#64748b',
-                          }}
+                          className={`text-[10px] md:text-xs font-bold ${isMarketOpen ? 'text-green-800' : 'text-slate-500'}`}
                         >
                           {isMarketOpen ? 'Live' : 'Market Closed'}
                         </span>
                       </div>
-                      <div style={{ fontSize: 11, color: '#64748b', fontWeight: 500 }}>
+                      <div className={`text-[9px] md:text-xs text-slate-500 font-medium`}>
                         {isMarketOpen ? `Updated ${updatedLabel}` : closedLabel}
                       </div>
                     </div>
@@ -297,35 +220,20 @@ export const WinningTradesModal: React.FC<WinningTradesModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            style={{
-              border: 'none',
-              background: 'transparent',
-              fontSize: 28,
-              cursor: 'pointer',
-              color: '#64748b',
-              lineHeight: 1,
-              padding: 0,
-              alignSelf: 'flex-start',
-              marginTop: -6,
-            }}
+            className="border-slate-400 bg-slate-800/5 border rounded-md cursor-pointer leading-none px-0.5 self-start text-xl md:text-2xl -mt-1 md:-mt-1.5 text-slate-500"
           >
             &times;
           </button>
         </div>
 
         {/* Mode Filters */}
-        <div style={{ marginBottom: 20 }}>
+        <div className="mb-4 md:mb-5">
           <div
-            style={{
-              fontSize: 12,
-              fontWeight: 600,
-              color: '#0f172a',
-              marginBottom: 8,
-            }}
+            className="text-[11px] md:text-xs font-semibold text-slate-900 mb-2"
           >
             TRADING MODE
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          <div className={`flex gap-1.5 md:flex-wrap md:gap-2 overflow-x-auto md:overflow-visible`} style={{ msOverflowStyle: 'none', scrollbarWidth: 'none', WebkitScrollbar: { display: 'none' } as any }}>
             {['All', 'Scalping', 'Intraday', 'Swing', 'Options', 'Futures'].map((mode) => {
               const isActive = winningTradesMode === mode
 
@@ -333,8 +241,8 @@ export const WinningTradesModal: React.FC<WinningTradesModalProps> = ({
                 mode === 'All'
                   ? null
                   : (availableModes || DEFAULT_AVAILABLE_MODES).find(
-                      (m) => String(m.value).toLowerCase() === mode.toLowerCase()
-                    )
+                    (m) => String(m.value).toLowerCase() === mode.toLowerCase()
+                  )
 
               const tooltip =
                 mode === 'All' ? 'Show performance across all trading modes' : modeConfig?.description || `${mode} mode`
@@ -353,22 +261,7 @@ export const WinningTradesModal: React.FC<WinningTradesModalProps> = ({
                     })
                   }}
                   onMouseLeave={() => setTip(null)}
-                  style={{
-                    position: 'relative',
-                    padding: '8px 12px',
-                    fontSize: 12,
-                    fontWeight: 600,
-                    borderRadius: 999,
-                    border: isActive ? '2px solid #14b8a6' : '1px solid #e2e8f0',
-                    background: isActive ? '#ecfeff' : '#ffffff',
-                    color: '#0f172a',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    userSelect: 'none',
-                  }}
+                  className={`relative flex items-center gap-1.5 px-2 py-1.5 text-[11px] md:gap-2 md:px-3 md:py-2 md:text-xs font-semibold rounded-full border cursor-pointer transition-all duration-200 select-none ${isActive ? 'border-2 border-teal-500 bg-cyan-50' : 'border border-slate-200 bg-white'} text-slate-900 active:scale-95 md:hover:border-slate-300`}
                 >
                   <input
                     type="radio"
@@ -376,28 +269,14 @@ export const WinningTradesModal: React.FC<WinningTradesModalProps> = ({
                     value={mode}
                     checked={isActive}
                     onChange={() => setWinningTradesMode(mode)}
-                    style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}
+                    className="absolute opacity-0 pointer-events-none"
                   />
                   <div
-                    style={{
-                      width: 14,
-                      height: 14,
-                      borderRadius: '50%',
-                      border: isActive ? '3px solid #14b8a6' : '2px solid #94a3b8',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      background: '#ffffff',
-                    }}
+                    className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center bg-white ${isActive ? 'border-[3px] border-teal-500' : 'border-2 border-slate-400'}`}
                   >
                     {isActive && (
                       <div
-                        style={{
-                          width: 6,
-                          height: 6,
-                          borderRadius: '50%',
-                          background: '#14b8a6',
-                        }}
+                        className="w-1.5 h-1.5 rounded-full bg-teal-500"
                       />
                     )}
                   </div>
@@ -410,7 +289,7 @@ export const WinningTradesModal: React.FC<WinningTradesModalProps> = ({
 
         {/* Performance Metrics */}
         {loadingWinningTrades ? (
-          <div style={{ textAlign: 'center', padding: 40, color: '#78350f' }}>Loading performance data...</div>
+          <div className={`text-center py-8 md:py-10 text-amber-700`}>Loading performance data...</div>
         ) : winningTradesData ? (
           (() => {
             let filteredRecs = winningTradesData?.recommendations || []
@@ -447,53 +326,40 @@ export const WinningTradesModal: React.FC<WinningTradesModalProps> = ({
             const avgReturnNum = parseFloat(avgReturn)
             const alphaNum = parseFloat(alphaGen)
 
-            const avgReturnColor = avgReturnNum > 0 ? '#16a34a' : avgReturnNum < 0 ? '#ef4444' : '#0f172a'
-            const alphaColor = alphaNum > 0 ? '#16a34a' : alphaNum < 0 ? '#ef4444' : '#0f172a'
-
-            const kpiCardStyle: React.CSSProperties = {
-              background: '#ffffff',
-              padding: 16,
-              borderRadius: 12,
-              border: '1px solid #e2e8f0',
-              boxShadow: '0 1px 0 rgba(15,23,42,0.04)',
-            }
+            const avgReturnColor = avgReturnNum > 0 ? 'text-green-600' : avgReturnNum < 0 ? 'text-red-500' : 'text-slate-900'
+            const alphaColor = alphaNum > 0 ? 'text-green-600' : alphaNum < 0 ? 'text-red-500' : 'text-slate-900'
 
             return (
               <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                  gap: 16,
-                  marginBottom: 24,
-                }}
+                className={`grid grid-cols-2 gap-3 md:grid-cols-[repeat(auto-fit,minmax(200px,1fr))] md:gap-4 mb-6`}
               >
-                <div style={{ ...kpiCardStyle }}>
-                  <div style={{ fontSize: 12, color: '#64748b', fontWeight: 600, marginBottom: 4 }}>WIN RATE</div>
-                  <div style={{ fontSize: 32, fontWeight: 700, color: '#0f172a' }}>{winRate}%</div>
-                  <div style={{ fontSize: 11, color: '#64748b' }}>
+                <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-[0_1px_0_rgba(15,23,42,0.04)]">
+                  <div className={`text-[10px] md:text-xs text-slate-500 font-semibold mb-1`}>WIN RATE</div>
+                  <div className={`text-xl md:text-2xl font-bold text-slate-900`}>{winRate}%</div>
+                  <div className={`text-[10px] md:text-xs text-slate-500`}>
                     {winningTradesMode === 'All' ? 'All modes' : winningTradesMode}
                   </div>
                 </div>
-                <div style={{ ...kpiCardStyle }}>
-                  <div style={{ fontSize: 12, color: '#64748b', fontWeight: 600, marginBottom: 4 }}>AVG RETURN</div>
-                  <div style={{ fontSize: 20, fontWeight: 700, color: avgReturnColor, marginBottom: 4 }}>
+                <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-[0_1px_0_rgba(15,23,42,0.04)]">
+                  <div className={`text-[10px] md:text-xs text-slate-500 font-semibold mb-1`}>AVG RETURN</div>
+                  <div className={`text-base md:text-lg font-bold mb-1 ${avgReturnColor}`}>
                     {avgReturnNum >= 0 ? '+' : ''}
                     {avgReturn}%
                   </div>
-                  <div style={{ fontSize: 11, color: '#64748b' }}>Per recommendation</div>
+                  <div className={`text-[10px] md:text-xs text-slate-500`}>Per recommendation</div>
                 </div>
-                <div style={{ ...kpiCardStyle }}>
-                  <div style={{ fontSize: 12, color: '#64748b', fontWeight: 600, marginBottom: 4 }}>ALPHA GENERATED</div>
-                  <div style={{ fontSize: 20, fontWeight: 700, color: alphaColor, marginBottom: 4 }}>
+                <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-[0_1px_0_rgba(15,23,42,0.04)]">
+                  <div className={`text-[10px] md:text-xs text-slate-500 font-semibold mb-1`}>ALPHA GENERATED</div>
+                  <div className={`text-base md:text-lg font-bold mb-1 ${alphaColor}`}>
                     {alphaNum >= 0 ? '+' : ''}
                     {alphaGen}%
                   </div>
-                  <div style={{ fontSize: 11, color: '#64748b' }}>vs NIFTY50</div>
+                  <div className={`text-[10px] md:text-xs text-slate-500`}>vs NIFTY50</div>
                 </div>
-                <div style={{ ...kpiCardStyle }}>
-                  <div style={{ fontSize: 12, color: '#64748b', fontWeight: 600, marginBottom: 4 }}>TOTAL PICKS</div>
-                  <div style={{ fontSize: 32, fontWeight: 700, color: '#0f172a' }}>{totalPicks}</div>
-                  <div style={{ fontSize: 11, color: '#64748b', lineHeight: 1.4 }}>
+                <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-[0_1px_0_rgba(15,23,42,0.04)]">
+                  <div className={`text-[10px] md:text-xs text-slate-500 font-semibold mb-1`}>TOTAL PICKS</div>
+                  <div className={`text-xl md:text-2xl font-bold text-slate-900`}>{totalPicks}</div>
+                  <div className={`text-[10px] md:text-xs text-slate-500 leading-[1.4]`}>
                     <div>Filtered results</div>
                     <div>Unique symbols: {uniqueSymbols}</div>
                   </div>
@@ -502,7 +368,7 @@ export const WinningTradesModal: React.FC<WinningTradesModalProps> = ({
             )
           })()
         ) : (
-          <div style={{ textAlign: 'center', padding: 40, color: '#78350f' }}>No performance data available</div>
+          <div className={`text-center py-8 md:py-10 text-amber-700`}>No performance data available</div>
         )}
 
         {/* Top Winning Trades Table - Continued in next part */}
@@ -542,115 +408,98 @@ const WinningTradesTable: React.FC<{
   winningTradesAvailableDates,
   winningStrategiesData,
 }) => {
-  // Extract strategyExitsByDate from winningStrategiesData
-  const strategyExitsByDate = winningStrategiesData?.strategy_exits_by_date || {}
-  let recs = winningTradesData?.recommendations || []
-  if (winningTradesMode !== 'All') {
-    recs = recs.filter((r: any) => r.mode === winningTradesMode)
-  }
-  if (winningTradesDate !== 'all') {
-    recs = recs.filter((r: any) => r.recommended_date === winningTradesDate)
-  }
-  recs = [...recs].sort((a: any, b: any) => b.return_pct - a.return_pct)
+    // Extract strategyExitsByDate from winningStrategiesData
+    const strategyExitsByDate = winningStrategiesData?.strategy_exits_by_date || {}
+    let recs = winningTradesData?.recommendations || []
+    if (winningTradesMode !== 'All') {
+      recs = recs.filter((r: any) => r.mode === winningTradesMode)
+    }
+    if (winningTradesDate !== 'all') {
+      recs = recs.filter((r: any) => r.recommended_date === winningTradesDate)
+    }
+    recs = [...recs].sort((a: any, b: any) => b.return_pct - a.return_pct)
 
-  return (
-    <div
-      style={{
-        background: '#fff',
-        borderRadius: 12,
-        padding: 16,
-        border: '1px solid #e5e7eb',
-      }}
-    >
+    return (
       <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 12,
-        }}
+        className="bg-white rounded-xl p-3 md:p-4 border border-gray-200"
       >
-        <div>
-          <div style={{ fontWeight: 600, fontSize: 16 }}>Top Winning Trades</div>
-          <div style={{ fontSize: 12, color: '#64748b' }}>
-            Performance tracked since recommendation • Sorted by Returns
-          </div>
-          <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
-            ! icon marks strategy advisories (trend weakening, volume fade, price stretched) and does not indicate an
-            executed exit.
-          </div>
-        </div>
-        <select
-          value={winningTradesDate}
-          onChange={(e) => setWinningTradesDate(e.target.value)}
-          style={{
-            padding: '6px 12px',
-            fontSize: 12,
-            fontWeight: 600,
-            borderRadius: 8,
-            border: '2px solid #e5e7eb',
-            background: '#fff',
-            color: '#64748b',
-            cursor: 'pointer',
-          }}
+        <div
+          className={`flex justify-between items-start mb-2 md:mb-3`}
         >
-          <option value="all">All Dates</option>
-          {winningTradesAvailableDates.map((d) => {
-            try {
-              const dt = new Date(d)
-              const label = formatIstDate(dt)
-              return (
-                <option key={d} value={d}>
-                  {label}
-                </option>
-              )
-            } catch {
-              return null
-            }
-          })}
-        </select>
-      </div>
-
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-            <th style={{ textAlign: 'left', padding: '8px', fontSize: 12, fontWeight: 600, color: '#64748b' }}>Symbol</th>
-            <th style={{ textAlign: 'left', padding: '8px', fontSize: 12, fontWeight: 600, color: '#64748b' }}>Mode</th>
-            <th style={{ textAlign: 'left', padding: '8px', fontSize: 12, fontWeight: 600, color: '#64748b' }}>
-              Recommended
-            </th>
-            <th style={{ textAlign: 'left', padding: '8px', fontSize: 12, fontWeight: 600, color: '#64748b' }}>
-              Exit Time
-            </th>
-            <th style={{ textAlign: 'right', padding: '8px', fontSize: 12, fontWeight: 600, color: '#64748b' }}>
-              Entry Price
-            </th>
-            <th style={{ textAlign: 'right', padding: '8px', fontSize: 12, fontWeight: 600, color: '#64748b' }}>
-              Exit / Last Price
-            </th>
-            <th style={{ textAlign: 'right', padding: '8px', fontSize: 12, fontWeight: 600, color: '#64748b' }}>
-              Return Profile
-            </th>
-            <th style={{ textAlign: 'center', padding: '8px', fontSize: 12, fontWeight: 600, color: '#64748b' }}>Status</th>
-            <th style={{ textAlign: 'center', padding: '8px', fontSize: 12, fontWeight: 600, color: '#64748b' }}>
-              Days Held
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {recs.map((row: any, idx: number) => (
-            <TradeRow key={idx} row={row} idx={idx} strategyExitsByDate={strategyExitsByDate} />
-          ))}
-        </tbody>
-      </table>
-      {recs.length === 0 && (
-        <div style={{ textAlign: 'center', padding: 40, color: '#94a3b8', fontSize: 14 }}>
-          📋 No trades found for selected filters
+          <div>
+            <div className={`font-semibold text-sm md:text-base`}>Top Winning Trades</div>
+            <div className={`text-[11px] md:text-xs text-slate-500`}>
+              Performance tracked since recommendation • Sorted by Returns
+            </div>
+            <div className={`text-[10px] md:text-[11px] text-slate-400 mt-1 md:mt-0.5`}>
+              ! icon marks strategy advisories (trend weakening, volume fade, price stretched) and does not indicate an
+              executed exit.
+            </div>
+          </div>
+          <select
+            value={winningTradesDate}
+            onChange={(e) => setWinningTradesDate(e.target.value)}
+            className={`px-2 py-1 text-[11px] md:px-3 md:py-1.5 md:text-xs font-semibold rounded-lg border-2 border-gray-200 bg-white text-slate-500 cursor-pointer`}
+          >
+            <option value="all">All Dates</option>
+            {winningTradesAvailableDates.map((d) => {
+              try {
+                const dt = new Date(d)
+                const label = formatIstDate(dt)
+                return (
+                  <option key={d} value={d}>
+                    {label}
+                  </option>
+                )
+              } catch {
+                return null
+              }
+            })}
+          </select>
         </div>
-      )}
-    </div>
-  )
-}
+
+        <div className={`overflow-x-auto md:overflow-visible`}>
+          <table className="w-full border-collapse" style={{ minWidth: '800px' }}>
+            <thead>
+              <tr className="border-b-2 border-gray-200">
+                <th className={`text-left p-2 text-[10px] md:text-xs font-semibold text-slate-500`} style={{ minWidth: '80px' }}>Symbol</th>
+                <th className={`text-left p-2 text-[10px] md:text-xs font-semibold text-slate-500`} style={{ minWidth: '70px' }}>Mode</th>
+                <th className={`text-left p-2 text-[10px] md:text-xs font-semibold text-slate-500`} style={{ minWidth: '100px' }}>
+                  Recommended
+                </th>
+                <th className={`text-left p-2 text-[10px] md:text-xs font-semibold text-slate-500`} style={{ minWidth: '40px' }}>
+                  Exit Time
+                </th>
+                <th className={`text-right p-2 text-[10px] md:text-xs font-semibold text-slate-500`} style={{ minWidth: '90px' }}>
+                  Entry Price
+                </th>
+                <th className={`text-right p-2 text-[10px] md:text-xs font-semibold text-slate-500`} style={{ minWidth: '110px' }}>
+                  Exit / Last Price
+                </th>
+                <th className={`text-right p-2 text-[10px] md:text-xs font-semibold text-slate-500`} style={{ minWidth: '100px' }}>
+                  Return Profile
+                </th>
+                <th className={`text-center p-2 text-[10px] md:text-xs font-semibold text-slate-500`} style={{ minWidth: '80px' }}>Status</th>
+                <th className={`text-center p-2 text-[10px] md:text-xs font-semibold text-slate-500`} style={{ minWidth: '70px' }}>
+                  Days Held
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {recs.map((row: any, idx: number) => (
+                <TradeRow key={idx} row={row} idx={idx} strategyExitsByDate={strategyExitsByDate} />
+              ))}
+            </tbody>
+          </table>
+          {recs.length === 0 && (
+            <div className={`text-center py-8 md:py-10 text-slate-400 text-sm md:text-base`}>
+              📋 No trades found for selected filters
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
 
 // Individual trade row component
 const TradeRow: React.FC<{ row: any; idx: number; strategyExitsByDate: Record<string, any> }> = ({
@@ -660,14 +509,14 @@ const TradeRow: React.FC<{ row: any; idx: number; strategyExitsByDate: Record<st
 }) => {
   const statusRaw = String(row.status || '').toUpperCase()
   const statusColor = statusRaw.includes('TP') || statusRaw.includes('TARGET')
-    ? '#16a34a'
+    ? 'text-green-600'
     : statusRaw.includes('STOP')
-    ? '#ef4444'
-    : statusRaw.includes('CLOSED')
-    ? '#64748b'
-    : statusRaw.includes('CONTEXT')
-    ? '#f97316'
-    : '#3b82f6'
+      ? 'text-red-500'
+      : statusRaw.includes('CLOSED')
+        ? 'text-slate-500'
+        : statusRaw.includes('CONTEXT')
+          ? 'text-orange-500'
+          : 'text-blue-500'
 
   const daysHeld = (() => {
     try {
@@ -757,7 +606,7 @@ const TradeRow: React.FC<{ row: any; idx: number; strategyExitsByDate: Record<st
         const title = parts.join(' • ')
         advisoryTooltipTitle = title || null
       }
-    } catch {}
+    } catch { }
   }
 
   let newsRiskLabel: string | null = null
@@ -805,28 +654,26 @@ const TradeRow: React.FC<{ row: any; idx: number; strategyExitsByDate: Record<st
   const recStr = String(row.recommendation || '').toLowerCase()
   const isShortSide = recStr.includes('sell')
   const directionLabel = isShortSide ? 'Short' : 'Long'
-  const directionBg = isShortSide ? '#fee2e2' : '#dcfce7'
-  const directionColor = isShortSide ? '#991b1b' : '#166534'
-  const directionBorder = isShortSide ? '#fecaca' : '#bbf7d0'
+  const directionBg = isShortSide ? 'bg-red-100' : 'bg-green-100'
+  const directionColor = isShortSide ? 'text-red-800' : 'text-green-800'
+  const directionBorder = isShortSide ? 'border-red-200' : 'border-green-300'
 
   return (
     <tr
-      style={{
-        borderBottom: '1px solid #f1f5f9',
-        background: idx < 3 ? '#fefce8' : 'transparent',
-      }}
+      className={`border-b border-slate-100 ${idx < 3 ? 'bg-yellow-50' : 'bg-transparent'}`}
     >
-      <td style={{ padding: '10px 8px', fontWeight: 600 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <span>{row.symbol}</span>
+      <td className={`py-2 px-1 md:py-2.5 md:px-2 font-semibold`}>
+        <div className="flex items-center gap-1">
+          <span className={`text-xs md:text-sm`}>{row.symbol}</span>
           {advisoryTooltipTitle && (
-            <span style={{ fontSize: 10, color: '#0f766e', cursor: 'default' }} title={advisoryTooltipTitle}>
+            <span className={`text-[8px] md:text-[10px] text-cyan-700 cursor-default`} title={advisoryTooltipTitle}>
               !
             </span>
           )}
           {newsRiskLabel && newsRiskScore != null && (
             <span
-              style={{ fontSize: 10, color: newsRiskColor, cursor: 'default' }}
+              className={`text-[8px] md:text-[10px] cursor-default`}
+              style={{ color: newsRiskColor }}
               title={(() => {
                 const parts: string[] = []
                 parts.push(`${newsRiskLabel} (${Math.round(Number(newsRiskScore))}/100)`)
@@ -840,58 +687,46 @@ const TradeRow: React.FC<{ row: any; idx: number; strategyExitsByDate: Record<st
           )}
         </div>
       </td>
-      <td style={{ padding: '10px 8px', fontSize: 11 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <span style={{ padding: '3px 8px', borderRadius: 4, background: '#f3e8ff', color: '#7c3aed', fontWeight: 600 }}>
+      <td className={`py-2 px-1 md:py-2.5 md:px-2 text-[10px] md:text-xs`}>
+        <div className="flex flex-col gap-1">
+          <span className={`px-1.5 py-0.5 text-[10px] md:px-2 md:py-0.5 md:text-xs rounded bg-purple-100 text-purple-700 font-semibold`}>
             {row.mode || 'Swing'}
           </span>
           <span
-            style={{
-              padding: '2px 6px',
-              borderRadius: 999,
-              fontSize: 9,
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: 0.4,
-              background: directionBg,
-              color: directionColor,
-              border: `1px solid ${directionBorder}`,
-              alignSelf: 'flex-start',
-              whiteSpace: 'nowrap',
-            }}
+            className={`px-1 py-0.5 text-[8px] md:px-1.5 md:py-0.5 md:text-[9px] rounded-full font-semibold uppercase tracking-wider whitespace-nowrap self-start border ${directionBg} ${directionColor} ${directionBorder}`}
           >
             {directionLabel}
           </span>
         </div>
       </td>
-      <td style={{ padding: '10px 8px', fontSize: 12, color: '#64748b' }}>
+      <td className={`py-2 px-1 md:py-2.5 md:px-2 text-[10px] md:text-xs text-slate-500`}>
         {(() => {
           try {
             const t = row.entry_time as any
-            if (!t) return <div>{row.recommended_date}</div>
+            if (!t) return <div className={`text-xs md:text-sm`}>{row.recommended_date}</div>
 
             const d = new Date(t)
             const dateLabel = formatIstDate(d)
             const timeLabel = formatIstTime(d)
 
             return (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <span style={{ fontSize: 11, color: '#64748b' }}>{dateLabel}</span>
-                <span style={{ fontWeight: 600, color: '#0f172a' }}>{timeLabel}</span>
+              <div className="flex flex-col gap-0.5">
+                <div className={`text-[10px] md:text-xs`}>{dateLabel}</div>
+                <div className={`text-[10px] md:text-xs text-slate-400`}>{timeLabel}</div>
               </div>
             )
           } catch {
-            return <div>{row.recommended_date}</div>
+            return <div className={`text-xs md:text-sm`}>{row.recommended_date}</div>
           }
         })()}
       </td>
-      <td style={{ padding: '10px 8px', textAlign: 'left', fontSize: 12, color: '#64748b' }}>
+      <td className={`py-2 px-1 md:py-2.5 md:px-2 text-left text-[10px] md:text-xs text-slate-500`}>
         {(() => {
           try {
             const t = (row as any).exit_time
             if (!t)
               return (
-                <span style={{ fontSize: 12, color: '#94a3b8' }}>—</span>
+                <span className={`text-[10px] md:text-xs text-slate-400`}>—</span>
               )
             const ts = new Date(t)
             const open = 9 * 60 + 15
@@ -932,72 +767,66 @@ const TradeRow: React.FC<{ row: any; idx: number; strategyExitsByDate: Record<st
             const dateLabel = formatIstDate(displayTs)
             const timeLabel = formatIstTime(displayTs)
             return (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <span style={{ fontSize: 11, color: '#64748b' }}>{dateLabel}</span>
-                <span style={{ fontWeight: 600, color: '#0f172a' }}>{timeLabel}</span>
+              <div className="flex flex-col gap-0.5">
+                <div className={`text-[10px] md:text-xs`}>{dateLabel}</div>
+                <div className={`text-[10px] md:text-xs text-slate-400`}>{timeLabel}</div>
               </div>
             )
           } catch {
-            return <span style={{ fontSize: 12, color: '#94a3b8' }}>—</span>
+            return <span className={'text-[10px] md:text-xs text-slate-400'}>—</span>
           }
         })()}
       </td>
-      <td style={{ padding: '10px 8px', textAlign: 'right', fontSize: 13 }}>₹{row.entry_price}</td>
-      <td style={{ padding: '10px 8px', textAlign: 'right', fontSize: 13 }}>
+      <td className={`py-2 px-1 md:py-2.5 md:px-2 text-right text-xs md:text-sm`}>₹{formatIndianPrice(row.entry_price)}</td>
+      <td className={`py-2 px-1 md:py-2.5 md:px-2 text-right text-xs md:text-sm`}>
         {(() => {
           const hasExit = typeof row.exit_price === 'number' && Number.isFinite(row.exit_price)
           const price = hasExit ? row.exit_price : row.current_price
 
           if (typeof price !== 'number' || !Number.isFinite(price)) {
-            return <span style={{ fontSize: 12, color: '#94a3b8' }}>—</span>
+            return <span className={`text-[10px] md:text-xs text-slate-400`}>—</span>
           }
 
           const label = hasExit ? 'Exit price' : 'Last traded price'
 
           return (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <span>₹{price}</span>
-              <span style={{ fontSize: 10, color: '#64748b', marginTop: 2 }}>{label}</span>
+            <div className="flex flex-col items-end">
+              <span className={`text-xs md:text-sm`}>₹{formatIndianPrice(price)}</span>
+              <span className={`text-[10px] md:text-[10px] text-slate-500 mt-0.5`}>{label}</span>
             </div>
           )
         })()}
       </td>
-      <td style={{ textAlign: 'right', padding: '10px 8px', fontSize: 12 }}>
+      <td className={`py-2 px-1 md:py-2.5 md:px-2 text-right text-[10px] md:text-xs`}>
         {(() => {
           const baseRet = typeof row.return_pct === 'number' && Number.isFinite(row.return_pct) ? row.return_pct : 0
-          const baseColor = baseRet > 0 ? '#16a34a' : baseRet < 0 ? '#ef4444' : '#64748b'
+          const baseColor = baseRet > 0 ? 'text-green-600' : baseRet < 0 ? 'text-red-500' : 'text-slate-500'
 
           return (
-            <span style={{ fontWeight: 600, color: baseColor }}>
+            <span className={`font-semibold text-[10px] md:text-xs ${baseColor}`}>
               {baseRet > 0 ? '+' : ''}
               {baseRet.toFixed(2)}%
             </span>
           )
         })()}
       </td>
-      <td style={{ padding: '10px 8px', textAlign: 'center', fontSize: 12 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+      <td className="py-2.5 px-2 text-center text-xs">
+        <div className="flex flex-col items-center gap-1">
           <span
-            style={{
-              padding: '4px 8px',
-              borderRadius: 6,
-              fontSize: 10,
-              fontWeight: 600,
-              background: statusColor + '20',
-              color: statusColor,
-            }}
+            className={`px-2 py-1 rounded text-[10px] md:text-[10px] font-semibold ${statusColor}`}
+            style={{ backgroundColor: statusColor === 'text-green-600' ? '#16a34a20' : statusColor === 'text-red-500' ? '#ef444420' : statusColor === 'text-slate-500' ? '#64748b20' : statusColor === 'text-orange-500' ? '#f9731620' : '#3b82f620' }}
             title={statusDetail || undefined}
           >
             {row.status}
           </span>
           {statusDetail && (
-            <span style={{ fontSize: 10, color: '#64748b' }} title={statusDetail}>
+            <span className={`text-[10px] md:text-xs text-slate-500`} title={statusDetail}>
               {statusDetail}
             </span>
           )}
         </div>
       </td>
-      <td style={{ padding: '10px 8px', textAlign: 'center', fontSize: 12, fontWeight: 600, color: '#64748b' }}>
+      <td className={`py-2 px-1 md:py-2.5 md:px-2 text-center text-[10px] md:text-xs font-semibold text-slate-500`}>
         {daysHeld}d
       </td>
     </tr>
@@ -1008,22 +837,16 @@ const TradeRow: React.FC<{ row: any; idx: number; strategyExitsByDate: Record<st
 const ModeComparisonTable: React.FC<{ winningStrategiesData: any }> = ({ winningStrategiesData }) => {
   return (
     <div
-      style={{
-        marginTop: 24,
-        background: '#fff',
-        borderRadius: 12,
-        padding: 16,
-        border: '1px solid #e2e8f0',
-      }}
+      className={`bg-white rounded-xl p-3 md:p-4 border border-slate-200`}
     >
-      <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div className={`font-semibold text-sm md:text-base mb-3 flex items-center gap-2`}>
         <span>🔄</span>
         <span>Mode Performance Comparison</span>
       </div>
-      <div style={{ fontSize: 12, color: '#64748b', marginBottom: 6 }}>
+      <div className={`text-[11px] md:text-xs text-slate-500 mb-1.5`}>
         Compare performance across all trading modes at a glance
       </div>
-      <div style={{ fontSize: 12, color: '#94a3b8', marginBottom: 16 }}>
+      <div className={`text-[11px] md:text-xs text-slate-400 mb-4`}>
         {(() => {
           try {
             const lookbackDaysRaw = (winningStrategiesData as any)?.filters?.lookback_days
@@ -1060,171 +883,144 @@ const ModeComparisonTable: React.FC<{ winningStrategiesData: any }> = ({ winning
         })()}
       </div>
 
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-            <th style={{ textAlign: 'left', padding: '8px', fontSize: 12, fontWeight: 600, color: '#64748b' }}>Mode</th>
-            <th style={{ textAlign: 'center', padding: '8px', fontSize: 12, fontWeight: 600, color: '#64748b' }}>
-              Total Picks
-            </th>
-            <th style={{ textAlign: 'center', padding: '8px', fontSize: 12, fontWeight: 600, color: '#64748b' }}>
-              Win Rate
-            </th>
-            <th style={{ textAlign: 'center', padding: '8px', fontSize: 12, fontWeight: 600, color: '#64748b' }}>
-              Avg Return/Rec
-            </th>
-            <th style={{ textAlign: 'center', padding: '8px', fontSize: 12, fontWeight: 600, color: '#64748b' }}>
-              Alpha vs NIFTY
-            </th>
-            <th style={{ textAlign: 'center', padding: '8px', fontSize: 12, fontWeight: 600, color: '#64748b' }}>
-              Best Pick
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {['Scalping', 'Intraday', 'Swing', 'Options', 'Futures'].map((mode) => {
-            const modeRecs = (winningStrategiesData?.recommendations || []).filter((r: any) => r.mode === mode)
-            if (modeRecs.length === 0) return null
+      <div className={`overflow-x-auto md:overflow-visible`}>
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="border-b-2 border-gray-200">
+              <th className={`text-left p-2 text-[10px] md:text-xs font-semibold text-slate-500`}>Mode</th>
+              <th className={`text-center p-2 text-[10px] md:text-xs font-semibold text-slate-500`}>
+                Total Picks
+              </th>
+              <th className={`text-center p-2 text-[10px] md:text-xs font-semibold text-slate-500`}>
+                Win Rate
+              </th>
+              <th className={`text-center p-2 text-[10px] md:text-xs font-semibold text-slate-500`}>
+                Avg Return/Rec
+              </th>
+              <th className={`text-center p-2 text-[10px] md:text-xs font-semibold text-slate-500`}>
+                Alpha vs NIFTY
+              </th>
+              <th className={`text-center p-2 text-[10px] md:text-xs font-semibold text-slate-500`}>
+                Best Pick
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {['Scalping', 'Intraday', 'Swing', 'Options', 'Futures'].map((mode) => {
+              const modeRecs = (winningStrategiesData?.recommendations || []).filter((r: any) => r.mode === mode)
+              if (modeRecs.length === 0) return null
 
-            const wins = modeRecs.filter((r: any) => r.return_pct > 0)
-            const winRate = ((wins.length / modeRecs.length) * 100).toFixed(1)
-            const benchmark =
-              typeof winningStrategiesData?.metrics?.benchmark_return === 'number'
-                ? winningStrategiesData.metrics.benchmark_return
-                : 1.0
+              const wins = modeRecs.filter((r: any) => r.return_pct > 0)
+              const winRate = ((wins.length / modeRecs.length) * 100).toFixed(1)
+              const benchmark =
+                typeof winningStrategiesData?.metrics?.benchmark_return === 'number'
+                  ? winningStrategiesData.metrics.benchmark_return
+                  : 1.0
 
-            const avgRaw =
-              modeRecs.reduce((sum: number, r: any) => {
-                const v = r?.return_pct
-                if (typeof v === 'number' && !Number.isNaN(v)) return sum + v
-                const parsed = parseFloat(String(v))
-                return Number.isNaN(parsed) ? sum : sum + parsed
-              }, 0) / modeRecs.length
+              const avgRaw =
+                modeRecs.reduce((sum: number, r: any) => {
+                  const v = r?.return_pct
+                  if (typeof v === 'number' && !Number.isNaN(v)) return sum + v
+                  const parsed = parseFloat(String(v))
+                  return Number.isNaN(parsed) ? sum : sum + parsed
+                }, 0) / modeRecs.length
 
-            const avgNum = Object.is(avgRaw, -0) ? 0 : avgRaw
-            const alphaRaw = avgNum - benchmark
-            const alphaNum = Object.is(alphaRaw, -0) ? 0 : alphaRaw
+              const avgNum = Object.is(avgRaw, -0) ? 0 : avgRaw
+              const alphaRaw = avgNum - benchmark
+              const alphaNum = Object.is(alphaRaw, -0) ? 0 : alphaRaw
 
-            const formatSignedPct = (v: number) => {
-              const rounded2 = Math.round(v * 100) / 100
-              if (Object.is(rounded2, -0) || Math.abs(rounded2) < 0.005) {
-                const abs = Math.abs(v)
-                if (abs >= 0.0005 && abs < 0.01) {
-                  const mag = Math.round(abs * 1000) / 1000
-                  return `${v > 0 ? '+' : '-'}${mag.toFixed(3)}%`
+              const formatSignedPct = (v: number) => {
+                const rounded2 = Math.round(v * 100) / 100
+                if (Object.is(rounded2, -0) || Math.abs(rounded2) < 0.005) {
+                  const abs = Math.abs(v)
+                  if (abs >= 0.0005 && abs < 0.01) {
+                    const mag = Math.round(abs * 1000) / 1000
+                    return `${v > 0 ? '+' : '-'}${mag.toFixed(3)}%`
+                  }
+                  return '0.00%'
                 }
-                return '0.00%'
+                return `${rounded2 > 0 ? '+' : ''}${rounded2.toFixed(2)}%`
               }
-              return `${rounded2 > 0 ? '+' : ''}${rounded2.toFixed(2)}%`
-            }
 
-            const avgDisplay = formatSignedPct(avgNum)
-            const alphaDisplay = formatSignedPct(alphaNum)
-            const bestPick = modeRecs.sort((a: any, b: any) => b.return_pct - a.return_pct)[0]
+              const avgDisplay = formatSignedPct(avgNum)
+              const alphaDisplay = formatSignedPct(alphaNum)
+              const bestPick = modeRecs.sort((a: any, b: any) => b.return_pct - a.return_pct)[0]
 
-            const modeColors: any = {
-              Scalping: { bg: '#fce7f3', border: '#fbcfe8', text: '#831843' },
-              Intraday: { bg: '#fef3c7', border: '#fde68a', text: '#78350f' },
-              Swing: { bg: '#ede9fe', border: '#ddd6fe', text: '#4c1d95' },
-              Options: { bg: '#dbeafe', border: '#bfdbfe', text: '#1e40af' },
-              Futures: { bg: '#dcfce7', border: '#bbf7d0', text: '#166534' },
-            }
-            const colors = modeColors[mode] || { bg: '#f1f5f9', border: '#e2e8f0', text: '#1e293b' }
+              const modeColors: any = {
+                Scalping: { bg: 'bg-pink-50', border: 'border-pink-200', text: 'text-pink-900' },
+                Intraday: { bg: 'bg-amber-50', border: 'border-yellow-200', text: 'text-amber-900' },
+                Swing: { bg: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-900' },
+                Options: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-900' },
+                Futures: { bg: 'bg-green-50', border: 'border-green-300', text: 'text-green-800' },
+              }
+              const colors = modeColors[mode] || { bg: 'bg-slate-100', border: 'border-slate-200', text: 'text-slate-800' }
 
-            return (
-              <tr key={mode} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                <td style={{ padding: '10px 8px' }}>
-                  <span
-                    style={{
-                      padding: '4px 10px',
-                      borderRadius: 999,
-                      background: colors.bg,
-                      border: `1px solid ${colors.border}`,
-                      color: colors.text,
-                      fontSize: 11,
-                      fontWeight: 600,
-                    }}
-                  >
-                    {mode}
-                  </span>
-                </td>
-                <td style={{ padding: '10px 8px', textAlign: 'center', fontSize: 13, fontWeight: 600 }}>
-                  {modeRecs.length}
-                </td>
-                <td style={{ padding: '10px 8px', textAlign: 'center' }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>{winRate}%</span>
-                </td>
-                <td style={{ padding: '10px 8px', textAlign: 'center' }}>
-                  <span
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 700,
-                      color: avgNum > 0 ? '#16a34a' : avgNum < 0 ? '#ef4444' : '#0f172a',
-                    }}
-                  >
-                    {avgDisplay}
-                  </span>
-                </td>
-                <td style={{ padding: '10px 8px', textAlign: 'center' }}>
-                  <span
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 700,
-                      color: alphaNum > 0 ? '#16a34a' : alphaNum < 0 ? '#ef4444' : '#0f172a',
-                    }}
-                  >
-                    {alphaDisplay}
-                  </span>
-                </td>
-                <td style={{ padding: '10px 8px', textAlign: 'center', fontSize: 11 }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <span style={{ fontWeight: 600, color: '#1e293b' }}>{bestPick.symbol}</span>
+              return (
+                <tr key={mode} className="border-b border-slate-100">
+                  <td className="py-2.5 px-2">
                     <span
-                      style={{
-                        fontSize: 10,
-                        color: bestPick.return_pct >= 0 ? '#16a34a' : '#ef4444',
-                        fontWeight: 600,
-                      }}
+                      className={`px-2.5 py-1 rounded-full border text-[11px] font-semibold ${colors.bg} ${colors.border} ${colors.text}`}
                     >
-                      {bestPick.return_pct >= 0 ? '+' : ''}
-                      {bestPick.return_pct}%
+                      {mode}
                     </span>
-                  </div>
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+                  </td>
+                  <td className="py-2.5 px-2 text-center text-sm font-semibold">
+                    {modeRecs.length}
+                  </td>
+                  <td className="py-2.5 px-2 text-center">
+                    <span className="text-sm font-bold text-slate-900">{winRate}%</span>
+                  </td>
+                  <td className="py-2.5 px-2 text-center">
+                    <span
+                      className={`text-sm font-bold ${avgNum > 0 ? 'text-green-600' : avgNum < 0 ? 'text-red-500' : 'text-slate-900'}`}
+                    >
+                      {avgDisplay}
+                    </span>
+                  </td>
+                  <td className="py-2.5 px-2 text-center">
+                    <span
+                      className={`text-sm font-bold ${alphaNum > 0 ? 'text-green-600' : alphaNum < 0 ? 'text-red-500' : 'text-slate-900'}`}
+                    >
+                      {alphaDisplay}
+                    </span>
+                  </td>
+                  <td className="py-2.5 px-2 text-center text-xs">
+                    <div className="flex flex-col items-center">
+                      <span className="font-semibold text-slate-800">{bestPick.symbol}</span>
+                      <span
+                        className={`text-[10px] font-semibold ${bestPick.return_pct >= 0 ? 'text-green-600' : 'text-red-500'}`}
+                      >
+                        {bestPick.return_pct >= 0 ? '+' : ''}
+                        {bestPick.return_pct}%
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
 
-      <div
-        style={{
-          marginTop: 14,
-          padding: 12,
-          background: '#fff7ed',
-          border: '1px solid #fed7aa',
-          borderRadius: 10,
-          color: '#1e293b',
-          fontSize: 12,
-          lineHeight: 1.6,
-        }}
-      >
-        <div style={{ fontWeight: 700, marginBottom: 6 }}>How we track performance</div>
-        <div style={{ color: '#475569' }}>
-          Each recommendation's performance is tracked from the entry price suggested by our Trade Strategy Agent. Returns
-          are calculated using the current market price (or exit price when closed). Status updates reflect when targets
-          are hit or stop-losses are triggered.
-        </div>
-        <div style={{ marginTop: 10, color: '#0f172a', fontWeight: 600 }}>Metric calculations</div>
-        <div style={{ color: '#475569' }}>
-          <div>
-            <strong>Win Rate</strong> = (Number of recommendations with Return % &gt; 0) ÷ (Total recommendations) × 100
+        <div
+          className="mt-3.5 p-3 bg-orange-50 border border-orange-200 rounded-lg text-slate-800 text-xs leading-6"
+        >
+          <div className="font-bold mb-1.5">How we track performance</div>
+          <div className="text-slate-600">
+            Each recommendation's performance is tracked from the entry price suggested by our Trade Strategy Agent. Returns
+            are calculated using the current market price (or exit price when closed). Status updates reflect when targets
+            are hit or stop-losses are triggered.
           </div>
-          <div>
-            <strong>Average Return</strong> = (Sum of Return % across recommendations) ÷ (Total recommendations)
-          </div>
-          <div>
-            <strong>Alpha vs NIFTY</strong> = (Average Return %) − (NIFTY return % over the same lookback window)
+          <div className="mt-2.5 text-slate-900 font-semibold">Metric calculations</div>
+          <div className="text-slate-600">
+            <div>
+              <strong>Win Rate</strong> = (Number of recommendations with Return % &gt; 0) ÷ (Total recommendations) × 100
+            </div>
+            <div>
+              <strong>Average Return</strong> = (Sum of Return % across recommendations) ÷ (Total recommendations)
+            </div>
+            <div>
+              <strong>Alpha vs NIFTY</strong> = (Average Return %) − (NIFTY return % over the same lookback window)
+            </div>
           </div>
         </div>
       </div>

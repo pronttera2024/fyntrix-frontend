@@ -31,6 +31,7 @@ import { LAYOUT_TOKENS, useBreakpoint } from '../utils/responsive'
 import { useSwipeToClose } from '../utils/swipeToClose'
 import { useFocusTrap } from '../utils/focusTrap'
 import { getUserData, removeAccessToken, removeIdToken, removeRefreshToken, removeTokenExpiresAt, removeUserData } from '../utils/authStorage'
+import GreetingMessage from '../components/GreetingMessage'
 
 // Score-based color utility function
 const getScoreColor = (score: number) => {
@@ -2895,13 +2896,13 @@ export default function App() {
 
             <div style={{ padding: 10, display: 'grid', gridTemplateColumns: '1fr', gap: 8, overflowY: 'auto', maxHeight: '70dvh', overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}>
               {[
-                // {
-                //   title: 'Preferences',
-                //   onClick: () => {
-                //     setIsMoreOpen(false)
-                //     setPrefsOpen(true)
-                //   },
-                // },
+                {
+                  title: 'Preferences',
+                  onClick: () => {
+                    setIsMoreOpen(false)
+                    setPrefsOpen(true)
+                  },
+                },
                 // {
                 //   title: 'Portfolio',
                 //   onClick: () => {
@@ -3175,6 +3176,8 @@ export default function App() {
                 </div>
               </section>
             )}
+
+            <GreetingMessage name={getUserData()?.name.split(' ')[0] || 'User'} />
 
             {/* Market Brief with Cards - Hidden only when picks drawer is shown */}
             {!showPicks && !showPortfolio && !showWatchlist && (
@@ -7026,7 +7029,7 @@ export default function App() {
             style={{
               flex: 1,
               border: 'none',
-              background: 'transparent',
+              background: activeMobileTab === 'portfolio' ? '#dbeafe' : 'transparent',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -7034,6 +7037,8 @@ export default function App() {
               gap: 4,
               padding: '10px 0',
               cursor: 'pointer',
+              borderRadius: 45,
+              margin: '0 2px',
             }}
           >
             <div style={{ position: 'relative', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -7053,7 +7058,7 @@ export default function App() {
             style={{
               flex: 1,
               border: 'none',
-              background: 'transparent',
+              background: activeMobileTab === 'watchlist' ? '#dbeafe' : 'transparent',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -7061,6 +7066,8 @@ export default function App() {
               gap: 4,
               padding: '10px 0',
               cursor: 'pointer',
+              borderRadius: 45,
+              margin: '0 2px',
             }}
           >
             <div style={{ position: 'relative', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -7080,7 +7087,7 @@ export default function App() {
             style={{
               flex: 1,
               border: 'none',
-              background: 'transparent',
+              background: activeMobileTab === 'home' ? '#dbeafe' : 'transparent',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -7088,6 +7095,8 @@ export default function App() {
               gap: 4,
               padding: '10px 0',
               cursor: 'pointer',
+              borderRadius: 45,
+              margin: '0 2px',
             }}
           >
             <div style={{ position: 'relative', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -7104,7 +7113,7 @@ export default function App() {
             style={{
               flex: 1,
               border: 'none',
-              background: 'transparent',
+              background: activeMobileTab === 'winners' ? '#dbeafe' : 'transparent',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -7112,6 +7121,8 @@ export default function App() {
               gap: 4,
               padding: '10px 0',
               cursor: 'pointer',
+              borderRadius: 45,
+              margin: '0 2px',
             }}
           >
             <div style={{ position: 'relative', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -7142,7 +7153,7 @@ export default function App() {
             style={{
               flex: 1,
               border: 'none',
-              background: 'transparent',
+              background: activeMobileTab === 'more' ? '#dbeafe' : 'transparent',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -7150,6 +7161,8 @@ export default function App() {
               gap: 4,
               padding: '10px 0',
               cursor: 'pointer',
+              borderRadius: 45,
+              margin: '0 2px',
             }}
           >
             <div style={{ position: 'relative', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

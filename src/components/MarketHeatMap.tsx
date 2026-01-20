@@ -148,7 +148,7 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
   ) : (
     <div className="flex gap-1 mt-1 text-muted-foreground">
       <Info className="w-3 h-3" />
-      <span className=''>
+      <span className='text-start'>
         Long-only mode <br /> no short/sell signals
       </span>
     </div>
