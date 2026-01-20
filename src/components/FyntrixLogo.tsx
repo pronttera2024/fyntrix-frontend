@@ -1,21 +1,25 @@
 import React from 'react'
+import fyntrixLogo from '../../assets/FyntrixLogo.png'
+import shortLogo from '../../assets/FyntrixShortLogo.png'
 
 interface FyntrixLogoProps {
   width?: number
   height?: number
   fontSize?: number
   fontWeight?: number
+  isMobile?: boolean
 }
 
 export const FyntrixLogo: React.FC<FyntrixLogoProps> = ({ 
   width = 120, 
   height = 40, 
   fontSize = 18, 
-  fontWeight = 900 
+  fontWeight = 900,
+  isMobile = false
 }) => {
   return (
     <img
-      src="/FyntrixLogo_PNG.png"
+      src={isMobile ? shortLogo : fyntrixLogo}
       alt="Fyntrix"
       style={{
         width: width,

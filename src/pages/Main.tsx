@@ -2620,7 +2620,7 @@ export default function App() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: isMobile ? 12 : 128, maxWidth: '100%' }}>
-          <FyntrixLogo fontSize={22} fontWeight={900} />
+          <FyntrixLogo fontSize={22} fontWeight={900} isMobile={isMobile} />
           <div
             style={{
               fontSize: 12,
