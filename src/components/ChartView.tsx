@@ -670,55 +670,21 @@ export function ChartView({ symbol, onClose, analysis, livePrice, onSubscribeSym
     'Buy'
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0,0,0,0.5)',
-      zIndex: 9999,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '20px',
-    }}>
-      <div
-        className="chart-modal-shell"
-        style={{
-          background: 'white',
-          borderRadius: '12px',
-          width: '100%',
-          maxWidth: '1400px',
-          maxHeight: '90vh',
-          overflow: 'auto',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-        }}
-      >
+    <div className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4 md:p-5">
+      <div className="chart-modal-shell bg-white rounded-xl w-full max-w-[1400px] max-h-[90vh] overflow-auto shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
         {/* Header */}
-        <div style={{
-          padding: '20px 24px',
-          borderBottom: '1px solid #e0e0e0',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          color: 'white',
-          borderRadius: '12px 12px 0 0',
-        }}>
-          <div>
-            <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 700 }}>
+        <div className="px-4 py-4 md:px-6 md:py-5 border-b border-gray-200 sticky top-0 z-10 bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-t-xl">
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 md:top-5 md:right-6 bg-white/20 border-none p-2 rounded-lg cursor-pointer text-white"
+          >
+            <X size={20} className="md:w-6 md:h-6" />
+          </button>
+          <div className="pr-12 md:pr-0">
+            <h2 className="m-0 text-xl md:text-2xl font-bold">
               {symbol}
               {analysis && (
-                <span style={{
-                  marginLeft: '16px',
-                  fontSize: '16px',
-                  background: getScoreColor(blendScore),
-                  color: 'white',
-                  padding: '6px 14px',
-                  borderRadius: '20px',
-                  fontWeight: 600,
-                }}>
+                <span className="ml-2 md:ml-4 text-xs md:text-base bg-green-500 text-white px-[10px] md:px-[14px] py-1 md:py-1.5 rounded-[20px] font-semibold inline-block">
                   {recommendationLabel} ({blendScore}/100)
                 </span>
               )}
@@ -732,33 +698,37 @@ export function ChartView({ symbol, onClose, analysis, livePrice, onSubscribeSym
               if (typeof price !== 'number') return null
 
               return (
-                <div style={{ marginTop: '8px', fontSize: '14px', opacity: 0.9 }}>
-                  Current: ₹{price.toFixed(2)} |
-                  {typeof change === 'number' && (
-                    <>
-                      {" "}Change: <span style={{ color: change >= 0 ? '#4ade80' : '#ef5350' }}>
-                        {change >= 0 ? '+' : ''}{change.toFixed(2)}%
-                      </span>
-                    </>
-                  )}
-                  {typeof volume === 'number' && (
-                    <>
-                      {" "}| Volume: {(volume / 1000000).toFixed(2)}M
-                    </>
-                  )}
+                <div className="mt-2 text-xs md:text-sm opacity-90">
+                  <div className="flex flex-row items-center gap-1 md:gap-2">
+                    <span>Current: ₹{price.toFixed(2)}</span>
+                    {typeof change === 'number' && (
+                      <>
+                        <span className="hidden md:inline">|</span>
+                        <span>Change: <span className={change >= 0 ? 'text-green-400' : 'text-red-400'}>
+                          {change >= 0 ? '+' : ''}{change.toFixed(2)}%
+                        </span></span>
+                      </>
+                    )}
+                    {typeof volume === 'number' && (
+                      <>
+                        <span className="hidden md:inline">|</span>
+                        <span>Volume: {(volume / 1000000).toFixed(2)}M</span>
+                      </>
+                    )}
+                  </div>
                 </div>
               )
             })()}
 
             {(analysis as any)?.exit_strategy?.time_exit && (
-              <div style={{ marginTop: '4px', fontSize: '13px', opacity: 0.9 }}>
-                Exit Horizon: <span style={{ fontWeight: 600 }}>
+              <div className="mt-1 text-xs opacity-90">
+                Exit Horizon: <span className="font-semibold">
                   {(((analysis as any).exit_strategy.time_exit.max_hold_mins || 0) / 60).toFixed(1)} hrs
                 </span>
                 {((analysis as any).exit_strategy.time_exit.eod_exit !== undefined) && (
                   <span>
                     {` | EOD Exit: `}
-                    <span style={{ fontWeight: 600 }}>
+                    <span className="font-semibold">
                       {(analysis as any).exit_strategy.time_exit.eod_exit ? 'Yes' : 'No'}
                     </span>
                   </span>
@@ -766,41 +736,19 @@ export function ChartView({ symbol, onClose, analysis, livePrice, onSubscribeSym
               </div>
             )}
           </div>
-          <button
-            onClick={onClose}
-            style={{
-              background: 'rgba(255,255,255,0.2)',
-              border: 'none',
-              padding: '8px',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              color: 'white',
-            }}
-          >
-            <X size={24} />
-          </button>
         </div>
 
         {/* Timeframe Selector */}
-        <div style={{
-          padding: '16px 24px',
-          borderBottom: '1px solid #e0e0e0',
-          display: 'flex',
-          gap: '8px',
-        }}>
+        <div className="px-4 py-3 md:px-6 md:py-4 border-b border-gray-200 flex gap-2 overflow-x-auto">
           {(['1D', '1W', '1M', '1Y'] as const).map((tf) => (
             <button
               key={tf}
               onClick={() => setTimeframe(tf)}
-              style={{
-                padding: '8px 16px',
-                border: timeframe === tf ? '2px solid #667eea' : '1px solid #ddd',
-                background: timeframe === tf ? '#f0f4ff' : 'white',
-                color: timeframe === tf ? '#667eea' : '#666',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontWeight: timeframe === tf ? 600 : 400,
-              }}
+              className={`px-3 py-2 md:px-4 md:py-2 border-2 rounded-md cursor-pointer font-medium text-sm md:text-base whitespace-nowrap ${
+                timeframe === tf 
+                  ? 'border-indigo-500 bg-blue-50 text-indigo-500' 
+                  : 'border-gray-300 bg-white text-gray-600'
+              }`}
             >
               {tf}
             </button>
@@ -808,42 +756,15 @@ export function ChartView({ symbol, onClose, analysis, livePrice, onSubscribeSym
         </div>
 
         {/* Chart */}
-        <div style={{ padding: '24px' }}>
+        <div className="px-4 py-4 md:px-6 md:py-6">
           {loading && (
-            <div style={{
-              height: '360px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#999',
-            }}>
+            <div className="h-[300px] md:h-[360px] flex items-center justify-center text-gray-500">
               Loading chart data...
             </div>
           )}
-          <div ref={chartContainerRef} style={{ 
-            display: loading ? 'none' : 'block',
-            width: '100%',
-            height: '360px',
-            position: 'relative'
-          }}>
+          <div ref={chartContainerRef} className={`${loading ? 'hidden' : 'block'} w-full h-[300px] md:h-[360px] relative`}>
             {crosshairSignal && crosshairSignal.text && (
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 8,
-                  right: 8,
-                  maxWidth: '60%',
-                  background: 'rgba(15,23,42,0.9)',
-                  color: '#e5e7eb',
-                  padding: '6px 10px',
-                  borderRadius: '6px',
-                  fontSize: '11px',
-                  lineHeight: 1.4,
-                  pointerEvents: 'none',
-                  boxShadow: '0 4px 12px rgba(15,23,42,0.4)',
-                  zIndex: 5,
-                }}
-              >
+              <div className="absolute top-2 right-2 max-w-[80%] md:max-w-[60%] bg-slate-900/90 text-gray-200 px-2 py-1.5 md:px-2.5 md:py-1.5 rounded-md text-[10px] md:text-xs leading-tight pointer-events-none shadow-lg z-[5]">
                 {crosshairSignal.text}
               </div>
             )}
@@ -852,60 +773,57 @@ export function ChartView({ symbol, onClose, analysis, livePrice, onSubscribeSym
 
         {/* Enhanced AI Insights Panel */}
         {analysis && (
-          <div style={{
-            padding: '24px',
-            background: '#f9fafb',
-            borderTop: '1px solid #e0e0e0',
-          }}>
-            <h3 style={{ margin: '0 0 20px 0', fontSize: '20px', fontWeight: 700, color: '#0369a1' }}>
+          <div className="px-4 py-4 md:px-6 md:py-6 bg-gray-50 border-t border-gray-200">
+            <h3 className="m-0 mb-4 md:mb-5 text-lg md:text-xl font-bold text-sky-700">
               📊 AI Insights & Analysis
             </h3>
 
             {/* Confidence Meter */}
-            <div style={{ marginBottom: '24px', background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #e0e0e0' }}>
-              <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '12px', color: '#475569' }}>Overall Confidence Score:</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ flex: 1, height: '12px', background: '#e5e7eb', borderRadius: '6px', overflow: 'hidden' }}>
-                  <div style={{
-                    width: `${blendScore}%`,
-                    height: '100%',
-                    background: getScoreColor(blendScore),
-                    transition: 'width 0.3s',
-                    borderRadius: '6px'
-                  }} />
+            <div className="mb-4 md:mb-6 bg-white p-4 md:p-5 rounded-xl border border-gray-200">
+              <div className="text-xs md:text-sm font-semibold mb-2 md:mb-3 text-slate-600">Overall Confidence Score:</div>
+              <div className="flex items-center gap-2 md:gap-3">
+                <div className="flex-1 h-2 md:h-3 bg-gray-200 rounded-md overflow-hidden">
+                  <div 
+                    className="h-full transition-all duration-300 rounded-md"
+                    style={{
+                      width: `${blendScore}%`,
+                      backgroundColor: getScoreColor(blendScore),
+                    }}
+                  />
                 </div>
-                <span style={{ fontSize: '18px', fontWeight: 700, color: getScoreColor(analysis.score_blend || analysis.blend_score), minWidth: '120px' }}>
+                <span className="text-sm md:text-lg font-bold min-w-[100px] md:min-w-[120px]" style={{ color: getScoreColor(analysis.score_blend || analysis.blend_score) }}>
                   {blendScore}% {getScoreLabel(blendScore)}
                 </span>
               </div>
-              <div style={{ marginTop: '12px', fontSize: '13px', color: '#64748b', fontStyle: 'italic' }}>
+              <div className="mt-2 md:mt-3 text-[11px] md:text-xs text-slate-500 italic">
                 Consensus from {analysis.scores ? Object.keys(analysis.scores).filter(k => !['trade_strategy', 'auto_monitoring', 'personalization'].includes(k)).length : '10'} AI agents · {recommendationLabel} recommendation
               </div>
             </div>
 
             {/* Agent Insights: side-by-side layout to match Multi-Agent System */}
             {analysis.scores && (
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'minmax(0, 1.1fr) minmax(0, 1.2fr)',
-                gap: '16px',
-                marginBottom: '24px',
-              }}>
+              <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1.2fr)] gap-4 mb-4 md:mb-6">
                 {/* 10 Core Scoring Agents (same label as Top Five Picks) */}
-                <div style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #e0e0e0' }}>
-                  <div style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px', color: '#1e293b' }}>10 Core Scoring Agents:</div>
-                  <div style={{ display: 'grid', gap: '10px' }}>
+                <div className="bg-white p-3 md:p-5 rounded-xl border border-gray-200">
+                  <div className="text-sm md:text-base font-semibold mb-3 md:mb-4 text-slate-800">10 Core Scoring Agents:</div>
+                  <div className="grid gap-2 md:gap-2.5">
                     {Object.entries(analysis.scores)
                       .filter(([agent]) => !['trade_strategy', 'auto_monitoring', 'personalization'].includes(agent))
                       .map(([agent, score]: any) => (
-                        <div key={agent} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          <div style={{ width: '160px', fontSize: '13px', fontWeight: 500, textTransform: 'capitalize', color: '#475569' }}>
+                        <div key={agent} className="flex items-center gap-2 md:gap-3">
+                          <div className="w-32 md:w-40 text-[11px] md:text-xs font-medium capitalize text-slate-600">
                             {agent.replace(/_/g, ' ')}
                           </div>
-                          <div style={{ flex: 1, height: '8px', background: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
-                            <div style={{ width: `${score}%`, height: '100%', background: getScoreColor(score), transition: 'width 0.3s' }} />
+                          <div className="flex-1 h-1.5 md:h-2 bg-gray-200 rounded overflow-hidden">
+                            <div 
+                              className="h-full transition-all duration-300"
+                              style={{
+                                width: `${score}%`,
+                                backgroundColor: getScoreColor(score),
+                              }}
+                            />
                           </div>
-                          <div style={{ width: '50px', fontSize: '13px', fontWeight: 600, color: getScoreColor(score), textAlign: 'right' }}>
+                          <div className="w-10 md:w-12 text-[11px] md:text-xs font-semibold text-right" style={{ color: getScoreColor(score) }}>
                             {score}%
                           </div>
                         </div>
@@ -914,17 +832,17 @@ export function ChartView({ symbol, onClose, analysis, livePrice, onSubscribeSym
                 </div>
 
                 {/* Comprehensive Analysis (aligned with picks section) */}
-                <div style={{ background: 'white', padding: '20px', borderRadius: '12px', border: '1px solid #e0e0e0' }}>
-                  <div style={{ fontSize: '16px', fontWeight: 600, marginBottom: '12px', color: '#1e293b' }}>Comprehensive Analysis:</div>
-                  <div style={{ fontSize: '14px', color: '#475569', lineHeight: 1.8 }}>
+                <div className="bg-white p-3 md:p-5 rounded-xl border border-gray-200">
+                  <div className="text-sm md:text-base font-semibold mb-2 md:mb-3 text-slate-800">Comprehensive Analysis:</div>
+                  <div className="text-xs md:text-sm text-slate-600 leading-6 md:leading-7">
                     {analysis.rationale ? (
-                      <div style={{ background: '#f9fafb', padding: '12px 14px', borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '13px' }}>
+                      <div className="bg-gray-50 px-3 py-2.5 md:px-3.5 md:py-3 rounded-lg border border-gray-200 text-[11px] md:text-xs">
                         {analysis.rationale}
                       </div>
                     ) : (
-                      <div style={{ background: '#fff', padding: '12px 14px', borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '13px' }}>
-                        <div style={{ marginBottom: 8 }}><strong>Multi-Agent Assessment:</strong></div>
-                        <ul style={{ margin: 0, paddingLeft: 20 }}>
+                      <div className="bg-white px-3 py-2.5 md:px-3.5 md:py-3 rounded-lg border border-gray-200 text-[11px] md:text-xs">
+                        <div className="mb-1.5 md:mb-2"><strong>Multi-Agent Assessment:</strong></div>
+                        <ul className="m-0 pl-4 md:pl-5">
                           {(() => {
                             const scores = analysis.scores || {}
                             const items: JSX.Element[] = []
@@ -961,7 +879,7 @@ export function ChartView({ symbol, onClose, analysis, livePrice, onSubscribeSym
                             return items
                           })()}
                         </ul>
-                        <div style={{ marginTop: 8, fontStyle: 'italic', color: '#64748b' }}>
+                        <div className="mt-1.5 md:mt-2 italic text-slate-500">
                           Recommendation based on {recommendationLabel} stance with {getScoreLabel(blendScore)} confidence level.
                         </div>
                       </div>
@@ -976,7 +894,7 @@ export function ChartView({ symbol, onClose, analysis, livePrice, onSubscribeSym
               const effectiveTradePlan = (analysis as any)?.trade_plan || strategyPlan?.plan
               if (!effectiveTradePlan) return null
               return (
-                <div style={{ marginBottom: '20px' }}>
+                <div className="mb-3 md:mb-5">
                   <TradeStrategyPanel
                     symbol={symbol}
                     plan={effectiveTradePlan}
@@ -993,27 +911,18 @@ export function ChartView({ symbol, onClose, analysis, livePrice, onSubscribeSym
 
             {/* If strategy is still loading and we don't yet have a plan, show a subtle hint */}
             {!((analysis as any)?.trade_plan || strategyPlan?.plan) && strategyLoading && (
-              <div style={{ marginBottom: '16px', fontSize: '13px', color: '#64748b', fontStyle: 'italic' }}>
+              <div className="mb-3 md:mb-4 text-[11px] md:text-xs text-slate-500 italic">
                 Generating trade strategy from multi-agent analysis...
               </div>
             )}
 
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '16px',
-            }}>
+            <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-3 md:gap-4">
               {/* Key Signals Card */}
               {combinedSignals && combinedSignals.length > 0 && (
-                <div style={{
-                  background: 'white',
-                  padding: '16px',
-                  borderRadius: '8px',
-                  border: '1px solid #e0e0e0',
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-                    <Activity size={20} style={{ marginRight: '8px', color: '#0095FF' }} />
-                    <strong>AI Signals Detected on Chart</strong>
+                <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
+                  <div className="flex items-center mb-2 md:mb-3">
+                    <Activity size={16} className="mr-2 md:mr-2 text-blue-500 md:w-5 md:h-5" />
+                    <strong className="text-sm md:text-base">AI Signals Detected on Chart</strong>
                   </div>
                   {(() => {
                     // Keep only unique signal texts (up to 5) for readability
@@ -1065,17 +974,22 @@ export function ChartView({ symbol, onClose, analysis, livePrice, onSubscribeSym
                           return (
                             <div
                               key={idx}
-                              style={{ marginBottom: '8px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}
+                              className="mb-1.5 md:mb-2 text-[11px] md:text-xs flex items-center gap-1.5 md:gap-2"
                               onMouseEnter={() => setHighlightSignalTime(signal.time)}
                               onMouseLeave={() => setHighlightSignalTime(null)}
                             >
-                              <span style={{ fontSize: '16px' }}>{visual.icon}</span>
-                              <span>{signal.text}</span>
+                              <span className="text-sm md:text-base">{visual.icon}</span>
+                              <span className="leading-tight">{signal.text}</span>
                             </div>
                           )
                         })}
-                        <div style={{ marginTop: '8px', fontSize: '11px', color: '#9ca3af' }}>
-                          Legend: 📈 Volume Surge · 📊 MACD / Technical Breakout · ⚡ Gap Up / Momentum · 🟢 Bullish · 🔴 Bearish
+                        <div className="mt-1.5 md:mt-2 text-[10px] md:text-[11px] text-gray-400">
+                          <div className="hidden md:block">
+                            Legend: 📈 Volume Surge · 📊 MACD / Technical Breakout · ⚡ Gap Up / Momentum · 🟢 Bullish · 🔴 Bearish
+                          </div>
+                          <div className="md:hidden">
+                            📈 Volume · � MACD · ⚡ Gap · �🟢 Bullish · 🔴 Bearish
+                          </div>
                         </div>
                       </>
                     )
@@ -1084,21 +998,16 @@ export function ChartView({ symbol, onClose, analysis, livePrice, onSubscribeSym
               )}
 
               {/* Data Source */}
-              <div style={{
-                background: 'white',
-                padding: '16px',
-                borderRadius: '8px',
-                border: '1px solid #e0e0e0',
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-                  <AlertCircle size={20} style={{ marginRight: '8px', color: '#667eea' }} />
-                  <strong>Data Information</strong>
+              <div className="bg-white p-3 md:p-4 rounded-lg border border-gray-200">
+                <div className="flex items-center mb-2 md:mb-3">
+                  <AlertCircle size={16} className="mr-2 md:mr-2 text-indigo-500 md:w-5 md:h-5" />
+                  <strong className="text-sm md:text-base">Data Information</strong>
                 </div>
-                <div style={{ fontSize: '13px', color: '#64748b', lineHeight: 1.6 }}>
+                <div className="text-[11px] md:text-xs text-slate-500 leading-5 md:leading-6">
                   <div><strong>Source:</strong> {chartData?.data_source || 'Loading...'}</div>
                   <div><strong>Candles:</strong> {chartData?.candles?.length || 0}</div>
                   <div><strong>Timeframe:</strong> {timeframe}</div>
-                  <div style={{ marginTop: '8px', fontSize: '12px', fontStyle: 'italic' }}>
+                  <div className="mt-1.5 md:mt-2 text-[11px] md:text-[12px] italic">
                     {chartData?.data_source === 'Zerodha Kite' ? '✅ Real-time market data' : '⚠️ Using fallback data'}
                   </div>
                 </div>
@@ -1106,36 +1015,15 @@ export function ChartView({ symbol, onClose, analysis, livePrice, onSubscribeSym
             </div>
 
             {/* Action Buttons */}
-            <div style={{
-              marginTop: '20px',
-              display: 'flex',
-              gap: '12px',
-              flexWrap: 'wrap',
-            }}>
+            <div className="mt-4 md:mt-5 flex gap-2 md:gap-3 flex-wrap">
               <button
-                style={{
-                  padding: '10px 20px',
-                  background: '#26a69a',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                }}
+                className="px-4 py-2 md:px-5 md:py-2.5 bg-teal-500 text-white border-none rounded-md cursor-pointer font-semibold text-sm md:text-base"
                 onClick={() => setTradeOpen(true)}
               >
                 Execute Trade
               </button>
               <button
-                style={{
-                  padding: '10px 20px',
-                  background: '#667eea',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                }}
+                className="px-4 py-2 md:px-5 md:py-2.5 bg-indigo-500 text-white border-none rounded-md cursor-pointer font-semibold text-sm md:text-base"
                 onClick={async () => {
                   try {
                     if (!symbol) return

@@ -157,26 +157,26 @@ export const TradeStrategyPanel: React.FC<TradeStrategyPanelProps> = ({
   }, [accountId, sessionId, symbol, recLabel, quantity, stopNum, firstTargetNum])
 
   return (
-    <div style={{display:'grid', gridTemplateColumns:'minmax(0, 1.2fr) minmax(0, 1.3fr)', gap:12}}>
+    <div className="flex flex-col gap-3 lg:gap-3">
       {/* Compact Trust Score with Analyst Rationale */}
-      <div style={{padding:12, background:'#ffffff', borderRadius:10, border:'1px solid #e5e7eb', borderLeft:'3px solid #3b82f6', gridColumn:'1 / -1'}}>
-        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8}}>
-          <div style={{display:'flex', alignItems:'center', gap:8}}>
-            <div style={{padding:'4px 10px', borderRadius:999, background:'#eef2ff', fontSize:11, fontWeight:700, color:'#3730a3'}}>
+      <div className="p-3 lg:p-3 bg-white rounded-xl border border-gray-200 border-l-[3px] border-l-blue-600">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-2 lg:mb-2">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-2">
+            <div className="px-2.5 py-1 rounded-full bg-blue-50 text-[11px] lg:text-[11px] font-bold text-blue-900">
               {symbol || 'Symbol'}
             </div>
-            <div style={{fontSize:11, color:'#475569'}}>
-              Expected Holding Period - <span style={{fontWeight:600}}>{timeHorizonLabel}</span>
+            <div className="text-xs lg:text-xs text-slate-600">
+              Expected Holding Period - <span className="font-semibold">{timeHorizonLabel}</span>
             </div>
           </div>
-          <div style={{display:'flex', alignItems:'center', gap:24}}>
-            <div style={{textAlign:'right'}}>
-              <div style={{fontSize:11, color:'#64748b', fontWeight:600}}>Confidence</div>
-              <div style={{fontSize:18, fontWeight:700, color:getScoreColor(effectiveBlend)}}>{effectiveBlend}%</div>
+          <div className="flex flex-row items-start gap-6 mt-2">
+            <div className="flex flex-col lg:items-end">
+              <div className="text-xs lg:text-xs text-slate-600 font-semibold">Confidence</div>
+              <div className="text-lg lg:text-lg font-bold" style={{ color: getScoreColor(effectiveBlend) }}>{effectiveBlend}%</div>
             </div>
-            <div style={{textAlign:'right'}}>
-              <div style={{fontSize:11, color:'#64748b', fontWeight:600}}>Risk:Reward</div>
-              <div style={{fontSize:16, fontWeight:700, color:'#7c3aed'}}>
+            <div className="flex flex-col lg:items-end">
+              <div className="text-xs lg:text-xs text-slate-600 font-semibold">Risk:Reward</div>
+              <div className="text-base lg:text-base font-bold text-purple-600">
                 {(() => {
                   const raw = plan.risk_reward ?? '2.5'
                   const num = parseFloat(String(raw))
@@ -187,21 +187,27 @@ export const TradeStrategyPanel: React.FC<TradeStrategyPanelProps> = ({
                 })()}
               </div>
             </div>
-            <div style={{textAlign:'right'}}>
-              <div style={{fontSize:11, color:'#64748b', fontWeight:600}}>Setup Quality</div>
-              <div style={{fontSize:14, fontWeight:700, padding:'4px 10px', borderRadius:999, background:(recLabel || '').toLowerCase().includes('sell') ? '#fee2e2' : '#dcfce7', color:(recLabel || '').toLowerCase().includes('sell') ? '#b91c1c' : '#166534'}}>
+            <div className="flex flex-col lg:items-end">
+              <div className="text-xs lg:text-xs text-slate-600 font-semibold">Setup Quality</div>
+              <div className="text-sm lg:text-sm font-bold px-2 py-1 rounded-full" style={{ backgroundColor: (recLabel || '').toLowerCase().includes('sell') ? '#fee2e2' : '#dcfce7', color: (recLabel || '').toLowerCase().includes('sell') ? '#b91c1c' : '#166534' }}>
                 {recLabel || 'Buy'}
               </div>
-              <div style={{fontSize:11, color:'#64748b', marginTop:2}}>
+              <div className="text-xs lg:text-xs text-slate-600 mt-0.5">
                 {plan.setup_quality || 'Good'}
               </div>
             </div>
           </div>
         </div>
-        <div style={{height:8, background:'#e5e7eb', borderRadius:4, overflow:'hidden', marginBottom:10}}>
-          <div style={{width: `${effectiveBlend}%`, height:'100%', background: getScoreColor(effectiveBlend), transition:'width 0.3s'}} />
+        <div className="h-2 lg:h-2 bg-gray-200 rounded-md overflow-hidden mb-2.5">
+          <div
+            className="h-full transition-all duration-300 rounded-md"
+            style={{
+              width: `${effectiveBlend}%`,
+              backgroundColor: getScoreColor(effectiveBlend),
+            }}
+          />
         </div>
-        <div style={{fontSize:12, color:'#075985', lineHeight:1.5, fontStyle:'italic'}}>
+        <div className="text-xs lg:text-xs text-emerald-700 leading-6 italic">
           {strategyRationale || (() => {
             const s = scores || {}
             const insights: string[] = []
@@ -212,85 +218,114 @@ export const TradeStrategyPanel: React.FC<TradeStrategyPanelProps> = ({
             if (s.pattern >= 70) insights.push('favorable historical patterns emerging')
             if (s.global >= 65) insights.push('global markets showing strength')
             if (s.risk <= 40) insights.push('risk-reward ratio attractive')
-            const rationale = insights.length > 0 ? 
-              `Our agents analyzed and found ${insights.slice(0,3).join(', ')}.` : 
+            const rationale = insights.length > 0 ?
+              `Our agents analyzed and found ${insights.slice(0, 3).join(', ')}.` :
               'Comprehensive multi-dimensional analysis indicates favorable setup.'
             return rationale
           })()}
         </div>
         {sentimentRisk && (
-          <div style={{marginTop:10, padding:8, borderRadius:8, background:'#fef2f2', border:'1px solid #fecaca'}}>
-            <div style={{fontSize:11, fontWeight:600, color:'#991b1b', marginBottom:4}}>
+          <div className="mt-2.5 p-2 lg:p-2 rounded-lg bg-red-50 border border-red-200">
+            <div className="text-xs lg:text-xs font-semibold text-red-800 mb-1">
               Sentiment risk:{' '}
-              <span style={{color: sentimentRisk.color}}>
+              <span style={{ color: sentimentRisk.color }}>
                 {sentimentRisk.label} ({sentimentRisk.score.toFixed(0)}/100)
               </span>
             </div>
-            <div style={{fontSize:11, color:'#4b5563', lineHeight:1.5}}>
+            <div className="text-xs lg:text-xs text-red-600 leading-6">
               {sentimentRisk.summary}
             </div>
           </div>
         )}
       </div>
 
-      {/* Trade Action Banner */}
-      <div style={{padding:12, background:'#ffffff', borderRadius:10, border:'1px solid #e5e7eb', borderLeft: (recLabel || '').toLowerCase().includes('sell') ? '3px solid #ef4444' : '3px solid #16a34a', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-        <div>
-          <div style={{fontSize:12, color:'#64748b', fontWeight:600}}>RECOMMENDED ACTION</div>
-          <div style={{fontSize:20, fontWeight:700, color:'#0f172a', display:'flex', alignItems:'center', gap:8, marginTop:4}}>
-            <span>📈</span>
-            <span>{recLabel}</span>
+      <div className="flex flex-row gap-2">
+        {/* Trade Action Banner */}
+        <div
+          className="p-2 bg-white rounded-xl border border-gray-200 border-l-[3px] flex-1"
+          style={{
+            borderLeftColor: (recLabel || '').toLowerCase().includes('sell')
+              ? '#ef4444'
+              : '#16a34a',
+          }}
+        >
+          {/* Title */}
+          <div className="text-sm text-slate-600 font-semibold mb-1">
+            RECOMMENDED ACTION
           </div>
-        </div>
-        <div style={{textAlign:'right'}}>
-          <div style={{fontSize:11, color:'#64748b'}}>Setup Quality</div>
-          <div style={{fontSize:16, fontWeight:700, color:'#16a34a'}}>{plan.setup_quality || 'GOOD'}</div>
-        </div>
-      </div>
+          {/* Content Row */}
+          <div className="flex flex-row justify-between items-start gap-4">
+            {/* Left Block */}
+            <div className="flex flex-row items-center gap-2">
+              <span className="text-lg">📈</span>
+              <span className="text-base font-semibold text-slate-800">
+                {recLabel}
+              </span>
+            </div>
 
-      {/* Entry Details - Comprehensive */}
-      <div style={{padding:12, background:'#ffffff', borderRadius:10, border:'1px solid #e5e7eb', borderLeft:'3px solid #3b82f6'}}>
-        <div style={{fontSize:14, fontWeight:700, color:'#1e40af', marginBottom:10, display:'flex', alignItems:'center', gap:8}}>
-          <span>🎯</span>
-          <span>ENTRY STRATEGY</span>
-        </div>
-        <div style={{display:'grid', gap:8}}>
-          <div style={{display:'grid', gridTemplateColumns:'120px 1fr', gap:8, alignItems:'center'}}>
-            <div style={{fontSize:11, color:'#64748b', fontWeight:600}}>Entry Price:</div>
-            <div style={{fontSize:18, fontWeight:700, color:'#16a34a'}}>{displayEntry}</div>
+            {/* Right Block */}
+            <div className="flex flex-col items-end">
+              <span className="text-xs text-slate-500">Setup Quality</span>
+              <span
+                className={`text-sm font-bold ${plan.setup_quality === 'STRONG'
+                  ? 'text-green-600'
+                  : plan.setup_quality === 'WEAK'
+                    ? 'text-red-500'
+                    : 'text-amber-600'
+                  }`}
+              >
+                {plan.setup_quality || 'GOOD'}
+              </span>
+            </div>
           </div>
-          <div style={{display:'grid', gridTemplateColumns:'120px 1fr', gap:8, alignItems:'start'}}>
-            <div style={{fontSize:11, color:'#64748b', fontWeight:600}}>Entry Timing:</div>
-            <div style={{fontSize:12, color:'#475569', lineHeight:1.5}}>
-              {plan.entry_timing || plan.entry?.timing || 'At current market price or on pullback to support zone. Consider entering in 2-3 tranches for better risk management.'}
+        </div>
+        {/* Entry Details - Comprehensive */}
+        <div className="p-2 bg-white rounded-xl border border-gray-200 border-l-[3px] border-l-blue-600 flex-1">
+          <div className="text-sm lg:text-sm font-bold text-blue-600 mb-2.5 flex items-center gap-2">
+            <span>🎯</span>
+            <span>ENTRY STRATEGY</span>
+          </div>
+          <div className="grid gap-2 lg:gap-2">
+            <div className="grid grid-cols-[120px_1fr] lg:grid-cols-[120px_1fr] gap-2 lg:gap-2 items-center">
+              <div className="text-xs text-slate-600 font-semibold">Entry Price:</div>
+              <div className="text-lg lg:text-lg font-bold text-green-600">{displayEntry}</div>
+            </div>
+            <div className="grid grid-cols-[120px_1fr] lg:grid-cols-[120px_1fr] gap-2 lg:gap-2 items-start">
+              <div className="text-xs text-slate-600 font-semibold">Entry Timing:</div>
+              <div className="text-xs text-slate-600 leading-6">
+                {plan.entry_timing || plan.entry?.timing || 'At current market price or on pullback to support zone. Consider entering in 2-3 tranches for better risk management.'}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
+
+
+
       {/* Stop Loss Details - Comprehensive */}
-      <div style={{padding:12, background:'#ffffff', borderRadius:10, border:'1px solid #e5e7eb', borderLeft:'3px solid #dc2626'}}>
-        <div style={{fontSize:14, fontWeight:700, color:'#991b1b', marginBottom:10, display:'flex', alignItems:'center', gap:8}}>
+      <div className="p-3 lg:p-3 bg-white rounded-xl border border-gray-200 border-l-[3px] border-l-red-600">
+        <div className="text-sm lg:text-sm font-bold text-red-600 mb-2.5 flex items-center gap-2">
           <span>🛡️</span>
           <span>STOP LOSS MANAGEMENT</span>
         </div>
-        <div style={{display:'grid', gap:10}}>
-          <div style={{padding:8, background:'#fff', borderRadius:6, border:'1px solid #fecaca'}}>
-            <div style={{fontSize:11, color:'#991b1b', fontWeight:600, marginBottom:4}}>Initial Stop Loss:</div>
-            <div style={{fontSize:16, fontWeight:700, color:'#dc2626'}}>{displayStop}</div>
+        <div className="grid gap-2.5 lg:gap-2.5">
+          <div className="p-2 lg:p-2 bg-white rounded-md border border-red-200">
+            <div className="text-xs text-red-800 font-semibold mb-1">Initial Stop Loss:</div>
+            <div className="text-base lg:text-base font-bold text-red-600">{displayStop}</div>
             {entryNum != null && stopNum != null && (
-              <div style={{fontSize:10, color:'#64748b', marginTop:2}}>Risk per share: ₹{(entryNum - stopNum).toFixed(2)}</div>
+              <div className="text-xs text-slate-600 mt-0.5">Risk per share: ₹{(entryNum - stopNum).toFixed(2)}</div>
             )}
           </div>
-          <div style={{padding:8, background:'#fff', borderRadius:6, border:'1px solid #fecaca'}}>
-            <div style={{fontSize:11, color:'#991b1b', fontWeight:600, marginBottom:4}}>Trailing Stop:</div>
-            <div style={{fontSize:11, color:'#475569', lineHeight:1.5}}>
+          <div className="p-2 lg:p-2 bg-white rounded-md border border-red-200">
+            <div className="text-xs text-red-800 font-semibold mb-1">Trailing Stop:</div>
+            <div className="text-xs text-slate-600 leading-6">
               {plan.trailing_stop || plan.stop_loss?.trailing || 'Move stop loss to breakeven (entry price) after T1 is achieved. Trail below recent swing lows as price advances.'}
             </div>
           </div>
-          <div style={{padding:8, background:'#fff', borderRadius:6, border:'1px solid #fecaca'}}>
-            <div style={{fontSize:11, color:'#991b1b', fontWeight:600, marginBottom:4}}>Final Stop:</div>
-            <div style={{fontSize:11, color:'#475569'}}>
+          <div className="p-2 lg:p-2 bg-white rounded-md border border-red-200">
+            <div className="text-xs text-red-800 font-semibold mb-1">Final Stop:</div>
+            <div className="text-xs text-slate-600">
               {plan.final_stop || plan.stop_loss?.final || 'Exit position if price closes below breakeven on daily timeframe'}
             </div>
           </div>
@@ -298,13 +333,13 @@ export const TradeStrategyPanel: React.FC<TradeStrategyPanelProps> = ({
       </div>
 
       {/* Target Levels - Comprehensive */}
-      <div style={{padding:12, background:'#ffffff', borderRadius:10, border:'1px solid #e5e7eb', borderLeft:'3px solid #16a34a'}}>
-        <div style={{fontSize:14, fontWeight:700, color:'#166534', marginBottom:10, display:'flex', alignItems:'center', gap:8}}>
+      <div className="p-3 lg:p-3 bg-white rounded-xl border border-gray-200 border-l-[3px] border-l-green-600">
+        <div className="text-sm lg:text-sm font-bold text-green-600 mb-2.5 flex items-center gap-2">
           <span>🎯</span>
           <span>TARGET LEVELS & PROFIT BOOKING</span>
         </div>
-        <div style={{display:'grid', gap:8}}>
-          {(plan.targets || ['101','102','103']).map((target: any, idx: number)=> {
+        <div className="grid gap-2 lg:gap-2">
+          {(plan.targets || ['101', '102', '103']).map((target: any, idx: number) => {
             const targetPrice = typeof target === 'string' || typeof target === 'number' ? target : target.price
             const entryForGain = entryNum ?? parseNumber(plan.entry || '100') ?? 100
             const gainPct = entryForGain && targetPrice != null
@@ -323,54 +358,54 @@ export const TradeStrategyPanel: React.FC<TradeStrategyPanelProps> = ({
             const rrLabel = !isNaN(rrNum) && rrNum > 0 ? `1:${rrNum}` : '1:1.5'
 
             return (
-              <div key={idx} style={{padding:10, background:'#fff', borderRadius:8, border:'2px solid #bbf7d0', display:'grid', gridTemplateColumns:'80px 100px 1fr 100px', gap:12, alignItems:'center'}}>
-                <div>
-                  <div style={{fontSize:10, color:'#64748b', fontWeight:600}}>TARGET {idx+1}</div>
-                  <div style={{fontSize:16, fontWeight:700, color:'#16a34a'}}>₹{targetPrice}</div>
+              <div key={idx} className="p-2 lg:p-2 bg-white rounded-lg border-[2px] border-amber-300 flex gap-3 lg:gap-3 items-center">
+                <div className="flex-1 text-center">
+                  <div className="text-xs text-slate-600 font-semibold">TARGET {idx + 1}</div>
+                  <div className="text-base lg:text-base font-bold text-green-600">₹{targetPrice}</div>
                 </div>
-                <div>
-                  <div style={{fontSize:10, color:'#64748b'}}>Gain</div>
-                  <div style={{fontSize:13, fontWeight:600, color:'#16a34a'}}>+{gainPct}%</div>
+                <div className="flex-1 text-center">
+                  <div className="text-xs text-slate-600">Gain</div>
+                  <div className="text-sm lg:text-sm font-semibold text-green-600">+{gainPct}%</div>
                 </div>
-                <div>
-                  <div style={{fontSize:10, color:'#64748b'}}>Book Profit</div>
-                  <div style={{fontSize:12, fontWeight:600, color:'#166534'}}>{idx===0?'33%':idx===1?'33%':'34%'} of position</div>
+                <div className="flex-1 text-center">
+                  <div className="text-xs text-slate-600">Book Profit</div>
+                  <div className="text-xs lg:text-xs font-semibold text-green-600">{idx === 0 ? '33%' : idx === 1 ? '33%' : '34%'} of position</div>
                 </div>
-                <div>
-                  <div style={{fontSize:10, color:'#64748b'}}>R:R Ratio</div>
-                  <div style={{fontSize:13, fontWeight:700, color:'#7c3aed'}}>{rrLabel}</div>
+                <div className="flex-1 text-center">
+                  <div className="text-xs text-slate-600">R:R Ratio</div>
+                  <div className="text-sm lg:text-sm font-bold text-purple-600">{rrLabel}</div>
                 </div>
               </div>
             )
           })}
         </div>
-        <div style={{marginTop:10, padding:8, background:'#fff', borderRadius:6, border:'1px solid #bbf7d0'}}>
-          <div style={{fontSize:11, color:'#166534', fontWeight:600, marginBottom:4}}>Strategy:</div>
-          <div style={{fontSize:11, color:'#475569', lineHeight:1.5}}>
+        <div className="mt-2.5 lg:mt-2.5 p-2 lg:p-2 bg-white rounded-md border border-amber-300">
+          <div className="text-xs text-green-600 font-semibold mb-1">Strategy:</div>
+          <div className="text-xs text-slate-600 leading-6">
             Book 33% at T1 (secure initial gains), 33% at T2 (lock core profits), and let remaining 34% run to T3 for maximum upside. Trail stop loss as each target is achieved.
           </div>
         </div>
       </div>
 
       {/* Position Sizing - Comprehensive */}
-      <div style={{padding:12, background:'#ffffff', borderRadius:10, border:'1px solid #e5e7eb', borderLeft:'3px solid #f59e0b'}}>
-        <div style={{fontSize:14, fontWeight:700, color:'#92400e', marginBottom:10, display:'flex', alignItems:'center', gap:8}}>
+      <div className="p-3 lg:p-3 bg-white rounded-xl border border-gray-200 border-l-[3px] border-l-amber-500">
+        <div className="text-sm lg:text-sm font-bold text-amber-600 mb-2.5 flex items-center gap-2">
           <span>📏</span>
           <span>POSITION SIZING & CAPITAL ALLOCATION</span>
         </div>
-        <div style={{display:'grid', gap:10}}>
-          <div style={{padding:10, background:'#fff', borderRadius:8, border:'1px solid #fde68a'}}>
-            <div style={{fontSize:11, color:'#92400e', fontWeight:600, marginBottom:6}}>2% Risk Rule (Recommended):</div>
-            <div style={{fontSize:12, color:'#78350f', lineHeight:1.6}}>
+        <div className="grid gap-2.5 lg:gap-2.5">
+          <div className="p-2.5 lg:p-2.5 bg-white rounded-lg border border-amber-200">
+            <div className="text-xs text-amber-600 font-semibold mb-1.5">2% Risk Rule (Recommended):</div>
+            <div className="text-xs text-amber-900 leading-6">
               <div><strong>Capital Allocation:</strong> {plan.sizing || '2-3% of total capital'}</div>
-              <div style={{marginTop:4}}><strong>Position Size:</strong> ₹{plan.position_size || '20,000'} (assuming ₹10L portfolio)</div>
-              <div style={{marginTop:4}}><strong>Quantity:</strong> {quantity || Math.floor(20000 / (entryNum || 100))} shares @ ₹{displayEntry || '100'}</div>
-              <div style={{marginTop:6, padding:8, background:'#fef3c7', borderRadius:6}}>
-                <div style={{fontSize:10, color:'#92400e', fontWeight:600}}>📊 Risk Calculation:</div>
-                <div style={{fontSize:11, color:'#78350f', marginTop:2}}>
+              <div className="mt-1"><strong>Position Size:</strong> ₹{plan.position_size || '20,000'} (assuming ₹10L portfolio)</div>
+              <div className="mt-1"><strong>Quantity:</strong> {quantity || Math.floor(20000 / (entryNum || 100))} shares @ ₹{displayEntry || '100'}</div>
+              <div className="mt-1.5 p-2 lg:p-2 bg-amber-50 rounded-md">
+                <div className="text-xs text-amber-600 font-semibold">📊 Risk Calculation:</div>
+                <div className="text-xs text-amber-900 mt-0.5">
                   Max Loss = (Entry - Stop Loss) × Quantity = ₹{maxLoss != null ? maxLoss.toFixed(2) : '—'}
                 </div>
-                <div style={{fontSize:11, color:'#78350f', marginTop:2}}>
+                <div className="text-xs text-amber-900 mt-0.5">
                   This represents ~2% of ₹10L capital, limiting downside while maximizing upside potential
                 </div>
               </div>
@@ -380,14 +415,14 @@ export const TradeStrategyPanel: React.FC<TradeStrategyPanelProps> = ({
       </div>
 
       {/* Risk:Reward & Time Horizon */}
-      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:10}}>
-        <div style={{padding:12, background:'#ffffff', borderRadius:10, border:'1px solid #e5e7eb', borderLeft:'3px solid #a855f7'}}>
-          <div style={{fontSize:14, fontWeight:700, color:'#6b21a8', marginBottom:8, display:'flex', alignItems:'center', gap:8}}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 lg:gap-2.5">
+        <div className="p-3 lg:p-3 bg-white rounded-xl border border-gray-200 border-l-[3px] border-l-yellow-600">
+          <div className="text-sm lg:text-sm font-bold text-yellow-600 mb-2 flex items-center gap-2">
             <span>📊</span>
             <span>RISK:REWARD</span>
           </div>
-          <div style={{textAlign:'center', padding:10}}>
-            <div style={{fontSize:32, fontWeight:700, color:'#7c3aed'}}>
+          <div className="text-center p-2.5 lg:p-2.5">
+            <div className="text-2xl lg:text-2xl font-bold text-purple-600">
               {(() => {
                 const raw = plan.risk_reward ?? '2.5'
                 const num = parseFloat(String(raw))
@@ -397,41 +432,41 @@ export const TradeStrategyPanel: React.FC<TradeStrategyPanelProps> = ({
                 return '1:2.5'
               })()}
             </div>
-            <div style={{fontSize:11, color:'#6b21a8', marginTop:4}}>Excellent risk-to-reward setup</div>
+            <div className="text-xs text-yellow-600 mt-1">Excellent risk-to-reward setup</div>
           </div>
         </div>
-        
-        <div style={{padding:12, background:'#ffffff', borderRadius:10, border:'1px solid #e5e7eb', borderLeft:'3px solid #f97316'}}>
-          <div style={{fontSize:14, fontWeight:700, color:'#9a3412', marginBottom:8, display:'flex', alignItems:'center', gap:8}}>
+
+        <div className="p-3 lg:p-3 bg-white rounded-xl border border-gray-200 border-l-[3px] border-l-orange-500">
+          <div className="text-sm lg:text-sm font-bold text-orange-500 mb-2 flex items-center gap-2">
             <span>⏱️</span>
             <span>TIME HORIZON</span>
           </div>
-          <div style={{textAlign:'center', padding:10}}>
-            <div style={{fontSize:24, fontWeight:700, color:'#ea580c'}}>
+          <div className="text-center p-2.5 lg:p-2.5">
+            <div className="text-2xl lg:text-2xl font-bold text-orange-500">
               {getTimeHorizonLabel()}
             </div>
-            <div style={{fontSize:11, color:'#9a3412', marginTop:4}}>Expected holding period</div>
+            <div className="text-xs text-orange-500 mt-1">Expected holding period</div>
           </div>
         </div>
       </div>
 
       {/* Invalidation Conditions */}
-      <div style={{padding:12, background:'#ffffff', borderRadius:10, border:'1px solid #e5e7eb', borderLeft:'3px solid #ef4444', gridColumn:'1 / -1'}}>
-        <div style={{fontSize:14, fontWeight:700, color:'#991b1b', marginBottom:10, display:'flex', alignItems:'center', gap:8}}>
+      <div className="p-3 lg:p-3 bg-white rounded-xl border border-gray-200 border-l-[3px] border-l-red-600 col-span-full">
+        <div className="text-sm lg:text-sm font-bold text-red-600 mb-2.5 flex items-center gap-2">
           <span>❌</span>
           <span>INVALIDATION CONDITIONS (Exit Immediately If)</span>
         </div>
-        <div style={{display:'grid', gap:6}}>
-          <div style={{padding:8, background:'#fff', borderRadius:6, border:'1px solid #fecaca', fontSize:12, color:'#991b1b'}}>
+        <div className="grid gap-1.5 lg:gap-1.5">
+          <div className="p-2 lg:p-2 bg-white rounded-md border border-red-200 text-xs text-red-800">
             • Stop loss is breached ({displayStop})
           </div>
-          <div style={{padding:8, background:'#fff', borderRadius:6, border:'1px solid #fecaca', fontSize:12, color:'#991b1b'}}>
+          <div className="p-2 lg:p-2 bg-white rounded-md border border-red-200 text-xs text-red-800">
             • {plan.invalidation || 'Price closes below support on daily timeframe'}
           </div>
-          <div style={{padding:8, background:'#fff', borderRadius:6, border:'1px solid #fecaca', fontSize:12, color:'#991b1b'}}>
+          <div className="p-2 lg:p-2 bg-white rounded-md border border-red-200 text-xs text-red-800">
             • Bearish reversal pattern emerges (e.g., shooting star, evening star)
           </div>
-          <div style={{padding:8, background:'#fff', borderRadius:6, border:'1px solid #fecaca', fontSize:12, color:'#991b1b'}}>
+          <div className="p-2 lg:p-2 bg-white rounded-md border border-red-200 text-xs text-red-800">
             • Negative material news or corporate action announced
           </div>
         </div>
@@ -439,16 +474,16 @@ export const TradeStrategyPanel: React.FC<TradeStrategyPanelProps> = ({
 
       {/* Action Buttons */}
       {showActions && (
-        <div style={{display:'flex', gap:10, paddingTop:8, marginTop:4, borderTop:'1px solid #e5e7eb', justifyContent:'flex-end', flexWrap:'wrap', gridColumn:'1 / -1'}}>
-          <button 
-            onClick={()=>{ 
+        <div className="flex gap-2.5 pt-2 mt-1 border-t border-gray-200 justify-end flex-wrap col-span-full">
+          <button
+            onClick={() => {
               setTradeOpen(true)
-            }} 
-            style={{padding:'10px 16px', borderRadius:8, background:'#16a34a', color:'#fff', border:'none', fontWeight:600, fontSize:13, cursor:'pointer', minWidth:130}}
+            }}
+            className="px-4 py-2.5 lg:px-4 lg:py-2.5 rounded-md bg-green-600 text-white border-none font-semibold text-sm cursor-pointer min-w-[130px]"
           >
             🚀 Execute Trade
           </button>
-          <button 
+          <button
             onClick={async () => {
               try {
                 const entryVal = parseNumber(entryRaw)
@@ -464,12 +499,12 @@ export const TradeStrategyPanel: React.FC<TradeStrategyPanelProps> = ({
                 })
                 try {
                   window.alert('Alert added to watchlist. Use the Watchlist button to monitor this setup.')
-                } catch {}
+                } catch { }
               } catch (e) {
                 console.error('Failed to add watchlist entry from trade strategy:', e)
               }
-            }} 
-            style={{padding:'10px 16px', borderRadius:8, background:'#4f46e5', color:'#fff', border:'none', fontWeight:600, fontSize:13, cursor:'pointer', minWidth:130}}
+            }}
+            className="px-4 py-2.5 lg:px-4 lg:py-2.5 rounded-md bg-slate-600 text-white border-none font-semibold text-sm cursor-pointer min-w-[130px]"
           >
             ⏰ Set Alert
           </button>
