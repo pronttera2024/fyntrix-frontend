@@ -9,7 +9,7 @@ import { AccountDropdown } from '../components/AccountDropdown'
 import { AIResearchChat } from '../components/Home/AIResearchChat'
 import { MarketBrief } from '../components/Home/MarketBrief'
 import { computeSentimentRiskLevel } from '../sentimentRisk'
-import { LayoutGrid, SlidersHorizontal, BriefcaseBusiness, Image, SquareActivity, Trophy, Copy, Bell, MessageCircle, Megaphone, User, Brain, MoreHorizontal, LogOut, Mail, CheckCircle, Menu, Phone } from 'lucide-react'
+import { LayoutGrid, SlidersHorizontal, BriefcaseBusiness, Image, SquareActivity, Trophy, Copy, Bell, MessageCircle, Megaphone, User, Brain, MoreHorizontal, LogOut, Mail, CheckCircle, Menu, Phone, Info } from 'lucide-react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { ChartView } from '../components/ChartView'
@@ -2299,7 +2299,7 @@ export default function App() {
   }, [chat.length])
 
   return (
-    <div className="app-shell" style={{ display: 'flex', height: '100dvh', background: '#f9fafb', overflow: 'hidden' }}>
+    <div className="app-shell" style={{ display: 'flex', height: '100dvh', overflow: 'hidden' }}>
       {/* Continuous Left Sidebar - dark unified band */}
       {!isMobile && (
         <aside style={{
@@ -2615,12 +2615,13 @@ export default function App() {
           zIndex: 200,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          // justifyContent: 'space-between',
           padding: isMobile ? '0 12px' : '0 24px',
-          boxShadow: 'none'
+          boxShadow: 'none',
+          width: '100%',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: isMobile ? 12 : 128, maxWidth: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: isMobile ? 12 : 128, width: '100%' }}>
           <FyntrixLogo fontSize={22} fontWeight={900} isMobile={isMobile} />
           <div
             style={{
@@ -2629,7 +2630,8 @@ export default function App() {
               fontWeight: 500,
               fontStyle: 'italic',
               cursor: 'pointer',
-              whiteSpace: 'nowrap'
+              whiteSpace: 'nowrap',
+              marginLeft: isMobile ? 'auto' : '0'
             }}
             onClick={() => setShowAgents(true)}
             onMouseEnter={e => {
@@ -2642,7 +2644,23 @@ export default function App() {
               e.currentTarget.style.textDecoration = 'none'
             }}
           >
-            (trading assisted by AI agents)
+            {isMobile ? <>
+            <span style={{
+              color: 'gray',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              borderRadius: 999,
+              border: '1px solid rgba(158, 180, 217, 0.9)',
+              padding: '6px',
+              marginLeft: 'auto'
+            }} >
+
+            <Brain size={18} color="#7a8da9ff" />
+            </span>
+            </>: 
+            "(trading assisted by AI agents)"
+            }
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -2977,8 +2995,8 @@ export default function App() {
         flexDirection: isMobile ? 'column' : 'row',
         gap: isMobile ? 12 : 20,
         padding: isMobile
-          ? `44px 12px calc(${LAYOUT_TOKENS.bottomNavHeight}px + env(safe-area-inset-bottom) + 12px) 12px`
-          : '44px 32px 20px 32px',
+          ? `56px 12px calc(${LAYOUT_TOKENS.bottomNavHeight}px + env(safe-area-inset-bottom) + 12px) 12px`
+          : '56px 32px 20px 32px',
         maxWidth: isMobile ? '100vw' : 'calc(100vw - 116px)',
         height: '100dvh',
         boxSizing: 'border-box',

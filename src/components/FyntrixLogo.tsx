@@ -1,6 +1,6 @@
 import React from 'react'
 import fyntrixLogo from '../../assets/FyntrixLogo.png'
-import shortLogo from '../../assets/FyntrixShortLogo.png'
+import shortLogo from '../../assets/FyntrixLogo.png'
 
 interface FyntrixLogoProps {
   width?: number

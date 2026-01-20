@@ -1,6 +1,7 @@
 import React from 'react'
 import { InsightCards } from '../InsightCards'
 import { MarketHeatMap } from '../MarketHeatMap'
+import { Globe } from 'lucide-react'
 
 type MarketRegion = 'India' | 'Global'
 
@@ -79,14 +80,14 @@ export const MarketBrief: React.FC<MarketBriefProps> = ({
     setShowPicks
 }) => {
     return (
-        <section className="p-2 border border-slate-200 rounded-md mb-3 shadow-sm">
+        <section className="p-2 border border-slate-200 rounded-xl mb-3 shadow-sm bg-white">
             <div className="flex justify-between mb-3 gap-3 flex-wrap">
                 <div className="flex flex-col gap-2">
                     <span className="text-lg font-semibold">Market Brief</span>
                     <div className="flex gap-2 border-b border-slate-200 pb-1">
                         {[
                             { value: 'India' as const, label: 'India Markets', icon: '🇮🇳' },
-                            { value: 'Global' as const, label: 'World Markets', icon: '🌍' },
+                            { value: 'Global' as const, label: 'World Markets', icon: <Globe size={16}/> },
                         ].map(tab => {
                             const isActive = marketRegion === tab.value
                             return (
