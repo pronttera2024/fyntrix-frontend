@@ -154,9 +154,10 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
 
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+          display: 'flex',
+          overflowX: 'auto',
           gap: 10,
+          padding: '10px 0',
         }}
       >
         {sortedStocks.map((stock) => {
@@ -170,6 +171,7 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
               onClick={() => onStockClick?.(stock.symbol)}
               style={{
                 background: '#ffffff',
+                minWidth: '48%',
                 borderRadius: 10,
                 padding: '10px 12px',
                 cursor: 'pointer',
