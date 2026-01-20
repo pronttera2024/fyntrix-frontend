@@ -1,6 +1,6 @@
 import React from 'react'
-import { InsightCards } from './InsightCards'
-import { MarketHeatMap } from './MarketHeatMap'
+import { InsightCards } from '../InsightCards'
+import { MarketHeatMap } from '../MarketHeatMap'
 
 type MarketRegion = 'India' | 'Global'
 
@@ -172,10 +172,10 @@ export const MarketBrief: React.FC<MarketBriefProps> = ({
                             : `Last closed ${datePart}, ${timePart}`
 
                         return (
-                            <div className="flex flex-1 flex-row md:flex-col justify-between md:justify-start gap-1 md:gap-2 items-center">
-                                <div className="flex flex-col items-center gap-1 md:gap-2 md:flex-row">
+                            <div className="flex w-full flex-row md:flex-col justify-between md:justify-start gap-1 md:gap-2">
+                                <div className="flex flex-col md:flex-row items-start md:items-center gap-1 md:gap-2">
                                     <span className={`
-                    md:text-xs text-sm rounded-full font-semibold px-2 py-1 animate-pulse animation-duration-100 animation-iteration-count-infinite 
+                    md:text-xs text-sm rounded-full font-semibold px-2 py-1 animate-pulse animation-duration-100 animation-iteration-count-infinite
                     ${!isMarketOpen
                                             ? 'bg-yellow-100 text-yellow-800'
                                             : (isStale
@@ -190,7 +190,7 @@ export const MarketBrief: React.FC<MarketBriefProps> = ({
                                         {label}
                                     </span>
                                 </div>
-                                <div className="flex md:flex-row flex-col items-center gap-1 md:gap-2">
+                                <div className="flex flex-col md:flex-row items-end md:items-center gap-1 md:gap-2 ml-auto">
                                     <span className="inline-flex items-center gap-1.5 text-sm md:text-xs px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200" style={{ color: sentiment.color }}>
                                         <span className="inline-flex gap-0.25">
                                             {Array.from({ length: 5 }).map((_, i) => {
@@ -215,7 +215,7 @@ export const MarketBrief: React.FC<MarketBriefProps> = ({
                     const isPositive = (t.pct || 0) >= 0
                     const trendColor = isPositive ? '#16a34a' : '#ef4444'
                     return (
-                        <div key={t.name} className="min-w-[150px] flex-[0_0_auto] p-2.5 border border-slate-200 rounded-xl bg-white shadow-sm">
+                        <div key={t.name} className="min-w-60 flex-[0_0_auto] p-2.5 border border-slate-200 rounded-xl bg-white shadow-sm">
                             <div className="flex justify-between items-start mb-1.5">
                                 <div>
                                     <div className="text-xs font-bold text-slate-900 uppercase mb-0.25">{t.name === 'GOLD' ? 'GOLD (IN $/OUNCE)' : t.name}</div>
