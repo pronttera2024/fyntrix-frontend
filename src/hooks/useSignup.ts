@@ -86,66 +86,63 @@ export const useSignup = (): UseSignupReturn => {
     setError(null)
 
     try {
-      // Call the verify signup API - this returns tokens
+      console.log('Starting OTP verification for:', phone_number)
+      
+      // Call the verify signup API - this verifies the account and returns tokens
       const response: VerifySignupResponse = await verifySignup({
         phone_number,
         otp_code
       })
 
-      // Store all tokens
-      setAccessToken(response.access_token)
-      setIdToken(response.id_token)
-      setRefreshToken(response.refresh_token)
-      setTokenExpiresAt(response.expires_in)
-
-      // Fetch user info using the access token
-      try {
-        const userInfo = await getCurrentUser()
-        setUserData(userInfo)
-      } catch (userError) {
-        console.warn('Could not fetch user info, using fallback:', userError)
-        // Fallback: extract user data from ID token
-        if (response.id_token) {
-          try {
-            const payload = JSON.parse(atob(response.id_token.split('.')[1]))
-            const userData = {
-              user_id: payload.sub || payload.user_id || 'unknown',
-              phone: phone_number,
-              name: signupData.phone_number || payload.name || '',
-              phone_verified: true
-            }
-            setUserData(userData)
-          } catch (tokenError) {
-            console.warn('Could not parse ID token payload:', tokenError)
-            // Final fallback: store minimal user data
-            setUserData({
-              user_id: signupData.user_sub || 'unknown',
-              phone: phone_number,
-              name: '',
-              phone_verified: true
-            })
-          }
-        }
-      }
+      console.log('OTP verification successful:', response)
 
       // Clear signup data after successful verification
       setSignupData(null)
 
-      // Redirect to main app or dashboard
-      navigate('/', { replace: true })
+      // Use setTimeout to ensure state updates are processed before navigation
+      setTimeout(() => {
+        console.log('Redirecting to login page...')
+        navigate('/login', { 
+          replace: true,
+          state: { 
+            message: 'Account verified successfully! Please login to continue.',
+            phone: phone_number 
+          }
+        })
+      }, 100)
 
     } catch (err: any) {
       console.error('Verify signup error:', err)
       
-      // Handle different error types
-      if (err.message) {
-        setError(err.message)
-      } else if (err.detail) {
-        setError(err.detail)
-      } else if (err.error) {
-        setError(err.error)
-      } else if (typeof err === 'string') {
-        setError(err)
+      // Check if this is the specific 500 error that indicates success
+      const errorMessage = err.message || err.detail || err.error || err
+      
+      // If it's the specific "Verification succeeded but failed to generate tokens" message, treat as success
+      if (errorMessage && errorMessage.includes('Verification succeeded but failed to generate tokens')) {
+        console.log('Treating 500 error as success and redirecting to login...')
+        setSignupData(null)
+        
+        setTimeout(() => {
+          navigate('/login', { 
+            replace: true,
+            state: { 
+              message: 'Account verified successfully! Please login to continue.',
+              phone: phone_number 
+            }
+          })
+        }, 100)
+        return
+      }
+      
+      // Don't show token-related errors to users - filter out various token-related messages
+      if (errorMessage && (
+        errorMessage.includes('token') || 
+        errorMessage.includes('Token') ||
+        errorMessage.includes('generate')
+      )) {
+        setError('OTP verification failed. Please try again.')
+      } else if (typeof errorMessage === 'string' && errorMessage.trim()) {
+        setError(errorMessage)
       } else {
         setError('OTP verification failed. Please try again.')
       }

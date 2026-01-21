@@ -473,6 +473,18 @@ export default function CreateAccount() {
           {/* OTP Field - Only visible after Generate OTP is clicked */}
           {showOtpField && (
             <div style={{ marginBottom: 16 }}>
+              <div style={{
+                marginBottom: 12,
+                padding: '12px 16px',
+                background: '#f0f9ff',
+                border: '1px solid #bae6fd',
+                borderRadius: 8,
+                fontSize: 12,
+                color: '#0369a1',
+                lineHeight: 1.4
+              }}>
+                After verification, you'll be redirected to login page to access your account.
+              </div>
               <label style={{
                 display: 'block',
                 fontSize: 13,
@@ -668,10 +680,10 @@ export default function CreateAccount() {
                   borderRadius: '50%',
                   animation: 'spin 1s linear infinite'
                 }} />
-                {showOtpField ? 'Creating Account...' : 'Generating OTP...'}
+                {showOtpField ? 'Verifying Account...' : 'Generating OTP...'}
               </>
             ) : (
-              showOtpField ? 'Create Account' : 'Generate OTP'
+              showOtpField ? 'Verify Account' : 'Generate OTP'
             )}
           </button>
         </form>

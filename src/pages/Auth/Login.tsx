@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Phone, Lock, Eye, EyeOff, TrendingUp, Shield, Zap, AlertCircle, ArrowLeft } from 'lucide-react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { Phone, Lock, Eye, EyeOff, TrendingUp, Shield, Zap, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react'
 import { GoogleLogin } from '@react-oauth/google'
 import { FyntrixLogo } from '../../components/FyntrixLogo'
 import { BRANDING } from '../../branding'
@@ -14,6 +14,7 @@ export default function Login() {
   const [resendTimer, setResendTimer] = useState(0)
   
   const navigate = useNavigate()
+  const location = useLocation()
   const {
     isLoading,
     error,
@@ -46,6 +47,15 @@ export default function Login() {
       navigate('/', { replace: true })
     }
   }, [isAuthenticated, navigate])
+
+  // Check for navigation state and pre-fill phone number
+  useEffect(() => {
+    if (location.state?.phone) {
+      // Remove +91 prefix for display in the input field
+      const displayPhone = location.state.phone.replace(/^\+91/, '')
+      setPhone(displayPhone)
+    }
+  }, [location.state])
 
   // Show OTP field when session data is available
   useEffect(() => {
@@ -287,6 +297,30 @@ export default function Login() {
                 lineHeight: 1.4
               }}>
                 {error}
+              </span>
+            </div>
+          )}
+
+          {/* Success Message Display */}
+          {location.state?.message && (
+            <div style={{
+              marginBottom: 20,
+              padding: isMobile ? '16px 20px' : '12px 16px',
+              background: '#f0fdf4',
+              border: '1px solid #dcfce7',
+              borderRadius: isMobile ? 16 : 8,
+              display: 'flex',
+              alignItems: 'center',
+              gap: isMobile ? 12 : 8
+            }}>
+              <CheckCircle size={isMobile ? 20 : 16} color="#16a34a" />
+              <span style={{
+                fontSize: isMobile ? 14 : 13,
+                color: '#16a34a',
+                fontWeight: 500,
+                lineHeight: 1.4
+              }}>
+                {location.state.message}
               </span>
             </div>
           )}
