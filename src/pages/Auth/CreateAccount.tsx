@@ -639,15 +639,10 @@ export default function CreateAccount() {
             }
             style={{
               width: '100%',
-              padding: '14px 24px',
               background: isLoading || !formData.name || !formData.phone || !formData.acceptTerms || (showOtpField && formData.otp.length !== 6)
                 ? '#94a3b8'
                 : 'linear-gradient(135deg, #0095FF 0%, #10C8A9 100%)',
-              color: '#fff',
               border: 'none',
-              borderRadius: 12,
-              fontSize: 15,
-              fontWeight: 700,
               cursor: isLoading || !formData.name || !formData.phone || !formData.acceptTerms || (showOtpField && formData.otp.length !== 6) ? 'not-allowed' : 'pointer',
               boxShadow: isLoading || !formData.name || !formData.phone || !formData.acceptTerms || (showOtpField && formData.otp.length !== 6)
                 ? 'none'
@@ -656,10 +651,8 @@ export default function CreateAccount() {
               alignItems: 'center',
               justifyContent: 'center',
               gap: 8,
-              width: '100%',
               padding: isMobile ? '8px 24px' : '14px 24px',
               color: '#fff',
-              border: 'none',
               borderRadius: isMobile ? 8 : 12,
               fontSize: isMobile ? 12 : 15,
               fontWeight: 700,

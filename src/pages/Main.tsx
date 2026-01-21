@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState, Fragment, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { getFlows, getMarketSummary, getNews, getMiniSeries, postChat, getAgentsPicks, postStrategySuggest, getWinningTrades, getTradingModes, validateTradingModes, logPickInteraction, logPickFeedback, updateMemory, getPortfolioMonitor, addWatchlistEntry, postAnalyze, getStrategyExits, getRlMetrics } from '../api'
 import { BRANDING } from '../branding'
 import { FyntrixLogo } from '../components/FyntrixLogo'
@@ -215,6 +216,7 @@ type MobileNavTab = 'portfolio' | 'watchlist' | 'home' | 'winners' | 'more'
 
 export default function App() {
   try { dayjs.extend(relativeTime) } catch { }
+  const navigate = useNavigate()
   const [market, setMarket] = useState<any>(() => {
     try {
       const raw = localStorage.getItem('arise_market')
@@ -7002,7 +7004,7 @@ export default function App() {
         onClose={() => setIsLogoutConfirmOpen(false)}
         onLogout={() => {
           setIsAccountOpen(false)
-          window.location.href = '/login'
+          navigate('/login', { replace: true })
         }}
       />
 
