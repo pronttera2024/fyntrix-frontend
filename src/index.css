@@ -93,3 +93,24 @@ input:focus {
     display: none !important;
   }
 }
+
+/* width */
+::-webkit-scrollbar {
+  width: 2px !important;
+  height: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #a4f3d6; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #6f7ba0; 
+}

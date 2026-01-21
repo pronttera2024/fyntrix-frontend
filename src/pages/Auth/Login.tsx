@@ -124,9 +124,9 @@ export default function Login() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: isMobile 
-        ? 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)'
-        : 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
+      // background: isMobile 
+      //   ? 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)'
+      //   : 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
       display: 'flex',
       flexDirection: isMobile ? 'column' : 'row',
       alignItems: 'center',
@@ -135,7 +135,10 @@ export default function Login() {
       position: 'relative',
       overflow: 'hidden',
       width: '100%'
-    }}>
+    }}
+
+    className='bg-gradient-to-br from-purple-100 to-teal-100'
+    >
       {/* Mobile Header Bar */}
 
       {/* Background decorative elements - simplified for mobile */}
@@ -180,28 +183,30 @@ export default function Login() {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center'
-      }}>
+      }} >
         {/* Logo and Header */}
         <div style={{
           textAlign: 'center',
           marginBottom: isMobile ? 30 : 40,
           marginTop: isMobile ? 20 : 0
-        }}>
-          <div style={{ marginBottom: 16 }}>
+        }}
+        className='pt-[80px] md:pt-0'
+        >
+          <div style={{ marginBottom: 16, display: 'grid', placeContent: 'center'}}>
             <FyntrixLogo height={56} width={160} />
           </div>
           <h1 style={{
-            fontSize: isMobile ? 28 : 24,
-            fontWeight: 800,
+            fontSize: 18,
+            fontWeight: 600,
             color: isMobile ? '#1f2937' : '#1e293b',
             marginBottom: 8,
             margin: 0,
             lineHeight: 1.2
           }}>
-            Welcome Back
+            Start Trading Smarter
           </h1>
           <p style={{
-            fontSize: isMobile ? 16 : 14,
+            fontSize: isMobile ? 14 : 12,
             color: isMobile ? 'rgba(31, 41, 55, 0.8)' : '#64748b',
             margin: 0,
             lineHeight: 1.5,
@@ -209,7 +214,7 @@ export default function Login() {
             marginLeft: 'auto',
             marginRight: 'auto'
           }}>
-            Sign in to access your AI Trading Platform
+            Simple trading for everyone
           </p>
         </div>
 
@@ -261,7 +266,7 @@ export default function Login() {
         )}
 
         {/* Login Form */}
-        <form onSubmit={onSubmit} style={{ marginBottom: isMobile ? 20 : 24 }}>
+        <form className='mt-auto' onSubmit={onSubmit} style={{ marginBottom: isMobile ? 20 : 24 }}>
           {/* Error Display */}
           {error && (
             <div style={{
@@ -289,19 +294,18 @@ export default function Login() {
           <div style={{ marginBottom: isMobile ? 24 : 20 }}>
             <label style={{
               display: 'block',
-              fontSize: isMobile ? 16 : 13,
-              fontWeight: 600,
+              fontSize: isMobile ? 12 : 13,
               color: isMobile ? '#1f2937' : '#374151',
-              marginBottom: isMobile ? 12 : 8
+              marginBottom: isMobile ? 4 : 8
             }}>
               Phone Number
             </label>
             <div style={{
               position: 'relative',
               display: 'flex',
-              alignItems: 'center'
+              alignItems: 'center',
             }}>
-              <Phone size={isMobile ? 20 : 18} color={isMobile ? 'rgba(31, 41, 55, 0.6)' : '#6b7280'} style={{
+              <Phone size={isMobile ? 14 : 18} color={isMobile ? 'rgba(31, 41, 55, 0.6)' : '#6b7280'} style={{
                 position: 'absolute',
                 left: isMobile ? 18 : 14,
                 zIndex: 1
@@ -315,16 +319,14 @@ export default function Login() {
                 required
                 style={{
                   width: '100%',
-                  padding: isMobile ? '16px 20px 16px 52px' : '12px 14px 12px 44px',
+                  padding: isMobile ? '8px 20px 8px 52px' : '12px 14px 12px 44px',
                   border: isMobile ? '1px solid rgba(0, 0, 0, 0.2)' : '1px solid #d1d5db',
                   color: isMobile ? '#1f2937' : '#1f2937',
-                  borderRadius: isMobile ? 16 : 12,
-                  fontSize: isMobile ? 16 : 14,
+                  borderRadius: isMobile ? 8 : 12,
+                  fontSize: isMobile ? 12 : 14,
                   outline: 'none',
-                  transition: 'all 0.2s',
-                  background: isMobile ? 'rgba(0, 0, 0, 0.05)' : '#fff',
+                  background: '#fff',
                   boxSizing: 'border-box',
-                  height: isMobile ? 52 : 'auto',
                   WebkitAppearance: 'none',
                   MozAppearance: 'textfield'
                 }}
@@ -353,15 +355,14 @@ export default function Login() {
           {/* OTP Field - Only visible after Generate OTP is clicked */}
           {showOtpField && (
             <div style={{ marginBottom: isMobile ? 24 : 20 }}>
-              <label style={{
-                display: 'block',
-                fontSize: 13,
-                fontWeight: 600,
-                color: '#374151',
-                marginBottom: 8
-              }}>
-                Enter OTP
-              </label>
+             <label style={{
+              display: 'block',
+              fontSize: isMobile ? 12 : 13,
+              color: isMobile ? '#1f2937' : '#374151',
+              marginBottom: isMobile ? 4 : 8
+            }}>
+              Enter OTP
+            </label>
               <div style={{
                 position: 'relative',
                 display: 'flex',
@@ -381,13 +382,12 @@ export default function Login() {
                   required
                   style={{
                     width: '100%',
-                    padding: '12px 14px 12px 44px',
+                    padding: isMobile ? '8px 14px 8px 44px' : '12px 14px 12px 44px',
                     border: '1px solid #d1d5db',
                     color: '#6b7280',
-                    borderRadius: 12,
-                    fontSize: 14,
+                    borderRadius: isMobile ? 8 : 12,
+                    fontSize: isMobile ? 12 : 14,
                     outline: 'none',
-                    transition: 'all 0.2s',
                     background: '#fff',
                     boxSizing: 'border-box'
                   }}
@@ -432,24 +432,24 @@ export default function Login() {
             disabled={isLoading || phone.length !== 10 || (showOtpField && otp.length !== 6)}
             style={{
               width: '100%',
-              padding: '14px 24px',
+              padding: isMobile ? '8px 24px' : '14px 24px',
               background: isLoading || phone.length !== 10 || (showOtpField && otp.length !== 6)
                 ? '#94a3b8'
                 : 'linear-gradient(135deg, #0095FF 0%, #10C8A9 100%)',
               color: '#fff',
               border: 'none',
-              borderRadius: 12,
-              fontSize: 15,
+              borderRadius: isMobile ? 8 : 12,
+              fontSize: isMobile ? 12 : 15,
               fontWeight: 700,
               cursor: isLoading || phone.length !== 10 || (showOtpField && otp.length !== 6) ? 'not-allowed' : 'pointer',
-              transition: 'all 0.2s',
               boxShadow: isLoading || phone.length !== 10 || (showOtpField && otp.length !== 6)
                 ? 'none'
                 : '0 4px 12px rgba(0, 149, 255, 0.3)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 8
+              gap: 8,
+
             }}
           >
             {isLoading ? (
@@ -475,7 +475,7 @@ export default function Login() {
           display: 'flex',
           alignItems: 'center',
           gap: 12,
-          margin: '24px 0'
+          margin: isMobile ? '16px 0' : '24px 0'
         }}>
           <div style={{ flex: 1, height: 1, background: '#e5e7eb' }} />
           <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500 }}>OR</span>
@@ -483,10 +483,10 @@ export default function Login() {
         </div>
 
         {/* Google Sign-In */}
-        <div style={{ marginBottom: 24 }}>
+        <div style={{ marginBottom: isMobile ? 16 : 24 }}>
           {googleError && (
             <div style={{
-              marginBottom: 16,
+              marginBottom: isMobile ? 16 : 16,
               padding: '12px 16px',
               background: '#fef2f2',
               border: '1px solid #fecaca',
@@ -520,6 +520,11 @@ export default function Login() {
               text="continue_with"
               shape="rectangular"
               width="340"
+              containerProps={{
+                style: {
+                  borderRadius: '8px'
+                }
+              }}
             />
           </div>
         </div>
@@ -527,12 +532,12 @@ export default function Login() {
         {/* Footer */}
         <div style={{
           textAlign: 'center',
-          paddingTop: 24,
+          paddingTop: isMobile ? 16 : 24,
           borderTop: '1px solid #e5e7eb',
           fontSize: 13,
           color: '#64748b'
         }}>
-          <div style={{ marginBottom: 8 }}>
+          <div style={{ marginBottom: isMobile ? 8 : 8 }}>
             Don't have an account?{' '}
             <button
               onClick={() => navigate('/create-account')}

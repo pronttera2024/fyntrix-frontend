@@ -417,7 +417,7 @@ export const WatchlistModal: React.FC<WatchlistModalProps> = ({
                       }}
                     >
                       <span style={{ fontSize: 14 }}>💬</span>
-                      <span>AI Strategist</span>
+                      <span>TradeGPT</span>
                     </button>
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, fontSize: 13 }}>

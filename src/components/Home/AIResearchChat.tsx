@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { BotMessageSquare, MessageCircle, X } from 'lucide-react'
+import { BotMessageSquare, BrushCleaning, MessageCircle, Send, Trash, X } from 'lucide-react'
 import { reportError } from '../../utils/errorReporting'
+
+import tradeGpt from '../../../assets/trade-gpt.png'
 
 type ChatLayout = 'left-fixed' | 'bottom-docked'
 
@@ -99,26 +101,25 @@ export const AIResearchChat: React.FC<AIResearchChatProps> = ({
       <button
         onClick={onToggleChat}
         onMouseDown={handleMouseDown}
-        className="fixed flex items-center justify-between gap-2 px-4 transition-all duration-200"
+        className="fixed flex items-center w-fit justify-between gap-1 px-4 transition-all duration-200"
         style={{
           left: position.x,
           top: position.y,
-          width: 150,
+          // width: 120,
           height: 50,
           borderRadius: 25,
-          background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-          border: '2px solid #ffffff',
+          background: 'rgb(1 158 151)',
           boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)',
           cursor: isDragging ? 'grabbing' : 'grab',
           transform: isDragging ? 'scale(1.05)' : 'scale(1)'
         }}
       >
-        {/* AI Strategist Icon */}
-        <div className="bg-white rounded-full">
-          <BotMessageSquare size={36} color="#3b82f6" />
+        {/* TradeGPT Icon */}
+        <div className=" rounded-full">
+          <img src={tradeGpt} className="w-10 h-10"/>
         </div>
         <span className="text-sm font-semibold text-white whitespace-nowrap">
-          AI Strategist
+          TradeGPT
         </span>
       </button>
     )
@@ -132,30 +133,31 @@ export const AIResearchChat: React.FC<AIResearchChatProps> = ({
       }}
     >
       {/* Header with Clear Button */}
-      <div className="px-5 py-3.5 border-b-2 border-gray-200 bg-gradient-to-r from-blue-50 to-blue-100 flex items-center justify-between">
+      <div className="px-5 py-3.5 border-b-2 border-gray-200 text-white bg-[#019e97ff] flex items-center justify-between">
         <div>
-          <div className="font-bold text-lg text-blue-800 mb-0.5">
-            AI Research and Trade Strategist
+          <div className="font-bold text-lg mb-0.5">
+            AI Research & Trade Strategist
           </div>
-          <div className="text-xs text-slate-500 italic">Ask me about markets, picks, or strategies</div>
+          <div className="text-xs text-slate-100 italic">Ask me about markets, trade ideas, or strategies</div>
         </div>
         <div className="flex items-center gap-2">
           {chat.length > 0 && (
             <button
               onClick={() => setChat([])}
-              className="px-3.5 py-2 text-xs font-semibold rounded-full border border-gray-300 bg-slate-50 text-slate-900 cursor-pointer transition-all duration-200 shadow-sm flex items-center gap-1.5 hover:bg-slate-200 hover:-translate-y-px hover:shadow-md"
+              className="px-3.5 py-2 text-xs font-semibold rounded-full bg-slate-600 text-white cursor-pointer transition-all duration-200 shadow-sm flex items-center gap-1.5 hover:shadow-md"
             >
-              <span className="text-sm">🧹</span>
+              <span className="text-sm">
+                <BrushCleaning size={16}/>
+                </span>
               <span>Clear chat</span>
             </button>
           )}
           {isMobile && (
             <button
               onClick={onToggleChat}
-              className="px-3.5 py-2 text-xs font-semibold rounded-full border border-gray-300 bg-slate-50 text-slate-900 cursor-pointer transition-all duration-200 shadow-sm flex items-center gap-1.5 hover:bg-slate-200 hover:-translate-y-px hover:shadow-md"
+              className="p-2 text-xs font-semibold rounded-full border border-gray-300 bg-[#019e97ff] text-white cursor-pointer transition-all duration-200 shadow-sm flex items-center gap-1.5 hover:bg-slate-600 hover:shadow-md"
             >
-              <X size={14} />
-              <span>Close</span>
+              <X size={18}/>
             </button>
           )}
         </div>
@@ -167,7 +169,7 @@ export const AIResearchChat: React.FC<AIResearchChatProps> = ({
           ref={(el) => {
             chatMessagesRef.current = el
           }}
-          className="flex-1 h-full overflow-y-auto overflow-x-hidden overscroll-contain px-5 py-4 bg-gray-50 text-sm aris-chat-messages"
+          className="flex-1 h-full  bg-gray-50 overflow-y-auto overflow-x-hidden overscroll-contain px-5 py-4 bg-gray-50 text-sm aris-chat-messages"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           <style>{`
@@ -207,8 +209,8 @@ export const AIResearchChat: React.FC<AIResearchChatProps> = ({
           `}</style>
           {/* Chat messages - streamlined without redundant labels */}
           {chat.length === 0 ? (
-            <div className="px-4 py-2 text-center text-slate-400 text-xs italic">
-              Start a conversation by asking a question below
+            <div className="px-4 py-2 font-medium text-center text-slate-400 text-xs italic">
+           Type your question below to get started
             </div>
           ) : (
             chat.map((m, i) => (
@@ -255,16 +257,18 @@ export const AIResearchChat: React.FC<AIResearchChatProps> = ({
               }
             }}
           />
+  
+
           <button
             onClick={onSend}
             disabled={!chatInput.trim()}
-            className={`px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-150 min-w-[70px] ${
+            className={`px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-150 p-2 ${
               chatInput.trim() 
-                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-sm cursor-pointer hover:-translate-y-px hover:shadow-md' 
+                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-sm cursor-pointer hover:shadow-md' 
                 : 'bg-gray-200 text-slate-400 cursor-not-allowed'
             }`}
           >
-            Send
+            <Send size={16}/>
           </button>
         </div>
       </div>
