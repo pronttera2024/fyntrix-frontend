@@ -193,7 +193,7 @@ export const MarketBrief: React.FC<MarketBriefProps> = ({
                                     </span>
                                 </div>
                                 <div className="flex flex-col md:flex-row items-end md:items-center gap-1 md:gap-2 ml-auto">
-                                    <span className="inline-flex items-center gap-1 text-sm md:text-xs px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200" style={{ color: sentiment.color }}>
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200" style={{ color: sentiment.color }}>
                                         <span className="inline-flex gap-0.25">
                                             {Array.from({ length: 5 }).map((_, i) => {
                                                 const active = (sentiment.score || 0) > ((i - 2) * 15)
@@ -201,7 +201,7 @@ export const MarketBrief: React.FC<MarketBriefProps> = ({
                                                 return <span key={i} className="md:w-[3px] w-2 md:h-[9px] h-3 rounded-[2px]" style={{ background: bg }} />
                                             })}
                                         </span>
-                                        <span className="font-semibold text-xs">{sentiment.label}</span>
+                                        <span className="font-semibold text-[10px] md:text-xs">{sentiment.label}</span>
                                     </span>
                                     {isMarketOpen && (
                                         <span className="text-sm md:text-xs text-slate-400 uppercase tracking-[0.5px]">Nifty 50 Sentiment</span>
