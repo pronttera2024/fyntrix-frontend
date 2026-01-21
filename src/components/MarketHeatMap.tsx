@@ -109,7 +109,7 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
       <div className="flex justify-between items-center mb-3 pb-2 border-b border-gray-200">
         <div>
           <div className="font-semibold text-base mb-0.5 flex items-center gap-1">
-<Stars color="#16a34a" size={17} /> Top Picks Map
+            <Stars color="#16a34a" size={17} /> Top Picks Map
             {modeLabel ? (
               <span className="text-xs italic ml-1 chip bg-green-100 text-green-600 px-2 py-1 rounded-full ">
                 ({modeLabel})
@@ -117,43 +117,43 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
             ) : null}
           </div>
           <div className="text-xs">
-            Visual score distribution <br />{stocks.length} stocks • {universeLabel}
+            {stocks.length} stocks • {universeLabel}
           </div>
         </div>
-       <div className="text-xs text-right">
-  <div className="flex flex-col gap-1">
-    <span className="flex justify-end gap-1">
-      <Rocket className="w-3 h-3 text-green-500" />
-      Strong Buy ≥ {strongBuyLabel}
-    </span>
+        <div className="text-xs text-right">
+          <div className="flex flex-col gap-1">
+            <span className="flex justify-end items-center gap-1">
+              <Rocket className="w-3 h-3 text-green-500" />
+              Strong Buy ≥ {strongBuyLabel}
+            </span>
 
-    <span className="flex justify-end gap-1">
-      <CheckCircle className="w-3 h-3 text-green-400" />
-      Buy ≥ {buyLabel}
-    </span>
-  </div>
+            <span className="flex justify-end items-center gap-1">
+              <CheckCircle className="w-3 h-3 text-green-400" />
+              Buy ≥ {buyLabel}
+            </span>
+          </div>
 
-  {showShortLegend ? (
-    <div className="flex flex-col gap-1 mt-1">
-      <span className="flex justify-end gap-1">
-        <TrendingDown className="w-3 h-3 text-red-400" />
-        {isOptionsMode ? "Buy Put" : "Sell"} ≤ {sellLabel}
-      </span>
+          {showShortLegend ? (
+            <div className="flex flex-col gap-1 mt-1">
+              <span className="flex justify-end items-center gap-1">
+                <TrendingDown className="w-3 h-3 text-red-400" />
+                {isOptionsMode ? "Buy Put" : "Sell"} ≤ {sellLabel}
+              </span>
 
-      <span className="flex justify-end gap-1">
-        <OctagonAlert className="w-3 h-3 text-red-500" />
-        {isOptionsMode ? "Strong Buy Put" : "Strong Sell"} ≤ {strongSellLabel}
-      </span>
-    </div>
-  ) : (
-    <div className="flex gap-1 mt-1 text-muted-foreground">
-      <Info className="w-3 h-3" />
-      <span className='text-start'>
-        Long-only mode <br /> no short/sell signals
-      </span>
-    </div>
-  )}
-</div>
+              <span className="flex justify-end items-center gap-1">
+                <OctagonAlert className="w-3 h-3 text-red-500" />
+                {isOptionsMode ? "Strong Buy Put" : "Strong Sell"} ≤ {strongSellLabel}
+              </span>
+            </div>
+          ) : (
+            <div className="flex gap-1 mt-1 text-muted-foreground">
+              <Info className="w-3 h-3" />
+              <span className='text-start'>
+                Long-only mode <br /> no short/sell signals
+              </span>
+            </div>
+          )}
+        </div>
 
       </div>
 
@@ -167,7 +167,7 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
             <div
               key={stock.symbol}
               onClick={() => onStockClick?.(stock.symbol)}
-              className="bg-white min-w-[60%] md:min-w-[20%] rounded-lg p-1.5 mt-1 gap-4 cursor-pointer transition-all duration-200 shadow-sm border border-gray-200 border-l-[3px] flex flex-col hover:shadow-lg hover:border-sky-500"
+              className="bg-white min-w-[60%] md:min-w-[20%] rounded-lg p-1.5 mt-1 gap-3 cursor-pointer transition-all duration-200 shadow-sm border border-gray-200 border-l-[3px] flex flex-col hover:shadow-lg hover:border-sky-500"
               style={{ borderLeftColor: colors.border }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)'
@@ -180,7 +180,7 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
                 e.currentTarget.style.borderColor = '#e5e7eb'
               }}
             >
-              <div className="flex justify-between items-center gap-16">
+              <div className="flex justify-between items-center">
                 <span
                   className="text-sm font-bold uppercase truncate text-ellipsis whitespace-nowrap leading-[14px]"
                   style={{ color: colors.text }}
@@ -190,12 +190,27 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
                 {band !== 'neutral' && (
                   <div className='flex flex-col' >
                     <span
-                    className="text-sm font-semibold px-1.5 py-0.5 rounded-full whitespace-nowrap inline-flex items-center leading-[14px]"
-                    style={{ backgroundColor: colors.bg, color: colors.text }}
-                  >
-                    {bandLabel}
-                  </span>
-                   {typeof stock.change === 'number' && (
+                      className="text-sm font-semibold px-1.5 py-0.5 rounded-full whitespace-nowrap inline-flex items-center leading-[14px]"
+                      style={{ backgroundColor: colors.bg, color: colors.text }}
+                    >
+                      {bandLabel}
+                    </span>
+                  </div>
+
+                )}
+              </div>
+
+              <div className="flex justify-between items-end">
+                <div
+                  className="flex items-baseline gap-0.5 text-lg font-bold mb-0.5"
+                  style={{ color: band === 'strong-buy' || band === 'buy' ? '#166534' : band === 'neutral' ? '#111827' : '#b91c1c' }}
+                >
+                  {stock.score.toFixed(1)}%
+
+                </div>
+
+                <div className='flex flex-col'>
+                  {typeof stock.change === 'number' && (
                     <div
                       className="text-xs font-semibold flex items-center justify-start gap-0.5 mt-0.5"
                       style={{ color: stock.change >= 0 ? '#16a34a' : '#ef4444' }}
@@ -204,36 +219,24 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
                       <span>{Math.abs(stock.change).toFixed(2)}%</span>
                     </div>
                   )}
-                  </div>
-                
-                )}
-              </div>
-
-              <div className="flex justify-between items-center gap-1">
-                <div
-                  className="flex items-baseline gap-0.5 text-lg font-bold mb-0.5"
-                  style={{ color: band === 'strong-buy' || band === 'buy' ? '#166534' : band === 'neutral' ? '#111827' : '#b91c1c' }}
-                >
-                  {stock.score.toFixed(1)}%
-                 
-                </div>
-                {typeof stock.price === 'number' && Number.isFinite(stock.price) && (
-                  <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
-                    <div className='flex flex-col'>
-                      <span className="text-sm font-semibold text-slate-900">
-                        ₹{stock.price.toFixed(2)}
-                      </span>
-                      {typeof stock.live === 'boolean' && (
-                        <span
-                          className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full border text-green-600 bg-green-50"
-                          style={{ borderColor: stock.live ? '#86efac' : '#cbd5e1', backgroundColor: stock.live ? '#dcfce7' : '#f1f5f9', color: stock.live ? '#166534' : '#475569' }}
-                        >
-                          {stock.live ? 'LIVE' : 'DELAYED'}
+                  {typeof stock.price === 'number' && Number.isFinite(stock.price) && (
+                    <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                      <div className='flex flex-col'>
+                        <span className="text-sm font-semibold text-slate-900">
+                          ₹{stock.price.toFixed(2)}
                         </span>
-                      )}
-                    </div>
-                  </span>
-                )}
+                        {typeof stock.live === 'boolean' && (
+                          <span
+                            className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full border text-green-600 bg-green-50"
+                            style={{ borderColor: stock.live ? '#86efac' : '#cbd5e1', backgroundColor: stock.live ? '#dcfce7' : '#f1f5f9', color: stock.live ? '#166534' : '#475569' }}
+                          >
+                            {stock.live ? 'LIVE' : 'DELAYED'}
+                          </span>
+                        )}
+                      </div>
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           )
