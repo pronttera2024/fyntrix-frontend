@@ -3,7 +3,7 @@ import { getFlows, getMarketSummary, getNews, getMiniSeries, postChat, getAgents
 import { BRANDING } from './branding'
 import { FyntrixLogo } from './components/FyntrixLogo'
 import { computeSentimentRiskLevel } from './sentimentRisk'
-import { LayoutGrid, SlidersHorizontal, BriefcaseBusiness, Image, SquareActivity, Trophy, Copy, Bell, MessageCircle, Megaphone, User } from 'lucide-react'
+import { LayoutGrid, SlidersHorizontal, BriefcaseBusiness, Image, SquareActivity, Trophy, Copy, Bell, MessageCircle, Megaphone, User, Globe } from 'lucide-react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { ChartView } from './components/ChartView'
@@ -2372,7 +2372,7 @@ export default function App(){
                 <div style={{display:'flex', gap:12, borderBottom:'1px solid #e5e7eb', paddingBottom:4}}>
                   {[
                     { value: 'India' as const, label: 'India Markets', icon: '🇮🇳' },
-                    { value: 'Global' as const, label: 'World Markets', icon: '🌍' },
+                    { value: 'Global' as const, label: 'World Markets', icon: <Globe/> },
                   ].map(tab => {
                     const isActive = marketRegion === tab.value
                     return (

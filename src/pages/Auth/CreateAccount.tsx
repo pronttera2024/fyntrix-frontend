@@ -30,12 +30,12 @@ export default function CreateAccount() {
   } = useSignup()
 
   const {
-      isLoading: isGoogleLoading,
-      error: googleError,
-      handleGoogleSuccess,
-      handleGoogleError,
-      clearError: clearGoogleError
-    } = useGoogleAuth()
+    isLoading: isGoogleLoading,
+    error: googleError,
+    handleGoogleSuccess,
+    handleGoogleError,
+    clearError: clearGoogleError
+  } = useGoogleAuth()
 
   // Show OTP field when signup data is available
   const showOtpField = !!signupData
@@ -163,10 +163,7 @@ export default function CreateAccount() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: isMobile
-        ? 'linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)'
-        : 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
-      display: 'flex',
+     display: 'flex',
       flexDirection: isMobile ? 'column' : 'row',
       alignItems: 'center',
       justifyContent: isMobile ? 'flex-start' : 'center',
@@ -174,7 +171,10 @@ export default function CreateAccount() {
       position: 'relative',
       overflow: 'hidden',
       width: '100%'
-    }}>
+    }}
+    className='bg-gradient-to-br from-purple-100 to-teal-100'
+    
+    >
       {/* Background decorative elements - simplified for mobile */}
       {!isMobile && (
         <>
@@ -223,22 +223,25 @@ export default function CreateAccount() {
           textAlign: 'center',
           marginBottom: isMobile ? 30 : 40,
           marginTop: isMobile ? 20 : 0,
-        }}>
-          <div style={{ marginBottom: 16 }}>
+        }}
+        className='pt-[80px] md:pt-0'
+        
+        >
+          <div style={{ marginBottom: 16, display: 'grid', placeContent: 'center' }}>
             <FyntrixLogo height={56} width={160} />
           </div>
           <h1 style={{
-            fontSize: isMobile ? 28 : 24,
-            fontWeight: 800,
+            fontSize: 18,
+            fontWeight: 600,
             color: isMobile ? '#1f2937' : '#1e293b',
             marginBottom: 8,
             margin: 0,
             lineHeight: 1.2
           }}>
-            Create Account
+            Get Started 
           </h1>
           <p style={{
-            fontSize: isMobile ? 16 : 14,
+            fontSize: isMobile ? 14 : 12,
             color: isMobile ? 'rgba(31, 41, 55, 0.8)' : '#64748b',
             margin: 0,
             lineHeight: 1.5,
@@ -246,7 +249,7 @@ export default function CreateAccount() {
             marginLeft: 'auto',
             marginRight: 'auto'
           }}>
-            Join FYNTRIX and start with an AI Trading Platform today
+            Create your free account to get started
           </p>
         </div>
 
@@ -299,11 +302,11 @@ export default function CreateAccount() {
         )}
 
         {/* Create Account Form */}
-        <form onSubmit={handleSubmit} style={{ marginBottom: isMobile ? 20 : 24 }}>
+        <form className='mt-auto' onSubmit={handleSubmit} style={{ marginBottom: isMobile ? 20 : 24 }}>
           {/* API Error Display */}
           {error && (
             <div style={{
-              marginBottom: 20,
+              marginBottom: isMobile ? 16 : 20,
               padding: isMobile ? '16px 20px' : '12px 16px',
               background: isMobile ? 'rgba(220, 38, 38, 0.1)' : '#fef2f2',
               border: isMobile ? '1px solid rgba(220, 38, 38, 0.2)' : '1px solid #fecaca',
@@ -324,13 +327,12 @@ export default function CreateAccount() {
             </div>
           )}
           {/* Name Field */}
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: isMobile ? 16 : 16 }}>
             <label style={{
-               display: 'block',
-              fontSize: isMobile ? 16 : 13,
-              fontWeight: 600,
+              display: 'block',
+              fontSize: isMobile ? 12 : 13,
               color: isMobile ? '#1f2937' : '#374151',
-              marginBottom: isMobile ? 12 : 8
+              marginBottom: isMobile ? 4 : 8
             }}>
               Full Name
             </label>
@@ -339,7 +341,7 @@ export default function CreateAccount() {
               display: 'flex',
               alignItems: 'center'
             }}>
-              <User size={isMobile ? 20 : 18} color={isMobile ? 'rgba(31, 41, 55, 0.6)' : '#6b7280'} style={{
+              <User size={isMobile ? 14 : 18} color={isMobile ? 'rgba(31, 41, 55, 0.6)' : '#6b7280'} style={{
                 position: 'absolute',
                 left: isMobile ? 18 : 14,
                 zIndex: 1
@@ -351,20 +353,16 @@ export default function CreateAccount() {
                 placeholder="Enter your full name"
                 required
                 style={{
-                  width: '100%',
-                  padding: isMobile ? '16px 20px 16px 52px' : '12px 14px 12px 44px',
-                  border: isMobile ? '1px solid rgba(0, 0, 0, 0.2)' : '1px solid #d1d5db',
-                  color: isMobile ? '#1f2937' : '#1f2937',
-                  borderRadius: isMobile ? 16 : 12,
-                  fontSize: isMobile ? 16 : 14,
-                  outline: 'none',
-                  transition: 'all 0.2s',
-                  background: isMobile ? 'rgba(0, 0, 0, 0.05)' : '#fff',
-                  boxSizing: 'border-box',
-                  height: isMobile ? 52 : 'auto',
-                  WebkitAppearance: 'none',
-                  MozAppearance: 'textfield'
-                }}
+                    width: '100%',
+                    padding: isMobile ? '8px 14px 8px 44px' : '12px 14px 12px 44px',
+                    border: '1px solid #d1d5db',
+                    color: '#6b7280',
+                    borderRadius: isMobile ? 8 : 12,
+                    fontSize: isMobile ? 12 : 14,
+                    outline: 'none',
+                    background: '#fff',
+                    boxSizing: 'border-box'
+                  }}
                 onFocus={(e) => {
                   if (isMobile) {
                     e.target.style.background = 'rgba(255, 255, 255, 0.1)'
@@ -403,11 +401,10 @@ export default function CreateAccount() {
           {/* Phone Number Field */}
           <div style={{ marginBottom: 16 }}>
             <label style={{
-             display: 'block',
-              fontSize: isMobile ? 16 : 13,
-              fontWeight: 600,
+              display: 'block',
+              fontSize: isMobile ? 12 : 13,
               color: isMobile ? '#1f2937' : '#374151',
-              marginBottom: isMobile ? 12 : 8
+              marginBottom: isMobile ? 4 : 8
             }}>
               Phone Number
             </label>
@@ -416,7 +413,7 @@ export default function CreateAccount() {
               display: 'flex',
               alignItems: 'center'
             }}>
-              <Phone size={isMobile ? 20 : 18} color={isMobile ? 'rgba(31, 41, 55, 0.6)' : '#6b7280'} style={{
+              <Phone size={isMobile ? 14 : 18} color={isMobile ? 'rgba(31, 41, 55, 0.6)' : '#6b7280'} style={{
                 position: 'absolute',
                 left: isMobile ? 18 : 14,
                 zIndex: 1
@@ -427,21 +424,17 @@ export default function CreateAccount() {
                 onChange={(e) => handleInputChange('phone', e.target.value)}
                 placeholder="Enter your phone number"
                 required
-                style={{
-                  width: '100%',
-                  padding: isMobile ? '16px 20px 16px 52px' : '12px 14px 12px 44px',
-                  border: isMobile ? '1px solid rgba(0, 0, 0, 0.2)' : '1px solid #d1d5db',
-                  color: isMobile ? '#1f2937' : '#1f2937',
-                  borderRadius: isMobile ? 16 : 12,
-                  fontSize: isMobile ? 16 : 14,
-                  outline: 'none',
-                  transition: 'all 0.2s',
-                  background: isMobile ? 'rgba(0, 0, 0, 0.05)' : '#fff',
-                  boxSizing: 'border-box',
-                  height: isMobile ? 52 : 'auto',
-                  WebkitAppearance: 'none',
-                  MozAppearance: 'textfield'
-                }}
+                 style={{
+                    width: '100%',
+                    padding: isMobile ? '8px 14px 8px 44px' : '12px 14px 12px 44px',
+                    border: '1px solid #d1d5db',
+                    color: '#6b7280',
+                    borderRadius: isMobile ? 8 : 12,
+                    fontSize: isMobile ? 12 : 14,
+                    outline: 'none',
+                    background: '#fff',
+                    boxSizing: 'border-box'
+                  }}
                 onFocus={(e) => {
                   if (isMobile) {
                     e.target.style.background = 'rgba(255, 255, 255, 0.1)'
@@ -513,7 +506,6 @@ export default function CreateAccount() {
                     borderRadius: 10,
                     fontSize: 14,
                     outline: 'none',
-                    transition: 'all 0.2s',
                     background: '#fff',
                     boxSizing: 'border-box',
                     color: '#6b7280'
@@ -550,7 +542,7 @@ export default function CreateAccount() {
                   type="button"
                   onClick={handleResend}
                   disabled={resendTimer > 0 || isLoading}
-                  style={{
+                   style={{
                     background: 'none',
                     border: 'none',
                     color: resendTimer > 0 ? '#9ca3af' : '#0095FF',
@@ -643,34 +635,33 @@ export default function CreateAccount() {
               !formData.name ||
               !formData.phone ||
               !formData.acceptTerms ||
-              (showOtpField && !formData.otp)
+              (showOtpField && formData.otp.length !== 6)
             }
             style={{
               width: '100%',
-              padding: '14px 24px',
-              background: isLoading || !formData.name || !formData.phone || !formData.acceptTerms || (showOtpField && !formData.otp)
+              background: isLoading || !formData.name || !formData.phone || !formData.acceptTerms || (showOtpField && formData.otp.length !== 6)
                 ? '#94a3b8'
                 : 'linear-gradient(135deg, #0095FF 0%, #10C8A9 100%)',
-              color: '#fff',
               border: 'none',
-              borderRadius: 12,
-              fontSize: 15,
-              fontWeight: 700,
-              cursor: isLoading || !formData.name || !formData.phone || !formData.acceptTerms || (showOtpField && !formData.otp) ? 'not-allowed' : 'pointer',
-              transition: 'all 0.2s',
-              boxShadow: isLoading || !formData.name || !formData.phone || !formData.acceptTerms || (showOtpField && !formData.otp)
+              cursor: isLoading || !formData.name || !formData.phone || !formData.acceptTerms || (showOtpField && formData.otp.length !== 6) ? 'not-allowed' : 'pointer',
+              boxShadow: isLoading || !formData.name || !formData.phone || !formData.acceptTerms || (showOtpField && formData.otp.length !== 6)
                 ? 'none'
                 : '0 4px 12px rgba(0, 149, 255, 0.3)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 8
+              gap: 8,
+              padding: isMobile ? '8px 24px' : '14px 24px',
+              color: '#fff',
+              borderRadius: isMobile ? 8 : 12,
+              fontSize: isMobile ? 12 : 15,
+              fontWeight: 700,
             }}
           >
             {isLoading ? (
               <>
                 <div style={{
-                  width: 16,
+                  /* ... */
                   height: 16,
                   border: '2px solid rgba(255, 255, 255, 0.3)',
                   borderTop: '2px solid #fff',
@@ -720,7 +711,7 @@ export default function CreateAccount() {
               </span>
             </div>
           )}
-          
+
           <div style={{
             display: 'flex',
             justifyContent: 'center',
@@ -735,6 +726,11 @@ export default function CreateAccount() {
               text="continue_with"
               shape="rectangular"
               width="340"
+                containerProps={{
+                style: {
+                  borderRadius: '8px'
+                }
+              }}
             />
           </div>
         </div>

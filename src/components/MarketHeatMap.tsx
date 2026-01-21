@@ -1,3 +1,4 @@
+import { BadgeCheck, BadgeCheckIcon, CheckCircle, Info, OctagonAlert, Rocket, Stars, TrendingDown } from 'lucide-react'
 import React from 'react'
 
 interface MarketHeatMapProps {
@@ -96,69 +97,67 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
     universe === 'BANKNIFTY'
       ? 'Bank Nifty'
       : universe === 'NIFTY100'
-      ? 'Nifty 100'
-      : universe === 'NIFTY500'
-      ? 'Nifty 500'
-      : 'Nifty 50'
+        ? 'Nifty 100'
+        : universe === 'NIFTY500'
+          ? 'Nifty 500'
+          : 'Nifty 50'
 
   const showShortLegend = hasShorts && sellLabel != null && strongSellLabel != null
 
   return (
-    <div
-      style={{
-        background: '#fff',
-        borderRadius: 12,
-        padding: 12,
-        border: '1px solid #e5e7eb',
-        boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 12,
-          paddingBottom: 8,
-          borderBottom: '1px solid #e5e7eb',
-        }}
-      >
+    <div className="bg-white rounded-xl p-2.5 border border-gray-200 shadow-sm">
+      <div className="flex justify-between items-center mb-3 pb-2 border-b border-gray-200">
         <div>
-          <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 2 }}>
-            📊 Top Picks Map
+          <div className="font-semibold text-base mb-0.5 flex items-center gap-1">
+            <Stars color="#16a34a" size={17} /> Top Picks Map
             {modeLabel ? (
-              <span style={{ fontSize: 12, fontStyle: 'italic', marginLeft: 4 }}>
+              <span className="text-xs italic ml-1 chip bg-green-100 text-green-600 px-2 py-1 rounded-full ">
                 ({modeLabel})
               </span>
             ) : null}
           </div>
-          <div style={{ fontSize: 11, color: '#64748b' }}>
-            Visual score distribution • {stocks.length} stocks • {universeLabel}
+          <div className="text-xs">
+            {stocks.length} stocks • {universeLabel}
           </div>
         </div>
-        <div style={{ fontSize: 11, color: '#64748b', textAlign: 'right' }}>
-          <div>
-            🚀 Strong Buy ≥{strongBuyLabel} • ✅ Buy ≥{buyLabel}
+        <div className="text-xs text-right">
+          <div className="flex flex-col gap-1">
+            <span className="flex justify-end items-center gap-1">
+              <Rocket className="w-3 h-3 text-green-500" />
+              Strong Buy ≥ {strongBuyLabel}
+            </span>
+
+            <span className="flex justify-end items-center gap-1">
+              <CheckCircle className="w-3 h-3 text-green-400" />
+              Buy ≥ {buyLabel}
+            </span>
           </div>
+
           {showShortLegend ? (
-            <div>
-              {isOptionsMode ? '📉 Buy Put' : '📉 Sell'}
-              {' '}≤{sellLabel} • {isOptionsMode ? '🛑 Strong Buy Put' : '🛑 Strong Sell'}
-              {' '}≤{strongSellLabel}
+            <div className="flex flex-col gap-1 mt-1">
+              <span className="flex justify-end items-center gap-1">
+                <TrendingDown className="w-3 h-3 text-red-400" />
+                {isOptionsMode ? "Buy Put" : "Sell"} ≤ {sellLabel}
+              </span>
+
+              <span className="flex justify-end items-center gap-1">
+                <OctagonAlert className="w-3 h-3 text-red-500" />
+                {isOptionsMode ? "Strong Buy Put" : "Strong Sell"} ≤ {strongSellLabel}
+              </span>
             </div>
           ) : (
-            <div>Long-only mode • no short/sell signals</div>
+            <div className="flex gap-1 mt-1 text-muted-foreground">
+              <Info className="w-3 h-3" />
+              <span className='text-start'>
+                Long-only mode <br /> no short/sell signals
+              </span>
+            </div>
           )}
         </div>
+
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
-          gap: 10,
-        }}
-      >
+      <div className="flex overflow-x-auto gap-2.5">
         {sortedStocks.map((stock) => {
           const band = getBand(stock.score)
           const colors = getColors(band)
@@ -168,19 +167,8 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
             <div
               key={stock.symbol}
               onClick={() => onStockClick?.(stock.symbol)}
-              style={{
-                background: '#ffffff',
-                borderRadius: 10,
-                padding: '10px 12px',
-                cursor: 'pointer',
-                transition: 'box-shadow 0.2s, transform 0.2s, border-color 0.2s',
-                boxShadow: '0 1px 3px rgba(15,23,42,0.06)',
-                border: '1px solid #e5e7eb',
-                borderLeft: `3px solid ${colors.border}`,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 4,
-              }}
+              className="bg-white min-w-[60%] md:min-w-[20%] rounded-lg p-1.5 mt-1 mb-1 gap-3 cursor-pointer transition-all duration-200 shadow-sm border border-gray-200 border-l-[3px] flex flex-col hover:shadow-lg hover:border-sky-500"
+              style={{ borderLeftColor: colors.border }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)'
                 e.currentTarget.style.boxShadow = '0 6px 18px rgba(15,23,42,0.15)'
@@ -192,114 +180,71 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
                 e.currentTarget.style.borderColor = '#e5e7eb'
               }}
             >
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  gap: 6,
-                }}
-              >
+              <div className="flex justify-between items-center">
                 <span
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: colors.text,
-                    textTransform: 'uppercase',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    lineHeight: '14px',
-                  }}
+                  className="text-sm font-bold uppercase truncate text-ellipsis whitespace-nowrap leading-[14px]"
+                  style={{ color: colors.text }}
                 >
                   {stock.symbol}
                 </span>
                 {band !== 'neutral' && (
-                  <span
-                    style={{
-                      fontSize: 10,
-                      fontWeight: 600,
-                      padding: '2px 6px',
-                      borderRadius: 999,
-                      background: colors.bg,
-                      color: colors.text,
-                      whiteSpace: 'nowrap',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      lineHeight: '14px',
-                    }}
-                  >
-                    {bandLabel}
-                  </span>
+                  <div className='flex flex-col' >
+                    <span
+                      className="text-sm font-semibold px-1.5 py-0.5 rounded-full whitespace-nowrap inline-flex items-center leading-[14px]"
+                      style={{ backgroundColor: colors.bg, color: colors.text }}
+                    >
+                      {bandLabel}
+                    </span>
+                  </div>
+
                 )}
               </div>
 
-              <div style={{display:'flex', justifyContent:'space-between', alignItems:'baseline', gap: 8}}>
+              <div className="flex justify-between items-end">
                 <div
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 700,
-                    marginBottom: 2,
-                    color: band === 'strong-buy' || band === 'buy' ? '#166534' : band === 'neutral' ? '#111827' : '#b91c1c',
-                  }}
+                  className="flex items-baseline gap-0.5 text-lg font-bold mb-0.5"
+                  style={{ color: band === 'strong-buy' || band === 'buy' ? '#166534' : band === 'neutral' ? '#111827' : '#b91c1c' }}
                 >
                   {stock.score.toFixed(1)}%
-                </div>
-                {typeof stock.price === 'number' && Number.isFinite(stock.price) && (
-                  <span style={{display:'inline-flex', alignItems:'center', gap:6, whiteSpace:'nowrap'}}>
-                    <span style={{fontSize:11, fontWeight:600, color:'#0f172a'}}>
-                      ₹{stock.price.toFixed(2)}
-                    </span>
-                    {typeof stock.live === 'boolean' && (
-                      <span
-                        style={{
-                          fontSize: 9,
-                          fontWeight: 800,
-                          padding: '2px 6px',
-                          borderRadius: 999,
-                          border: '1px solid ' + (stock.live ? '#86efac' : '#cbd5e1'),
-                          background: stock.live ? '#dcfce7' : '#f1f5f9',
-                          color: stock.live ? '#166534' : '#475569',
-                        }}
-                      >
-                        {stock.live ? 'LIVE' : 'DELAYED'}
-                      </span>
-                    )}
-                  </span>
-                )}
-              </div>
 
-              {typeof stock.change === 'number' && (
-                <div
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 600,
-                    color: stock.change >= 0 ? '#16a34a' : '#ef4444',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'flex-start',
-                    gap: 4,
-                    marginTop: 2,
-                  }}
-                >
-                  <span>{stock.change >= 0 ? '▲' : '▼'}</span>
-                  <span>{Math.abs(stock.change).toFixed(2)}%</span>
                 </div>
-              )}
+
+                <div className='flex flex-col'>
+                  {typeof stock.change === 'number' && (
+                    <div
+                      className="text-xs font-semibold flex items-center justify-start gap-0.5 mt-0.5"
+                      style={{ color: stock.change >= 0 ? '#16a34a' : '#ef4444' }}
+                    >
+                      <span>{stock.change >= 0 ? '▲' : '▼'}</span>
+                      <span>{Math.abs(stock.change).toFixed(2)}%</span>
+                    </div>
+                  )}
+                  {typeof stock.price === 'number' && Number.isFinite(stock.price) && (
+                    <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                      <div className='flex flex-col'>
+                        <span className="text-sm font-semibold text-slate-900">
+                          ₹{stock.price.toFixed(2)}
+                        </span>
+                        {typeof stock.live === 'boolean' && (
+                          <span
+                            className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full border text-green-600 bg-green-50"
+                            style={{ borderColor: stock.live ? '#86efac' : '#cbd5e1', backgroundColor: stock.live ? '#dcfce7' : '#f1f5f9', color: stock.live ? '#166534' : '#475569' }}
+                          >
+                            {stock.live ? 'LIVE' : 'DELAYED'}
+                          </span>
+                        )}
+                      </div>
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
           )
         })}
       </div>
 
       {stocks.length === 0 && (
-        <div
-          style={{
-            textAlign: 'center',
-            padding: 40,
-            color: '#94a3b8',
-            fontSize: 14,
-          }}
-        >
+        <div className="text-center py-10 text-slate-400 text-sm">
           📊 No stocks to display
         </div>
       )}
