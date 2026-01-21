@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import SplashScreen from '../../assets/splash-screen-2.png';
+import SplashScreen from '../../assets/splash-screen.png';
 import BackgroundMusic from '../../assets/bg-music.mp3';
 
 export default function TemporaryOverlay() {
