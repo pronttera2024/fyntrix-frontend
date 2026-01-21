@@ -2623,7 +2623,7 @@ export default function App() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: isMobile ? 12 : 128, width: '100%' }}>
-          <FyntrixLogo fontSize={22} fontWeight={900} isMobile={isMobile} />
+          <FyntrixLogo isMobile={isMobile} />
           <div
             style={{
               fontSize: 12,
@@ -3245,38 +3245,9 @@ export default function App() {
                     zIndex: 2,
                   }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, gap: 12, flexWrap: 'wrap' }}>
-                    <div style={{ fontWeight: 600, fontSize: 18 }}>★ Top Five Picks</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                      <div style={{ fontSize: 12, color: '#64748b' }}>
-                        {loadingPicks
-                          ? `Agents are working… Refreshing ${primaryMode} recommendations for ${universe.toUpperCase()}`
-                          : (isIndiaMarketOpen && picksAsOf
-                            ? `Last updated ${dayjs(picksAsOf).fromNow()} (${formatIstTime(picksAsOf)})`
-                            : '')}
-                      </div>
-                      {isIndiaMarketOpen && (
-                        <button
-                          disabled={loadingPicks}
-                          onClick={() => onFetchPicks(true)}
-                          style={{
-                            border: '2px solid #3b82f6',
-                            background: loadingPicks ? '#9ca3af' : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                            borderRadius: 999,
-                            padding: '6px 14px',
-                            fontSize: 12,
-                            fontWeight: 600,
-                            color: '#fff',
-                            cursor: loadingPicks ? 'not-allowed' : 'pointer',
-                            boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 6,
-                            opacity: loadingPicks ? 0.7 : 1
-                          }}
-                        >
-                          🔄 Recalculate
-                        </button>
-                      )}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: 1 }}>
+                      <span style={{ fontWeight: 600, fontSize: 18 }}>★ Top Five Picks</span>
+
                       <button
                         ref={topPicksCloseRef}
                         onClick={() => { setShowPicks(false); setShowHeatMap(true) }}
@@ -3313,6 +3284,38 @@ export default function App() {
                         }}>×</span>
                         Close
                       </button>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                      <div style={{ fontSize: 12, color: '#64748b' }}>
+                        {loadingPicks
+                          ? `Agents are working… Refreshing ${primaryMode} recommendations for ${universe.toUpperCase()}`
+                          : (isIndiaMarketOpen && picksAsOf
+                            ? `Last updated ${dayjs(picksAsOf).fromNow()} (${formatIstTime(picksAsOf)})`
+                            : '')}
+                      </div>
+                      {isIndiaMarketOpen && (
+                        <button
+                          disabled={loadingPicks}
+                          onClick={() => onFetchPicks(true)}
+                          style={{
+                            border: '2px solid #3b82f6',
+                            background: loadingPicks ? '#9ca3af' : 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                            borderRadius: 999,
+                            padding: '6px 14px',
+                            fontSize: 12,
+                            fontWeight: 600,
+                            color: '#fff',
+                            cursor: loadingPicks ? 'not-allowed' : 'pointer',
+                            boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            opacity: loadingPicks ? 0.7 : 1
+                          }}
+                        >
+                          🔄 Recalculate
+                        </button>
+                      )}
                     </div>
                   </div>
                   {picksAsOf && picks.length > 0 && (!isIndiaMarketOpen || isPreviousSessionData) && (

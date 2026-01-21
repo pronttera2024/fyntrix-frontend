@@ -1,6 +1,7 @@
 import React from 'react'
 import { InsightCards } from '../InsightCards'
 import { MarketHeatMap } from '../MarketHeatMap'
+import india from '../../../assets/India.png'
 import { Globe } from 'lucide-react'
 
 type MarketRegion = 'India' | 'Global'
@@ -86,8 +87,8 @@ export const MarketBrief: React.FC<MarketBriefProps> = ({
                     <span className="text-lg font-semibold">Market Brief</span>
                     <div className="flex gap-2 border-b border-slate-200 pb-1">
                         {[
-                            { value: 'India' as const, label: 'India Markets', icon: '🇮🇳' },
-                            { value: 'Global' as const, label: 'World Markets', icon: <Globe size={16}/> },
+                            { value: 'India' as const, label: 'India Markets', icon: <img src={india} alt="India" className="w-4 h-3" /> },
+                            { value: 'Global' as const, label: 'World Markets', icon: '🌍' },
                         ].map(tab => {
                             const isActive = marketRegion === tab.value
                             return (
@@ -101,9 +102,9 @@ export const MarketBrief: React.FC<MarketBriefProps> = ({
                                         try { localStorage.setItem('arise_market_region', r) } catch { }
                                     }}
                                     className={`
-                    border-none bg-transparent py-0.5 px-1 border-b-[3px] cursor-pointer flex items-center gap-1.5 text-sm
+                    border-none py-1 px-2 rounded-full border-b-[3px] cursor-pointer flex items-center gap-1.5 text-sm
                     ${isActive
-                                            ? 'border-b-blue-600 text-blue-700 font-semibold'
+                                            ? 'border-b-blue-600 text-blue-700 font-semibold bg-blue-100'
                                             : 'border-b-transparent text-slate-600 font-medium'
                                         }
                   `}
@@ -176,7 +177,7 @@ export const MarketBrief: React.FC<MarketBriefProps> = ({
                             <div className="flex w-full flex-row md:flex-col justify-between md:justify-start gap-1 md:gap-2">
                                 <div className="flex flex-col md:flex-row items-start md:items-center gap-1 md:gap-2">
                                     <span className={`
-                    md:text-xs text-sm rounded-full font-semibold px-2 py-1 animate-pulse animation-duration-100 animation-iteration-count-infinite
+                    text-xs rounded-full font-semibold px-2 py-1 animate-pulse animation-duration-100 animation-iteration-count-infinite
                     ${!isMarketOpen
                                             ? 'bg-yellow-100 text-yellow-800'
                                             : (isStale
@@ -192,7 +193,7 @@ export const MarketBrief: React.FC<MarketBriefProps> = ({
                                     </span>
                                 </div>
                                 <div className="flex flex-col md:flex-row items-end md:items-center gap-1 md:gap-2 ml-auto">
-                                    <span className="inline-flex items-center gap-1.5 text-sm md:text-xs px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200" style={{ color: sentiment.color }}>
+                                    <span className="inline-flex items-center gap-1 text-sm md:text-xs px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200" style={{ color: sentiment.color }}>
                                         <span className="inline-flex gap-0.25">
                                             {Array.from({ length: 5 }).map((_, i) => {
                                                 const active = (sentiment.score || 0) > ((i - 2) * 15)
@@ -200,7 +201,7 @@ export const MarketBrief: React.FC<MarketBriefProps> = ({
                                                 return <span key={i} className="md:w-[3px] w-2 md:h-[9px] h-3 rounded-[2px]" style={{ background: bg }} />
                                             })}
                                         </span>
-                                        <span className="font-semibold text-base md:text-xs">{sentiment.label}</span>
+                                        <span className="font-semibold text-xs">{sentiment.label}</span>
                                     </span>
                                     {isMarketOpen && (
                                         <span className="text-sm md:text-xs text-slate-400 uppercase tracking-[0.5px]">Nifty 50 Sentiment</span>
