@@ -146,11 +146,16 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
               </span>
             </div>
           ) : (
-            <div className="flex gap-1 mt-1 text-muted-foreground">
-              <Info className="w-3 h-3" />
-              <span className='text-start'>
-                Long-only mode <br /> no short/sell signals
-              </span>
+            <div className="hidden md:flex flex-col gap-1 mt-1 text-muted-foreground">
+              <div className="flex justify-end items-center gap-1">
+                <Info className="w-3 h-3" />
+                <span className='text-end'>
+                  Long-only mode
+                </span>
+              </div>
+              <div className='flex justify-end items-center gap-1'>
+                <span className='text-end'>no short/sell signals</span>
+              </div>
             </div>
           )}
         </div>
@@ -167,7 +172,7 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
             <div
               key={stock.symbol}
               onClick={() => onStockClick?.(stock.symbol)}
-              className="bg-white min-w-[60%] md:min-w-[20%] rounded-lg p-1.5 mt-1 mb-1 gap-3 cursor-pointer transition-all duration-200 shadow-sm border border-gray-200 border-l-[3px] flex flex-col hover:shadow-lg hover:border-sky-500"
+              className="bg-white min-w-[48%] md:min-w-[20%] rounded-lg p-1.5 mt-1 mb-1 gap-3 cursor-pointer transition-all duration-200 shadow-sm border border-gray-200 border-l-[3px] flex flex-col hover:shadow-lg hover:border-sky-500"
               style={{ borderLeftColor: colors.border }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)'
