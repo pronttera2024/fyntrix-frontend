@@ -55,108 +55,66 @@ export const ExitNotification: React.FC<ExitNotificationProps> = ({ exit, onClos
   }
 
   return (
-    <div style={{
-      background: isProfit ? '#f0fdf4' : '#fef2f2',
-      border: `2px solid ${isProfit ? '#86efac' : '#fca5a5'}`,
-      borderRadius: 12,
-      padding: 16,
-      boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
-      transition: 'transform 0.3s ease-out, opacity 0.3s ease-out',
-      minWidth: 320,
-      maxWidth: 400,
-      transform: visible ? 'translateX(0)' : 'translateX(420px)',
-      opacity: visible ? 1 : 0
-    }}>
+    <div className={`
+      relative p-4 rounded-xl shadow-lg transition-all duration-300 ease-out
+      min-w-[320px] max-w-[400px]
+      ${visible ? 'translate-x-0 opacity-100' : 'translate-x-[420px] opacity-0'}
+      ${isProfit 
+        ? 'bg-green-50 border-2 border-green-300' 
+        : 'bg-red-50 border-2 border-red-300'
+      }
+    `}
+    style={{ boxShadow: '0 10px 25px rgba(0,0,0,0.15)' }}
+    >
       {/* Close button */}
       <button
         onClick={handleClose}
-        style={{
-          position: 'absolute',
-          top: 8,
-          right: 8,
-          background: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
-          padding: 4,
-          borderRadius: 4,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
+        className="absolute top-2 right-2 bg-transparent border-none cursor-pointer p-1 rounded flex items-center justify-center"
       >
         <X size={16} color="#64748b" />
       </button>
 
       {/* Header */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        marginBottom: 8
-      }}>
-        <span style={{ fontSize: 20 }}>⚡</span>
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-xl">⚡</span>
         <div>
-          <div style={{ fontWeight: 700, fontSize: 14, color: '#0f172a' }}>
+          <div className="font-bold text-sm text-slate-900">
             Scalping Exit: {exit.symbol}
           </div>
-          <div style={{ fontSize: 11, color: '#64748b' }}>
+          <div className="text-xs text-slate-500">
             {formatTime(exit.exit_time)}
           </div>
         </div>
       </div>
 
       {/* Exit reason */}
-      <div style={{
-        fontSize: 12,
-        marginBottom: 8,
-        padding: '6px 10px',
-        background: 'rgba(255,255,255,0.7)',
-        borderRadius: 6,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 6
-      }}>
-        <span style={{ fontWeight: 600 }}>Reason:</span>
+      <div className="text-xs mb-2 px-2.5 py-1.5 bg-white/70 rounded-md flex items-center gap-1.5">
+        <span className="font-semibold">Reason:</span>
         <span>{exitReasonLabels[exit.exit_reason] || exit.exit_reason}</span>
       </div>
 
       {/* Return */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 8
-      }}>
-        <div style={{ fontSize: 12, color: '#64748b' }}>
+      <div className="flex justify-between items-center mb-2">
+        <div className="text-xs text-slate-500">
           ₹{exit.entry_price.toFixed(2)} → ₹{exit.exit_price.toFixed(2)}
         </div>
-        <div style={{
-          fontSize: 20,
-          fontWeight: 700,
-          color: isProfit ? '#15803d' : '#dc2626',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 4
-        }}>
+        <div className={`
+          text-xl font-bold flex items-center gap-1
+          ${isProfit ? 'text-green-700' : 'text-red-600'}
+        `}>
           {isProfit ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
           {isProfit ? '+' : ''}{exit.return_pct.toFixed(2)}%
         </div>
       </div>
 
       {/* Progress bar for visual feedback */}
-      <div style={{
-        height: 4,
-        background: '#e2e8f0',
-        borderRadius: 2,
-        overflow: 'hidden',
-        marginTop: 8
-      }}>
-        <div style={{
-          height: '100%',
-          width: '100%',
-          background: isProfit ? '#15803d' : '#dc2626',
-          animation: 'progressShrink 10s linear'
-        }} />
+      <div className="h-1 bg-slate-200 rounded-sm overflow-hidden mt-2">
+        <div className={`
+          h-full w-full
+          ${isProfit ? 'bg-green-700' : 'bg-red-600'}
+        `}
+        style={{ animation: 'progressShrink 10s linear' }}
+        />
       </div>
 
       <style>{`
@@ -177,6 +135,7 @@ interface ExitNotificationManagerProps {
 export const ExitNotificationManager: React.FC<ExitNotificationManagerProps> = ({ wsExits }) => {
   const [notifications, setNotifications] = useState<ExitAlert[]>([])
   const [lastCheckTime, setLastCheckTime] = useState<Date>(new Date())
+  const [pendingNotifications, setPendingNotifications] = useState<ExitAlert[]>([])
 
   const mergeBySymbol = (current: ExitAlert[], incoming: ExitAlert[]): ExitAlert[] => {
     const all = [...current, ...incoming]
@@ -234,28 +193,42 @@ export const ExitNotificationManager: React.FC<ExitNotificationManagerProps> = (
 
   useEffect(() => {
     if (!wsExits || wsExits.length === 0) return
-    setNotifications(prev => mergeBySymbol(prev, wsExits))
+    const newExits = mergeBySymbol([], wsExits)
+    setPendingNotifications(prev => mergeBySymbol(prev, newExits))
   }, [wsExits])
 
-  const removeNotification = (index: number) => {
-    setNotifications(prev => prev.filter((_, i) => i !== index))
+  // Stagger notification display to prevent them all appearing at once
+  useEffect(() => {
+    if (pendingNotifications.length === 0) return
+
+    const timer = setTimeout(() => {
+      const [next, ...rest] = pendingNotifications
+      setNotifications(prev => {
+        const updated = mergeBySymbol(prev, [next])
+        // Keep only the latest 5 notifications to prevent screen clutter
+        return updated.slice(-5)
+      })
+      setPendingNotifications(rest)
+    }, 500) // 500ms delay between notifications
+
+    return () => clearTimeout(timer)
+  }, [pendingNotifications])
+
+  const removeNotification = (symbol: string, exitTime: string) => {
+    setNotifications(prev => prev.filter(n => !(n.symbol === symbol && n.exit_time === exitTime)))
   }
 
   return (
     <>
-      {notifications.map((exit, index) => (
+      {notifications.map((exit) => (
         <div
-          key={`${exit.symbol}-${exit.exit_time}-${index}`}
-          style={{
-            position: 'fixed',
-            right: 20,
-            top: 80 + (index * 120),
-            zIndex: 9999
-          }}
+          key={`${exit.symbol}-${exit.exit_time}`}
+          className="fixed right-5 z-50"
+          style={{ top: `${80 + (notifications.indexOf(exit) * 120)}px` }}
         >
           <ExitNotification 
             exit={exit} 
-            onClose={() => removeNotification(index)} 
+            onClose={() => removeNotification(exit.symbol, exit.exit_time)} 
           />
         </div>
       ))}

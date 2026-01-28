@@ -212,7 +212,7 @@ We encourage all investors to use the information on the site as a resource only
 
 type ChatLayout = 'left-fixed' | 'bottom-docked'
 
-type MobileNavTab = 'portfolio' | 'watchlist' | 'home' | 'winners' | 'more'
+type MobileNavTab = 'scalping' | 'watchlist' | 'home' | 'winners' | 'more'
 
 export default function App() {
   try { dayjs.extend(relativeTime) } catch { }
@@ -2659,7 +2659,7 @@ export default function App() {
               marginLeft: 'auto'
             }} >
 
-            <Brain size={18} color="#7a8da9ff" />
+            <Brain size={18} color="#de6e6eff" />
             </span>
             </>: 
             "(trading assisted by AI agents)"
@@ -2905,21 +2905,14 @@ export default function App() {
                     setPrefsOpen(true)
                   },
                 },
-                // {
-                //   title: 'Portfolio',
-                //   onClick: () => {
-                //     setIsMoreOpen(false)
-                //     setShowPortfolio(true)
-                //     setShowWatchlist(false)
-                //     setShowPicks(false)
-                //     setShowHeatMap(false)
-                //   },
-                // },
                 {
-                  title: 'Scalping Monitor',
+                  title: 'Portfolio',
                   onClick: () => {
                     setIsMoreOpen(false)
-                    setShowScalpingMonitor(true)
+                    setShowPortfolio(true)
+                    setShowWatchlist(false)
+                    setShowPicks(false)
+                    setShowHeatMap(false)
                   },
                 },
                 // {
@@ -7024,8 +7017,9 @@ export default function App() {
         >
           <button
             onClick={() => {
-              setActiveMobileTab('portfolio')
-              setShowPortfolio(true)
+              setActiveMobileTab('scalping')
+              setShowScalpingMonitor(true)
+              setShowPortfolio(false)
               setShowWatchlist(false)
               setShowPicks(false)
               setShowHeatMap(false)
@@ -7033,7 +7027,7 @@ export default function App() {
             style={{
               flex: 1,
               border: 'none',
-              background: activeMobileTab === 'portfolio' ? '#dbeafe' : 'transparent',
+              background: activeMobileTab === 'scalping' ? '#dbeafe' : 'transparent',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -7046,9 +7040,9 @@ export default function App() {
             }}
           >
             <div style={{ position: 'relative', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <BriefcaseBusiness size={18} color={activeMobileTab === 'portfolio' ? '#1d4ed8' : '#0f172a'} />
+              <SquareActivity size={18} color={activeMobileTab === 'scalping' ? '#1d4ed8' : '#0f172a'} />
             </div>
-            <span style={{ fontSize: 11, fontWeight: activeMobileTab === 'portfolio' ? 900 : 700, color: activeMobileTab === 'portfolio' ? '#1d4ed8' : '#0f172a' }}>Portfolio</span>
+            <span style={{ fontSize: 11, fontWeight: activeMobileTab === 'scalping' ? 900 : 700, color: activeMobileTab === 'scalping' ? '#1d4ed8' : '#0f172a' }}>Scalping</span>
           </button>
 
           <button

@@ -6,6 +6,7 @@ import type { Pick as AIPick, ExitStrategy as ExitStrategyModel } from '../types
 import { TradeStrategyPanel } from './TradeStrategyPanel'
 import { classifyPickDirection } from '../utils/recommendation'
 import { TradeExecutionModal, type ExecuteTradePayload } from './TradeExecutionModal'
+import { BrokerModal } from './BrokerModal'
 
 interface ChartViewProps {
   symbol: string
@@ -32,6 +33,7 @@ export function ChartView({ symbol, onClose, analysis, livePrice, onSubscribeSym
   const [crosshairSignal, setCrosshairSignal] = useState<{ time: any; text: string } | null>(null)
 
   const [tradeOpen, setTradeOpen] = useState(false)
+  const [brokerOpen, setBrokerOpen] = useState(false)
 
   // Subscribe to live ticks for this symbol if helpers are provided
   useEffect(() => {
@@ -1018,7 +1020,7 @@ export function ChartView({ symbol, onClose, analysis, livePrice, onSubscribeSym
             <div className="mt-4 md:mt-5 flex gap-2 md:gap-3 flex-wrap">
               <button
                 className="px-4 py-2 md:px-5 md:py-2.5 bg-teal-500 text-white border-none rounded-md cursor-pointer font-semibold text-sm md:text-base"
-                onClick={() => setTradeOpen(true)}
+                onClick={() => setBrokerOpen(true)}
               >
                 Execute Trade
               </button>
@@ -1050,6 +1052,10 @@ export function ChartView({ symbol, onClose, analysis, livePrice, onSubscribeSym
               accountId={accountId}
               sessionId={sessionId}
               initialPayload={tradePayload}
+            />
+            <BrokerModal
+              isOpen={brokerOpen}
+              onClose={() => setBrokerOpen(false)}
             />
           </div>
         )}

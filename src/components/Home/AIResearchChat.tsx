@@ -54,7 +54,7 @@ export const AIResearchChat: React.FC<AIResearchChatProps> = ({
   const chatMessagesRef = useRef<HTMLDivElement | null>(null)
   const chatInputElRef = useRef<HTMLInputElement | null>(null)
   const [isDragging, setIsDragging] = useState(false)
-  const [position, setPosition] = useState({ x: window.innerWidth - 170, y: window.innerHeight - 180 })
+  const [position, setPosition] = useState({ x: window.innerWidth - 198, y: window.innerHeight - 180 })
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
@@ -119,7 +119,7 @@ export const AIResearchChat: React.FC<AIResearchChatProps> = ({
           <img src={tradeGpt} className="w-10 h-10"/>
         </div>
         <span className="text-sm font-semibold text-white whitespace-nowrap">
-          AI Strategist
+          Fyntrix Strategist
         </span>
       </button>
     )
@@ -136,7 +136,7 @@ export const AIResearchChat: React.FC<AIResearchChatProps> = ({
       <div className="px-5 py-3.5 border-b-2 border-gray-200 text-white bg-[#019e97ff] flex items-center justify-between">
         <div>
           <div className="font-bold text-lg mb-0.5">
-            AI Research & Trade Strategist
+            Fyntrix AI Strategist
           </div>
           <div className="text-xs text-slate-100 italic">Ask me about markets, trade ideas, or strategies</div>
         </div>
