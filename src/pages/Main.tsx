@@ -18,7 +18,7 @@ import { MarketHeatMap } from '../components/MarketHeatMap'
 import { AgentConsensus } from '../components/AgentConsensus'
 import { InsightCards } from '../components/InsightCards'
 import { ScalpingMonitor } from '../components/ScalpingMonitor'
-import { ExitNotificationManager } from '../components/ExitNotification'
+import { showExitToast } from '../utils/exitToast'
 import { TradeStrategyPanel } from '../components/TradeStrategyPanel'
 import LogoutConfirmModal from '../components/LogoutConfirmModal'
 import type { Pick as AIPick } from '../types/picks'
@@ -1032,6 +1032,19 @@ export default function App() {
       wsRef.current = null
     }
   }, [universe, primaryMode, marketRegion])
+
+  // Show exit toasts when new scalping exits are detected
+  useEffect(() => {
+    if (scalpingWsExits.length === 0) return
+    
+    // Show toast for each new exit
+    scalpingWsExits.forEach(exit => {
+      showExitToast(exit, isMobile)
+    })
+    
+    // Clear the exits after showing toasts to prevent duplicate toasts
+    setScalpingWsExits([])
+  }, [scalpingWsExits])
 
   const subscribeSymbols = React.useCallback((symbols: string[]) => {
     const upper = symbols.map(s => String(s || '').toUpperCase()).filter(Boolean)
@@ -6206,8 +6219,7 @@ export default function App() {
         />
       )}
 
-      {/* Exit Notifications */}
-      <ExitNotificationManager wsExits={scalpingWsExits} />
+      {/* Exit Notifications - now handled by React Toastify */}
 
       {/* About Menu Modal */}
       {isAboutMenuOpen && (

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useMemo } from 'react'
 import { createChart, IChartApi, ISeriesApi, LineStyle } from 'lightweight-charts'
 import { X, TrendingUp, Target, Shield, Activity, AlertCircle } from 'lucide-react'
 import { getChartData, postStrategySuggest, addWatchlistEntry } from '../api'
+import { showSuccessToast, showErrorToast } from '../utils/exitToast'
 import type { Pick as AIPick, ExitStrategy as ExitStrategyModel } from '../types/picks'
 import { TradeStrategyPanel } from './TradeStrategyPanel'
 import { classifyPickDirection } from '../utils/recommendation'
@@ -1037,8 +1038,11 @@ export function ChartView({ symbol, onClose, analysis, livePrice, onSubscribeSym
                       desired_entry: price,
                       source: 'chart',
                     })
+                    showSuccessToast(`Alert set for ${symbol} at ₹${price?.toFixed(2) || 'current price'}`)
+                    onClose()
                   } catch (e) {
                     console.error('Failed to add watchlist entry from chart:', e)
+                    showErrorToast('Failed to set alert. Please try again.')
                   }
                 }}
               >
