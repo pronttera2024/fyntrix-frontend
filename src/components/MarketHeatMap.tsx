@@ -105,7 +105,7 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
   const showShortLegend = hasShorts && sellLabel != null && strongSellLabel != null
 
   return (
-    <div className="bg-white rounded-xl p-2 border border-gray-200 shadow-sm">
+    <div className="bg-white rounded-xl p-2 border border-gray-200 border-b-white shadow-[0_0_12px_-6px_rgba(0,0,0,0.18)]">
       <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-200">
         <div>
           <div className="font-semibold text-base mb-0.5 flex items-center gap-1">
@@ -165,179 +165,271 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
       {/* Mobile: Two rows - Desktop: Single row */}
       {/* Mobile Layout */}
       <div className="md:hidden">
-        {/* First Row - Mobile */}
-        <div className="flex overflow-x-auto gap-2.5">
-          {sortedStocks.slice(0, Math.ceil(sortedStocks.length / 2)).map((stock) => {
-            const band = getBand(stock.score)
-            const colors = getColors(band)
-            const bandLabel = getBandLabel(band)
+        {sortedStocks.length <= 2 ? (
+          // Single row for 2 or fewer cards
+          <div className="flex overflow-x-auto gap-2.5">
+            {sortedStocks.map((stock) => {
+              const band = getBand(stock.score)
+              const colors = getColors(band)
+              const bandLabel = getBandLabel(band)
 
-            return (
-              <div
-                key={stock.symbol}
-                onClick={() => onStockClick?.(stock.symbol)}
-                className="bg-white min-w-[48%] rounded-lg p-1.5 mt-1 mb-1 gap-3 cursor-pointer transition-all duration-200 shadow-sm border border-gray-200 border-l-[3px] flex flex-col hover:shadow-lg hover:border-sky-500"
-                style={{ borderLeftColor: colors.border }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)'
-                  e.currentTarget.style.boxShadow = '0 6px 18px rgba(15,23,42,0.15)'
-                  e.currentTarget.style.borderColor = '#0ea5e9'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(15,23,42,0.06)'
-                  e.currentTarget.style.borderColor = '#e5e7eb'
-                }}
-              >
-                <div className="flex justify-between items-center">
-                  <span
-                    className="text-sm font-bold uppercase truncate text-ellipsis whitespace-nowrap leading-[14px]"
-                    style={{ color: colors.text }}
-                  >
-                    {stock.symbol}
-                  </span>
-                  {band !== 'neutral' && (
-                    <div className='flex flex-col' >
-                      <span
-                        className="text-sm font-semibold px-1.5 py-0.5 rounded-full whitespace-nowrap inline-flex items-center leading-[14px]"
-                        style={{ backgroundColor: colors.bg, color: colors.text }}
-                      >
-                        {bandLabel}
-                      </span>
+              return (
+                <div
+                  key={stock.symbol}
+                  onClick={() => onStockClick?.(stock.symbol)}
+                  className="bg-white min-w-[48%] rounded-lg p-1.5 mt-1 mb-1 gap-3 cursor-pointer transition-all duration-200 shadow-sm border border-gray-200 border-l-[3px] flex flex-col hover:shadow-lg hover:border-sky-500"
+                  style={{ borderLeftColor: colors.border }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)'
+                    e.currentTarget.style.boxShadow = '0 6px 18px rgba(15,23,42,0.15)'
+                    e.currentTarget.style.borderColor = '#0ea5e9'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)'
+                    e.currentTarget.style.boxShadow = '0 1px 3px rgba(15,23,42,0.06)'
+                    e.currentTarget.style.borderColor = '#e5e7eb'
+                  }}
+                >
+                  <div className="flex justify-between items-center">
+                    <span
+                      className="text-sm font-bold uppercase truncate text-ellipsis whitespace-nowrap leading-[14px]"
+                      style={{ color: colors.text }}
+                    >
+                      {stock.symbol}
+                    </span>
+                    {band !== 'neutral' && (
+                      <div className='flex flex-col' >
+                        <span
+                          className="text-sm font-semibold px-1.5 py-0.5 rounded-full whitespace-nowrap inline-flex items-center leading-[14px]"
+                          style={{ backgroundColor: colors.bg, color: colors.text }}
+                        >
+                          {bandLabel}
+                        </span>
+                      </div>
+
+                    )}
+                  </div>
+
+                  <div className="flex justify-between items-end">
+                    <div
+                      className="flex items-baseline gap-0.5 text-lg font-bold mb-0.5"
+                      style={{ color: band === 'strong-buy' || band === 'buy' ? '#166534' : band === 'neutral' ? '#111827' : '#b91c1c' }}
+                    >
+                      {stock.score.toFixed(1)}%
+
                     </div>
 
-                  )}
-                </div>
-
-                <div className="flex justify-between items-end">
-                  <div
-                    className="flex items-baseline gap-0.5 text-lg font-bold mb-0.5"
-                    style={{ color: band === 'strong-buy' || band === 'buy' ? '#166534' : band === 'neutral' ? '#111827' : '#b91c1c' }}
-                  >
-                    {stock.score.toFixed(1)}%
-
-                  </div>
-
-                  <div className='flex flex-col'>
-                    {typeof stock.change === 'number' && (
-                      <div
-                        className="text-xs font-semibold flex items-center justify-start gap-0.5 mt-0.5"
-                        style={{ color: stock.change >= 0 ? '#16a34a' : '#ef4444' }}
-                      >
-                        <span>{stock.change >= 0 ? '▲' : '▼'}</span>
-                        <span>{Math.abs(stock.change).toFixed(2)}%</span>
-                      </div>
-                    )}
-                    {typeof stock.price === 'number' && Number.isFinite(stock.price) && (
-                      <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
-                        <div className='flex flex-col'>
-                          <span className="text-sm font-semibold text-slate-900">
-                            ₹{stock.price.toFixed(2)}
-                          </span>
-                          {typeof stock.live === 'boolean' && (
-                            <span
-                              className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full border text-green-600 bg-green-50"
-                              style={{ borderColor: stock.live ? '#86efac' : '#cbd5e1', backgroundColor: stock.live ? '#dcfce7' : '#f1f5f9', color: stock.live ? '#166534' : '#475569' }}
-                            >
-                              {stock.live ? 'LIVE' : 'DELAYED'}
-                            </span>
-                          )}
+                    <div className='flex flex-col'>
+                      {typeof stock.change === 'number' && (
+                        <div
+                          className="text-xs font-semibold flex items-center justify-start gap-0.5 mt-0.5"
+                          style={{ color: stock.change >= 0 ? '#16a34a' : '#ef4444' }}
+                        >
+                          <span>{stock.change >= 0 ? '▲' : '▼'}</span>
+                          <span>{Math.abs(stock.change).toFixed(2)}%</span>
                         </div>
-                      </span>
-                    )}
+                      )}
+                      {typeof stock.price === 'number' && Number.isFinite(stock.price) && (
+                        <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                          <div className='flex flex-col'>
+                            <span className="text-sm font-semibold text-slate-900">
+                              ₹{stock.price.toFixed(2)}
+                            </span>
+                            {typeof stock.live === 'boolean' && (
+                              <span
+                                className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full border text-green-600 bg-green-50"
+                                style={{ borderColor: stock.live ? '#86efac' : '#cbd5e1', backgroundColor: stock.live ? '#dcfce7' : '#f1f5f9', color: stock.live ? '#166534' : '#475569' }}
+                              >
+                                {stock.live ? 'LIVE' : 'DELAYED'}
+                              </span>
+                            )}
+                          </div>
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )
-          })}
-        </div>
+              )
+            })}
+          </div>
+        ) : (
+          // Two rows for more than 2 cards
+          <>
+            {/* First Row - Mobile */}
+            <div className="flex overflow-x-auto gap-2.5">
+              {sortedStocks.slice(0, Math.ceil(sortedStocks.length / 2)).map((stock) => {
+                const band = getBand(stock.score)
+                const colors = getColors(band)
+                const bandLabel = getBandLabel(band)
 
-        {/* Second Row - Mobile */}
-        <div className="flex overflow-x-auto gap-2.5">
-          {sortedStocks.slice(Math.ceil(sortedStocks.length / 2)).map((stock) => {
-            const band = getBand(stock.score)
-            const colors = getColors(band)
-            const bandLabel = getBandLabel(band)
-
-            return (
-              <div
-                key={stock.symbol}
-                onClick={() => onStockClick?.(stock.symbol)}
-                className="bg-white min-w-[48%] rounded-lg p-1.5 mt-1 mb-1 gap-3 cursor-pointer transition-all duration-200 shadow-sm border border-gray-200 border-l-[3px] flex flex-col hover:shadow-lg hover:border-sky-500"
-                style={{ borderLeftColor: colors.border }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)'
-                  e.currentTarget.style.boxShadow = '0 6px 18px rgba(15,23,42,0.15)'
-                  e.currentTarget.style.borderColor = '#0ea5e9'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(15,23,42,0.06)'
-                  e.currentTarget.style.borderColor = '#e5e7eb'
-                }}
-              >
-                <div className="flex justify-between items-center">
-                  <span
-                    className="text-sm font-bold uppercase truncate text-ellipsis whitespace-nowrap leading-[14px]"
-                    style={{ color: colors.text }}
+                return (
+                  <div
+                    key={stock.symbol}
+                    onClick={() => onStockClick?.(stock.symbol)}
+                    className="bg-white min-w-[48%] rounded-lg p-1.5 mt-1 mb-1 gap-3 cursor-pointer transition-all duration-200 shadow-sm border border-gray-200 border-l-[3px] flex flex-col hover:shadow-lg hover:border-sky-500"
+                    style={{ borderLeftColor: colors.border }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)'
+                      e.currentTarget.style.boxShadow = '0 6px 18px rgba(15,23,42,0.15)'
+                      e.currentTarget.style.borderColor = '#0ea5e9'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)'
+                      e.currentTarget.style.boxShadow = '0 1px 3px rgba(15,23,42,0.06)'
+                      e.currentTarget.style.borderColor = '#e5e7eb'
+                    }}
                   >
-                    {stock.symbol}
-                  </span>
-                  {band !== 'neutral' && (
-                    <div className='flex flex-col' >
+                    <div className="flex justify-between items-center">
                       <span
-                        className="text-sm font-semibold px-1.5 py-0.5 rounded-full whitespace-nowrap inline-flex items-center leading-[14px]"
-                        style={{ backgroundColor: colors.bg, color: colors.text }}
+                        className="text-sm font-bold uppercase truncate text-ellipsis whitespace-nowrap leading-[14px]"
+                        style={{ color: colors.text }}
                       >
-                        {bandLabel}
+                        {stock.symbol}
                       </span>
+                      {band !== 'neutral' && (
+                        <div className='flex flex-col' >
+                          <span
+                            className="text-sm font-semibold px-1.5 py-0.5 rounded-full whitespace-nowrap inline-flex items-center leading-[14px]"
+                            style={{ backgroundColor: colors.bg, color: colors.text }}
+                          >
+                            {bandLabel}
+                          </span>
+                        </div>
+
+                      )}
                     </div>
 
-                  )}
-                </div>
-
-                <div className="flex justify-between items-end">
-                  <div
-                    className="flex items-baseline gap-0.5 text-lg font-bold mb-0.5"
-                    style={{ color: band === 'strong-buy' || band === 'buy' ? '#166534' : band === 'neutral' ? '#111827' : '#b91c1c' }}
-                  >
-                    {stock.score.toFixed(1)}%
-
-                  </div>
-
-                  <div className='flex flex-col'>
-                    {typeof stock.change === 'number' && (
+                    <div className="flex justify-between items-end">
                       <div
-                        className="text-xs font-semibold flex items-center justify-start gap-0.5 mt-0.5"
-                        style={{ color: stock.change >= 0 ? '#16a34a' : '#ef4444' }}
+                        className="flex items-baseline gap-0.5 text-lg font-bold mb-0.5"
+                        style={{ color: band === 'strong-buy' || band === 'buy' ? '#166534' : band === 'neutral' ? '#111827' : '#b91c1c' }}
                       >
-                        <span>{stock.change >= 0 ? '▲' : '▼'}</span>
-                        <span>{Math.abs(stock.change).toFixed(2)}%</span>
+                        {stock.score.toFixed(1)}%
+
                       </div>
-                    )}
-                    {typeof stock.price === 'number' && Number.isFinite(stock.price) && (
-                      <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
-                        <div className='flex flex-col'>
-                          <span className="text-sm font-semibold text-slate-900">
-                            ₹{stock.price.toFixed(2)}
+
+                      <div className='flex flex-col'>
+                        {typeof stock.change === 'number' && (
+                          <div
+                            className="text-xs font-semibold flex items-center justify-start gap-0.5 mt-0.5"
+                            style={{ color: stock.change >= 0 ? '#16a34a' : '#ef4444' }}
+                          >
+                            <span>{stock.change >= 0 ? '▲' : '▼'}</span>
+                            <span>{Math.abs(stock.change).toFixed(2)}%</span>
+                          </div>
+                        )}
+                        {typeof stock.price === 'number' && Number.isFinite(stock.price) && (
+                          <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                            <div className='flex flex-col'>
+                              <span className="text-sm font-semibold text-slate-900">
+                                ₹{stock.price.toFixed(2)}
+                              </span>
+                              {typeof stock.live === 'boolean' && (
+                                <span
+                                  className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full border text-green-600 bg-green-50"
+                                  style={{ borderColor: stock.live ? '#86efac' : '#cbd5e1', backgroundColor: stock.live ? '#dcfce7' : '#f1f5f9', color: stock.live ? '#166534' : '#475569' }}
+                                >
+                                  {stock.live ? 'LIVE' : 'DELAYED'}
+                                </span>
+                              )}
+                            </div>
                           </span>
-                          {typeof stock.live === 'boolean' && (
-                            <span
-                              className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full border text-green-600 bg-green-50"
-                              style={{ borderColor: stock.live ? '#86efac' : '#cbd5e1', backgroundColor: stock.live ? '#dcfce7' : '#f1f5f9', color: stock.live ? '#166534' : '#475569' }}
-                            >
-                              {stock.live ? 'LIVE' : 'DELAYED'}
-                            </span>
-                          )}
-                        </div>
-                      </span>
-                    )}
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
+                )
+              })}
+            </div>
+
+            {/* Second Row - Mobile */}
+            <div className="flex overflow-x-auto gap-2.5">
+              {sortedStocks.slice(Math.ceil(sortedStocks.length / 2)).map((stock) => {
+                const band = getBand(stock.score)
+                const colors = getColors(band)
+                const bandLabel = getBandLabel(band)
+
+                return (
+                  <div
+                    key={stock.symbol}
+                    onClick={() => onStockClick?.(stock.symbol)}
+                    className="bg-white min-w-[48%] rounded-lg p-1.5 mt-1 mb-1 gap-3 cursor-pointer transition-all duration-200 shadow-sm border border-gray-200 border-l-[3px] flex flex-col hover:shadow-lg hover:border-sky-500"
+                    style={{ borderLeftColor: colors.border }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)'
+                      e.currentTarget.style.boxShadow = '0 6px 18px rgba(15,23,42,0.15)'
+                      e.currentTarget.style.borderColor = '#0ea5e9'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)'
+                      e.currentTarget.style.boxShadow = '0 1px 3px rgba(15,23,42,0.06)'
+                      e.currentTarget.style.borderColor = '#e5e7eb'
+                    }}
+                  >
+                    <div className="flex justify-between items-center">
+                      <span
+                        className="text-sm font-bold uppercase truncate text-ellipsis whitespace-nowrap leading-[14px]"
+                        style={{ color: colors.text }}
+                      >
+                        {stock.symbol}
+                      </span>
+                      {band !== 'neutral' && (
+                        <div className='flex flex-col' >
+                          <span
+                            className="text-sm font-semibold px-1.5 py-0.5 rounded-full whitespace-nowrap inline-flex items-center leading-[14px]"
+                            style={{ backgroundColor: colors.bg, color: colors.text }}
+                          >
+                            {bandLabel}
+                          </span>
+                        </div>
+
+                      )}
+                    </div>
+
+                    <div className="flex justify-between items-end">
+                      <div
+                        className="flex items-baseline gap-0.5 text-lg font-bold mb-0.5"
+                        style={{ color: band === 'strong-buy' || band === 'buy' ? '#166534' : band === 'neutral' ? '#111827' : '#b91c1c' }}
+                      >
+                        {stock.score.toFixed(1)}%
+
+                      </div>
+
+                      <div className='flex flex-col'>
+                        {typeof stock.change === 'number' && (
+                          <div
+                            className="text-xs font-semibold flex items-center justify-start gap-0.5 mt-0.5"
+                            style={{ color: stock.change >= 0 ? '#16a34a' : '#ef4444' }}
+                          >
+                            <span>{stock.change >= 0 ? '▲' : '▼'}</span>
+                            <span>{Math.abs(stock.change).toFixed(2)}%</span>
+                          </div>
+                        )}
+                        {typeof stock.price === 'number' && Number.isFinite(stock.price) && (
+                          <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                            <div className='flex flex-col'>
+                              <span className="text-sm font-semibold text-slate-900">
+                                ₹{stock.price.toFixed(2)}
+                              </span>
+                              {typeof stock.live === 'boolean' && (
+                                <span
+                                  className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full border text-green-600 bg-green-50"
+                                  style={{ borderColor: stock.live ? '#86efac' : '#cbd5e1', backgroundColor: stock.live ? '#dcfce7' : '#f1f5f9', color: stock.live ? '#166534' : '#475569' }}
+                                >
+                                  {stock.live ? 'LIVE' : 'DELAYED'}
+                                </span>
+                              )}
+                            </div>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Desktop Layout - Single Row */}

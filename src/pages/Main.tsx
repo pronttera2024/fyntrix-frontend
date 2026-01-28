@@ -2991,7 +2991,7 @@ export default function App() {
         flexDirection: isMobile ? 'column' : 'row',
         gap: isMobile ? 12 : 20,
         padding: isMobile
-          ? `56px 12px calc(${LAYOUT_TOKENS.bottomNavHeight}px + env(safe-area-inset-bottom) + 12px) 12px`
+          ? `46px 12px calc(${LAYOUT_TOKENS.bottomNavHeight}px + env(safe-area-inset-bottom) + 12px) 12px`
           : '56px 32px 20px 32px',
         maxWidth: isMobile ? '100vw' : 'calc(100vw - 116px)',
         height: '100dvh',

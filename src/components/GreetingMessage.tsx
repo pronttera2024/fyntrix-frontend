@@ -50,9 +50,9 @@ export default function GreetingMessage({ name }) {
   }, []);
 
   return (
-    <div className="px-2 py-4">
+    <div className="px-2 py-1.5">
       {/* <p className="text-sm text-slate-400 capitalize">{period}</p> */}
-      <h1 className="mt-1 text-xl font-semibold">
+      <h1 className="text-xl font-semibold">
         {message}, <span className="text-indigo-400">{name}</span>.
       </h1>
     </div>

@@ -108,7 +108,7 @@ export const AIResearchChat: React.FC<AIResearchChatProps> = ({
           // width: 120,
           height: 50,
           borderRadius: 25,
-          background: 'rgb(1 158 151)',
+          background: 'linear-gradient(135deg, #0095FF 0%, #10C8A9 100%)',
           boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)',
           cursor: isDragging ? 'grabbing' : 'grab',
           transform: isDragging ? 'scale(1.05)' : 'scale(1)'
@@ -133,10 +133,10 @@ export const AIResearchChat: React.FC<AIResearchChatProps> = ({
       }}
     >
       {/* Header with Clear Button */}
-      <div className="px-5 py-3.5 border-b-2 border-gray-200 text-white bg-[#019e97ff] flex items-center justify-between">
+      <div className="px-5 py-3.5 border-b-2 border-gray-200 text-white bg-gradient-to-r from-[#0095FF] to-[#10C8A9] flex items-center justify-between">
         <div>
           <div className="font-bold text-lg mb-0.5">
-            Fyntrix AI Strategist
+            Fyntrix Strategist
           </div>
           <div className="text-xs text-slate-100 italic">Ask me about markets, trade ideas, or strategies</div>
         </div>
