@@ -3238,7 +3238,6 @@ export default function App() {
                 <div
                   {...swipeCloseTopPicks}
                   style={{
-                    padding: '12px 0 8px 0',
                     borderBottom: '1px solid #e5e7eb',
                     marginBottom: 12,
                     position: isMobile ? 'sticky' : 'static',
@@ -3246,8 +3245,8 @@ export default function App() {
                     background: '#fff',
                     zIndex: 2,
                   }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, gap: 12, flexWrap: 'wrap' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: 1 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, gap: 12, flexWrap: 'wrap', flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: 1, width: '100%' }}>
                       <span style={{ fontWeight: 600, fontSize: 18 }}>★ Top Five Picks</span>
 
                       <button
@@ -3287,14 +3286,7 @@ export default function App() {
                         Close
                       </button>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                      <div style={{ fontSize: 12, color: '#64748b' }}>
-                        {loadingPicks
-                          ? `Agents are working… Refreshing ${primaryMode} recommendations for ${universe.toUpperCase()}`
-                          : (isIndiaMarketOpen && picksAsOf
-                            ? `Last updated ${dayjs(picksAsOf).fromNow()} (${formatIstTime(picksAsOf)})`
-                            : '')}
-                      </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', width: '100%' }}>
                       {isIndiaMarketOpen && (
                         <button
                           disabled={loadingPicks}
@@ -3318,6 +3310,13 @@ export default function App() {
                           🔄 Recalculate
                         </button>
                       )}
+                      <div style={{ fontSize: 12, color: '#64748b' }}>
+                        {loadingPicks
+                          ? `Agents are working… Refreshing ${primaryMode} recommendations for ${universe.toUpperCase()}`
+                          : (isIndiaMarketOpen && picksAsOf
+                            ? `Last updated ${dayjs(picksAsOf).fromNow()} (${formatIstTime(picksAsOf)})`
+                            : '')}
+                      </div>
                     </div>
                   </div>
                   {picksAsOf && picks.length > 0 && (!isIndiaMarketOpen || isPreviousSessionData) && (
