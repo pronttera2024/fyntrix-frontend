@@ -662,7 +662,7 @@ export const WatchlistModal: React.FC<WatchlistModalProps> = ({
                             {isExpanded ? 'Hide Details' : 'Details'}
                           </button>
 
-                          {status === 'active' ? (
+                          {/* {status === 'active' ? (
                             <button
                               disabled={isBusy || !id}
                               onClick={() => mutateWatchlistStatus(id, 'paused')}
@@ -696,7 +696,7 @@ export const WatchlistModal: React.FC<WatchlistModalProps> = ({
                             >
                               Resume
                             </button>
-                          )}
+                          )} */}
 
                           <button
                             disabled={isBusy || !id}
