@@ -169,13 +169,13 @@ export const ScalpingMonitor: React.FC<ScalpingMonitorProps> = ({ onClose, liveP
       const data = await json<any>('/v1/scalping/monitor?manual=true', {
         method: 'POST'
       })
-      
+
       console.log('Manual monitoring triggered:', data)
-      
+
       // Refresh positions after monitoring
       await fetchPositions()
       await fetchMonitorOccupancy()
-      
+
       // Show notification if exits detected
       if (data.exits_detected > 0) {
         alert(`✅ ${data.exits_detected} position(s) exited!`)
@@ -195,7 +195,7 @@ export const ScalpingMonitor: React.FC<ScalpingMonitorProps> = ({ onClose, liveP
     const interval = setInterval(() => {
       fetchPositions()
     }, 30000) // 30 seconds
-    
+
     return () => clearInterval(interval)
   }, [])
 
@@ -226,157 +226,90 @@ export const ScalpingMonitor: React.FC<ScalpingMonitorProps> = ({ onClose, liveP
   }
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0,0,0,0.5)',
-      zIndex: 9999,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 8
-    }}>
-      <div style={{
-        background: '#ffffff',
-        borderRadius: 16,
-        boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-        maxWidth: 1180,
-        width: '96vw',
-        maxHeight: '92vh',
-        display: 'flex',
-        flexDirection: 'column'
-      }}>
+    <div className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-2 md:p-2">
+      <div className="bg-white rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] max-w-[1180px] w-[96vw] md:w-[92vw] max-h-[92vh] md:max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div style={{
-          padding: '18px 24px',
-          borderBottom: '1px solid #e2e8f0',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          background: 'linear-gradient(90deg, #0095FF 0%, #10C8A9 100%)',
-          color: '#ffffff',
-        }}>
+        <div className="px-4 md:px-6 py-[14px] md:py-[18px] border-b border-slate-200 flex flex-col md:justify-between gap-3 bg-gradient-to-r from-[#0095FF] to-[#10C8A9] text-white">
           <div>
-            <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8, color: '#ffffff' }}>
-              ⚡ Scalping Monitor
-              {isIndiaMarketOpen && positions.length > 0 && (
-                <span style={{
-                  background: '#ecfdf5',
-                  color: '#047857',
-                  padding: '4px 12px',
-                  borderRadius: 12,
-                  fontSize: 12,
-                  fontWeight: 600
-                }}>
-                  {positions.length} Active
-                </span>
-              )}
-            </h2>
+            <div className='flex justify-between'>
+              <h2 className="m-0 text-lg md:text-xl font-bold flex items-center gap-2 text-white">
+                ⚡ Scalping Monitor
+                {isIndiaMarketOpen && positions.length > 0 && (
+                  <span className="bg-green-50 text-green-700 px-2 py-0.5 md:px-3 md:py-1 rounded-full text-xs font-semibold">
+                    {positions.length} Active
+                  </span>
+                )}
+              </h2>
+
+              <button
+                onClick={onClose}
+                className="px-2 py-1 md:px-4 md:py-2 bg-slate-100 text-slate-600 border-none rounded-lg cursor-pointer font-semibold text-sm"
+              >
+                <span className="hidden sm:inline">Close</span>
+                <span className="sm:hidden">✕</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="flex gap-2 md:gap-3 items-center">
             {lastUpdate && (
-              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.85)', marginTop: 4 }}>
+              <div className="text-xs text-white/85 mt-2 md:mt-1">
                 {isIndiaMarketOpen
                   ? (topPicksMeta && topPicksMeta.length > 0
-                      ? (() => {
-                          const parts = topPicksMeta.map((m) => {
-                            const uni = (m.universe || 'nifty50').toUpperCase()
-                            const timeStr = m.as_of ? new Date(m.as_of).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : lastUpdate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
-                            return `${uni} at ${timeStr}`
-                          })
-                          return `Aligned with latest scalping picks: ${parts.join(', ')}`
-                        })()
-                      : `Last updated: ${lastUpdate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}`)
+                    ? (() => {
+                      const parts = topPicksMeta.map((m) => {
+                        const uni = (m.universe || 'nifty50').toUpperCase()
+                        const timeStr = m.as_of ? new Date(m.as_of).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : lastUpdate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+                        return `${uni} at ${timeStr}`
+                      })
+                      return `Aligned with latest scalping picks: ${parts.join(', ')}`
+                    })()
+                    : `Last updated: ${lastUpdate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}`)
                   : 'Markets are closed. Scalping signals were valid during the last trading session. Fresh setups will appear when markets reopen.'}
               </div>
             )}
-          </div>
-          
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
             <button
               onClick={triggerMonitoring}
               disabled={refreshing}
-              style={{
-                padding: '8px 16px',
-                background: refreshing ? '#e2e8f0' : 'linear-gradient(135deg, #0095FF 0%, #10C8A9 100%)',
-                color: refreshing ? '#64748b' : '#ffffff',
-                border: 'none',
-                borderRadius: 8,
-                cursor: refreshing ? 'not-allowed' : 'pointer',
-                fontWeight: 600,
-                fontSize: 14,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                boxShadow: refreshing ? 'none' : '0 4px 10px rgba(0,149,255,0.35)',
-              }}
+              className={`px-3 py-1.5 md:px-4 md:py-2 border-none rounded-lg font-semibold text-sm flex items-center gap-1.5 transition-all ${refreshing
+                ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                : 'bg-gradient-to-r from-[#0095FF] to-[#10C8A9] text-white cursor-pointer shadow-[0_4px_10px_rgba(0,149,255,0.35)]'
+                }`}
             >
-              <RefreshCw size={16} style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />
-              {refreshing ? 'Checking...' : 'Check Now'}
+              <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} />
+              <span className="hidden sm:inline">{refreshing ? 'Checking...' : 'Check Now'}</span>
+              <span className="sm:hidden">{refreshing ? '...' : 'Check'}</span>
             </button>
-            
-            <button
-              onClick={onClose}
-              style={{
-                padding: '8px 16px',
-                background: '#f1f5f9',
-                color: '#475569',
-                border: 'none',
-                borderRadius: 8,
-                cursor: 'pointer',
-                fontWeight: 600,
-                fontSize: 14
-              }}
-            >
-              Close
-            </button>
+
           </div>
         </div>
 
         {/* Content */}
-        <div style={{
-          flex: 1,
-          overflow: 'auto',
-          padding: 16
-        }}>
+        <div className="flex-1 overflow-auto p-3 md:p-4">
           {loading ? (
-            <div style={{ textAlign: 'center', padding: 60, color: '#64748b' }}>
-              <RefreshCw size={32} style={{ animation: 'spin 1s linear infinite' }} />
-              <div style={{ marginTop: 12 }}>Loading positions...</div>
+            <div className="text-center py-12 md:py-15 text-slate-500">
+              <RefreshCw size={28} className="animate-spin mx-auto" />
+              <div className="mt-3 text-sm md:text-base">Loading positions...</div>
             </div>
           ) : error ? (
-            <div style={{
-              textAlign: 'center',
-              padding: 60,
-              color: '#b91c1c',
-              background: '#fef2f2',
-              borderRadius: 12,
-              border: '1px solid #fecaca'
-            }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>⚠️</div>
-              <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>
+            <div className="text-center py-12 md:py-15 text-red-700 bg-red-50 rounded-xl border border-red-200">
+              <div className="text-2xl md:text-3xl mb-2">⚠️</div>
+              <div className="text-sm md:text-base font-semibold mb-1">
                 Scalping monitor is temporarily unavailable
               </div>
-              <div style={{ fontSize: 13, maxWidth: 520, margin: '0 auto' }}>
+              <div className="text-xs md:text-sm max-w-[400px] md:max-w-[520px] mx-auto">
                 {error}
               </div>
             </div>
           ) : (
             <>
               {positions.length === 0 && recentExits.length === 0 ? (
-                <div style={{
-                  textAlign: 'center',
-                  padding: 60,
-                  color: '#64748b',
-                  background: '#f8fafc',
-                  borderRadius: 12
-                }}>
-                  <div style={{ fontSize: 48, marginBottom: 12 }}>⚡</div>
-                  <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 4 }}>
+                <div className="text-center py-12 md:py-15 text-slate-500 bg-slate-50 rounded-xl">
+                  <div className="text-4xl md:text-5xl mb-3">⚡</div>
+                  <div className="text-sm md:text-base font-semibold mb-1">
                     No Active Scalping Positions
                   </div>
-                  <div style={{ fontSize: 14, maxWidth: 520, margin: '0 auto' }}>
+                  <div className="text-xs md:text-sm max-w-[400px] md:max-w-[520px] mx-auto">
                     {isIndiaMarketOpen
                       ? 'Scalping entries only appear here when ARIS finds fresh, high-confidence setups from your Top Five Picks. When a new scalp is triggered, it will be tracked live in this monitor.'
                       : topPicksMeta && topPicksMeta.length > 0
@@ -386,19 +319,11 @@ export const ScalpingMonitor: React.FC<ScalpingMonitorProps> = ({ onClose, liveP
                 </div>
               ) : (
                 <>
-                  <div style={{
-                    marginBottom: 12,
-                    fontSize: 11,
-                    color: '#64748b',
-                    background: '#f8fafc',
-                    borderRadius: 8,
-                    padding: 8,
-                    border: '1px dashed #cbd5e1'
-                  }}>
-                    <div style={{ fontWeight: 600, marginBottom: 2 }}>
+                  <div className="mb-3 text-xs text-slate-500 bg-slate-50 rounded-lg p-2 md:p-3 border border-dashed border-slate-300">
+                    <div className="font-semibold mb-0.5">
                       Scalping thresholds (score_blend)
                     </div>
-                    <div>
+                    <div className="text-xs">
                       {(() => {
                         const sb = Math.round(pickThresholds.strongBuyMin)
                         const b = Math.round(pickThresholds.buyMin)
@@ -412,17 +337,11 @@ export const ScalpingMonitor: React.FC<ScalpingMonitorProps> = ({ onClose, liveP
                     </div>
                   </div>
                   {positions.length > 0 && (
-                    <div style={{ marginBottom: 24 }}>
-                      <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}>
+                    <div className="mb-4 md:mb-6">
+                      <div className="text-sm font-semibold mb-2">
                         Open scalps
                       </div>
-                      <div
-                        style={{
-                          display: 'grid',
-                          gap: 12,
-                          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))'
-                        }}
-                      >
+                      <div className="grid gap-3 md:gap-3 grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(340px,1fr))]">
                         {positions.map((pos, idx) => (
                           <ScalpingPositionCard
                             key={`${pos.symbol}-${idx}`}
@@ -435,17 +354,11 @@ export const ScalpingMonitor: React.FC<ScalpingMonitorProps> = ({ onClose, liveP
                   )}
 
                   {recentExits.length > 0 && (
-                    <div style={{ marginBottom: 24 }}>
-                      <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}>
+                    <div className="mb-4 md:mb-6">
+                      <div className="text-sm font-semibold mb-2">
                         Closed scalps (last 60 mins)
                       </div>
-                      <div
-                        style={{
-                          display: 'grid',
-                          gap: 10,
-                          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))'
-                        }}
-                      >
+                      <div className="grid gap-2 md:gap-2.5 grid-cols-1 md:grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
                         {recentExits.map((exit, idx) => {
                           const hasReturn = typeof exit.return_pct === 'number' && Number.isFinite(exit.return_pct)
                           const isWin = hasReturn && exit.return_pct >= 0
@@ -478,55 +391,44 @@ export const ScalpingMonitor: React.FC<ScalpingMonitorProps> = ({ onClose, liveP
                           return (
                             <div
                               key={`${exit.symbol}-${exit.exit_time}-${idx}`}
-                              style={{
-                                padding: 16,
-                                background: isWin ? '#f0fdf4' : '#fef2f2',
-                                borderRadius: 10,
-                                border: `1px solid ${isWin ? '#bbf7d0' : '#fecaca'}`,
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: 6
-                              }}
+                              className={`p-3 md:p-4 rounded-xl border flex flex-col gap-1.5 ${isWin
+                                ? 'bg-green-50 border-green-200'
+                                : 'bg-red-50 border-red-200'
+                                }`}
                             >
-                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <div style={{ fontSize: 14, fontWeight: 600 }}>
+                              <div className="flex justify-between items-center">
+                                <div className="text-sm font-semibold">
                                   {exit.symbol}
                                 </div>
-                                <div style={{
-                                  fontSize: 11,
-                                  padding: '2px 8px',
-                                  borderRadius: 999,
-                                  background: '#e2e8f0',
-                                  color: '#475569'
-                                }}>
+                                <div className="text-xs px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">
                                   {reasonLabel}
                                 </div>
                               </div>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                                  {isWin ? <TrendingUp size={14} color="#15803d" /> : <TrendingDown size={14} color="#b91c1c" />}
-                                  <span style={{ fontWeight: 600, color: isWin ? '#15803d' : '#b91c1c' }}>
+                              <div className="flex justify-between items-center text-xs">
+                                <div className="flex items-center gap-1">
+                                  {isWin ? <TrendingUp size={12} color="#15803d" /> : <TrendingDown size={12} color="#b91c1c" />}
+                                  <span className={`font-semibold ${isWin ? 'text-green-700' : 'text-red-700'}`}>
                                     {hasReturn
                                       ? `${isWin ? '+' : ''}${exit.return_pct.toFixed(2)}%`
                                       : '--'}
                                   </span>
-                                  <span style={{ color: '#64748b' }}>
+                                  <span className="text-slate-500">
                                     • Hold {Math.round(exit.hold_duration_mins)} mins
                                   </span>
                                 </div>
-                                <div style={{ textAlign: 'right', color: '#64748b' }}>
+                                <div className="text-right text-slate-500">
                                   <div>
                                     Exited at {formatTime(exit.exit_time)}
                                   </div>
                                   {typeof exit.time_since_exit_mins === 'number' && (
-                                    <div style={{ fontSize: 11 }}>
+                                    <div className="text-[11px]">
                                       {exit.time_since_exit_mins.toFixed(1)} mins ago
                                     </div>
                                   )}
                                 </div>
                               </div>
                               {reasonDescription && (
-                                <div style={{ marginTop: 4, fontSize: 11, color: '#64748b' }}>
+                                <div className="mt-1 text-xs text-slate-500">
                                   {reasonDescription}
                                 </div>
                               )}
@@ -539,56 +441,50 @@ export const ScalpingMonitor: React.FC<ScalpingMonitorProps> = ({ onClose, liveP
                 </>
               )}
 
-              <div style={{
-                marginTop: 8,
-                fontSize: 11,
-                color: '#64748b',
-                background: '#f8fafc',
-                borderRadius: 8,
-                padding: 12,
-                border: '1px dashed #cbd5e1'
-              }}>
-                <div style={{ fontWeight: 600, marginBottom: 4 }}>
+              <div className="mt-2 text-xs text-slate-500 bg-slate-50 rounded-lg p-3 md:p-4 border border-dashed border-slate-300">
+                <div className="font-semibold mb-1">
                   Monitor Occupancy
                 </div>
-                {monitorOccupancy ? (
-                  <>
-                    {monitorOccupancy.last_day && (() => {
-                      const ld = monitorOccupancy.last_day
-                      const occ = typeof ld.occupancy_pct === 'number' && Number.isFinite(ld.occupancy_pct)
-                        ? ld.occupancy_pct.toFixed(2)
-                        : '--'
-                      const avg = typeof ld.avg_active_positions === 'number' && Number.isFinite(ld.avg_active_positions)
-                        ? ld.avg_active_positions.toFixed(2)
-                        : '--'
-                      return (
-                        <div>
-                          Last day (24h): {occ}% of cycles had at least one scalping position (avg {avg} active).
-                        </div>
-                      )
-                    })()}
-                    {monitorOccupancy.last_week && (() => {
-                      const lw = monitorOccupancy.last_week
-                      const occ = typeof lw.occupancy_pct === 'number' && Number.isFinite(lw.occupancy_pct)
-                        ? lw.occupancy_pct.toFixed(2)
-                        : '--'
-                      const avg = typeof lw.avg_active_positions === 'number' && Number.isFinite(lw.avg_active_positions)
-                        ? lw.avg_active_positions.toFixed(2)
-                        : '--'
-                      return (
-                        <div>
-                          Last week (7 days): {occ}% of cycles had positions (avg {avg} active).
-                        </div>
-                      )
-                    })()}
-                  </>
-                ) : monitorOccupancyError ? (
-                  <div>{monitorOccupancyError}</div>
-                ) : (
-                  <div>Loading occupancy stats...</div>
-                )}
-                <div style={{ marginTop: 4 }}>
-                  Scalping entries are short-lived and event-driven. It is normal for many monitor checks to show no active positions between bursts of activity.
+                <div className="text-xs space-y-1">
+                  {monitorOccupancy ? (
+                    <>
+                      {monitorOccupancy.last_day && (() => {
+                        const ld = monitorOccupancy.last_day
+                        const occ = typeof ld.occupancy_pct === 'number' && Number.isFinite(ld.occupancy_pct)
+                          ? ld.occupancy_pct.toFixed(2)
+                          : '--'
+                        const avg = typeof ld.avg_active_positions === 'number' && Number.isFinite(ld.avg_active_positions)
+                          ? ld.avg_active_positions.toFixed(2)
+                          : '--'
+                        return (
+                          <div>
+                            Last day (24h): {occ}% of cycles had at least one scalping position (avg {avg} active).
+                          </div>
+                        )
+                      })()}
+                      {monitorOccupancy.last_week && (() => {
+                        const lw = monitorOccupancy.last_week
+                        const occ = typeof lw.occupancy_pct === 'number' && Number.isFinite(lw.occupancy_pct)
+                          ? lw.occupancy_pct.toFixed(2)
+                          : '--'
+                        const avg = typeof lw.avg_active_positions === 'number' && Number.isFinite(lw.avg_active_positions)
+                          ? lw.avg_active_positions.toFixed(2)
+                          : '--'
+                        return (
+                          <div>
+                            Last week (7 days): {occ}% of cycles had positions (avg {avg} active).
+                          </div>
+                        )
+                      })()}
+                    </>
+                  ) : monitorOccupancyError ? (
+                    <div>{monitorOccupancyError}</div>
+                  ) : (
+                    <div>Loading occupancy stats...</div>
+                  )}
+                  <div className="mt-1">
+                    Scalping entries are short-lived and event-driven. It is normal for many monitor checks to show no active positions between bursts of activity.
+                  </div>
                 </div>
               </div>
             </>
@@ -608,22 +504,16 @@ export const ScalpingMonitor: React.FC<ScalpingMonitorProps> = ({ onClose, liveP
 
 const ScalpingPositionCard: React.FC<{ position: ScalpingPosition; liveTick?: { last_price?: number; change_percent?: number } }> = ({ position, liveTick }) => {
   // Defensive: Validate exit_strategy exists with required fields
-  if (!position.exit_strategy || 
-      typeof position.exit_strategy.target_price !== 'number' || 
-      typeof position.exit_strategy.stop_loss_price !== 'number' ||
-      typeof position.exit_strategy.max_hold_mins !== 'number') {
+  if (!position.exit_strategy ||
+    typeof position.exit_strategy.target_price !== 'number' ||
+    typeof position.exit_strategy.stop_loss_price !== 'number' ||
+    typeof position.exit_strategy.max_hold_mins !== 'number') {
     return (
-      <div style={{
-        padding: 20,
-        background: '#fef2f2',
-        border: '2px solid #fca5a5',
-        borderRadius: 12,
-        textAlign: 'center'
-      }}>
-        <div style={{ fontSize: 16, fontWeight: 600, color: '#dc2626', marginBottom: 8 }}>
+      <div className="p-5 bg-red-50 border-2 border-red-300 rounded-xl text-center">
+        <div className="text-base font-semibold text-red-600 mb-2">
           {position.symbol}
         </div>
-        <div style={{ fontSize: 12, color: '#64748b' }}>
+        <div className="text-xs text-slate-500">
           Incomplete position data - exit strategy missing
         </div>
       </div>
@@ -741,77 +631,58 @@ const ScalpingPositionCard: React.FC<{ position: ScalpingPosition; liveTick?: { 
   }
 
   return (
-    <div style={{
-      padding: 16,
-      background: isProfit ? '#f0fdf4' : '#fef2f2',
-      border: `2px solid ${isProfit ? '#86efac' : '#fca5a5'}`,
-      borderRadius: 12,
-      position: 'relative',
-      maxWidth: '100%'
-    }}>
+    <div className={`p-3 md:p-4 rounded-xl border-2 relative max-w-full ${isProfit ? 'bg-green-50 border-green-300' : 'bg-red-50 border-red-300'
+      }`}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-            <div style={{ fontSize: 18, fontWeight: 700 }}>
+      <div className="flex flex-col md:flex-row md:justify-between gap-3 mb-4">
+        <div className="flex-1">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+            <div className="text-base md:text-lg font-bold">
               {position.symbol}
             </div>
-            <div
-              style={{
-                padding: '2px 8px',
-                borderRadius: 999,
-                fontSize: 10,
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                letterSpacing: 0.4,
-                background: isLong ? '#dcfce7' : '#fee2e2',
-                color: isLong ? '#166534' : '#991b1b',
-                border: `1px solid ${isLong ? '#bbf7d0' : '#fecaca'}`,
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {isLong ? 'Long scalp' : 'Short scalp'}
-            </div>
-            {directionLabel && (
+            <div className="flex flex-wrap gap-1">
               <div
-                style={{
-                  padding: '2px 8px',
-                  borderRadius: 999,
-                  fontSize: 10,
-                  fontWeight: 600,
-                  background: direction?.side === 'short' ? '#fee2e2' : '#dcfce7',
-                  color: direction?.side === 'short' ? '#991b1b' : '#166534',
-                  border: `1px solid ${direction?.side === 'short' ? '#fecaca' : '#bbf7d0'}`,
-                  whiteSpace: 'nowrap',
-                }}
+                className={`px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.4px] border whitespace-nowrap ${isLong
+                  ? 'bg-green-50 text-green-800 border-green-200'
+                  : 'bg-red-50 text-red-800 border-red-200'
+                  }`}
               >
-                {directionLabel}
+                {isLong ? 'Long scalp' : 'Short scalp'}
               </div>
-            )}
+              {directionLabel && (
+                <div
+                  className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border whitespace-nowrap ${direction?.side === 'short'
+                    ? 'bg-red-50 text-red-800 border-red-200'
+                    : 'bg-green-50 text-green-800 border-green-200'
+                    }`}
+                >
+                  {directionLabel}
+                </div>
+              )}
+            </div>
           </div>
-          <div style={{ fontSize: 12, color: '#64748b', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <div className="text-xs text-slate-500 flex items-center gap-1">
             <Clock size={12} />
             Entry: {formatTime(position.entry_time)} @ ₹{entryPrice.toFixed(2)}
           </div>
         </div>
-        
-        <div style={{ textAlign: 'right' }}>
+
+        <div className="text-right">
           <div
-            style={{
-              fontSize: 24,
-              fontWeight: 700,
-              color: hasPnl ? (isProfit ? '#15803d' : '#dc2626') : '#64748b'
-            }}
+            className={`text-xl md:text-2xl font-bold ${hasPnl
+              ? (isProfit ? 'text-green-700' : 'text-red-700')
+              : 'text-slate-500'
+              }`}
           >
             {hasPnl && effectiveReturnPct !== undefined
               ? `${isProfit ? '+' : ''}${effectiveReturnPct.toFixed(2)}%`
               : '--'}
           </div>
-          <div style={{ fontSize: 12, color: '#64748b' }}>
+          <div className="text-xs text-slate-500">
             {effectivePrice && effectivePrice > 0 ? `₹${effectivePrice.toFixed(2)}` : 'Awaiting live price'}
           </div>
           {(!effectivePrice || !hasPnl) && (
-            <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 2 }}>
+            <div className="text-[10px] text-slate-400 mt-0.5">
               Using entry price as placeholder until first market tick arrives
             </div>
           )}
@@ -819,135 +690,96 @@ const ScalpingPositionCard: React.FC<{ position: ScalpingPosition; liveTick?: { 
       </div>
 
       {/* Strategy Info */}
-      <div style={{
-        background: 'rgba(255,255,255,0.7)',
-        padding: 12,
-        borderRadius: 8,
-        marginBottom: 12,
-        fontSize: 11,
-        color: '#475569'
-      }}>
-        <div style={{ fontWeight: 600, marginBottom: 4 }}>
+      <div className="bg-white/70 p-3 rounded-lg mb-3 text-xs text-slate-600">
+        <div className="font-semibold mb-1">
           {position.exit_strategy.description}
         </div>
-        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <div className="flex flex-col sm:flex-row sm:gap-4 gap-2">
+          <div className="flex items-center gap-1">
             <Target size={12} />
-            Target: ₹{position.exit_strategy.target_price.toFixed(2)} (+{position.exit_strategy.target_pct}%)
+            <span className="break-words">Target: ₹{position.exit_strategy.target_price.toFixed(2)} (+{position.exit_strategy.target_pct}%)</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <div className="flex items-center gap-1">
             <Shield size={12} />
-            Stop: ₹{position.exit_strategy.stop_loss_price.toFixed(2)} (-{position.exit_strategy.stop_pct}%)
+            <span className="break-words">Stop: ₹{position.exit_strategy.stop_loss_price.toFixed(2)} (-{position.exit_strategy.stop_pct}%)</span>
           </div>
         </div>
       </div>
 
       {/* Progress Indicators */}
-      <div style={{ display: 'grid', gap: 8, maxWidth: 560, margin: '0 auto' }}>
+      <div className="grid gap-2 max-w-[560px] mx-auto">
         {/* Target Progress */}
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4 }}>
-            <span style={{ color: '#64748b' }}>To Target</span>
-            <span style={{ fontWeight: 600, color: isNearTarget ? '#15803d' : '#64748b' }}>
+          <div className="flex justify-between text-xs mb-1">
+            <span className="text-slate-500">To Target</span>
+            <span className={`font-semibold ${isNearTarget ? 'text-green-700' : 'text-slate-500'}`}>
               {typeof effectivePrice === 'number' && effectivePrice > 0
                 ? (targetDistance > 0 ? `${targetDistance.toFixed(2)}%` : 'Target Hit!')
                 : '--'}
             </span>
           </div>
-          <div style={{
-            height: 6,
-            background: '#e2e8f0',
-            borderRadius: 3,
-            overflow: 'hidden'
-          }}>
-            <div style={{
-              height: '100%',
-              width: `${targetProgressPct}%`,
-              background: isNearTarget ? '#15803d' : '#3b82f6',
-              transition: 'width 0.3s ease'
-            }} />
+          <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
+            <div
+              className="h-full transition-all duration-300"
+              style={{
+                width: `${targetProgressPct}%`,
+                background: isNearTarget ? '#15803d' : '#3b82f6'
+              }}
+            />
           </div>
         </div>
 
         {/* Stop Distance */}
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4 }}>
-            <span style={{ color: '#64748b' }}>From Stop</span>
-            <span style={{ fontWeight: 600, color: isNearStop ? '#dc2626' : '#64748b' }}>
+          <div className="flex justify-between text-xs mb-1">
+            <span className="text-slate-500">From Stop</span>
+            <span className={`font-semibold ${isNearStop ? 'text-red-700' : 'text-slate-500'}`}>
               {typeof effectivePrice === 'number' && effectivePrice > 0 ? `${stopDistance.toFixed(2)}%` : '--'}
             </span>
           </div>
-          <div style={{
-            height: 6,
-            background: '#e2e8f0',
-            borderRadius: 3,
-            overflow: 'hidden'
-          }}>
-            <div style={{
-              height: '100%',
-              width: `${stopProgressPct}%`,
-              background: isNearStop ? '#dc2626' : '#64748b',
-              transition: 'width 0.3s ease'
-            }} />
+          <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
+            <div
+              className="h-full transition-all duration-300"
+              style={{
+                width: `${stopProgressPct}%`,
+                background: isNearStop ? '#dc2626' : '#64748b'
+              }}
+            />
           </div>
         </div>
 
         {/* Time Progress */}
         <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4 }}>
-            <span style={{ color: '#64748b' }}>Time Left</span>
-            <span style={{ fontWeight: 600, color: isTimeRunningOut ? '#f59e0b' : '#64748b' }}>
+          <div className="flex justify-between text-xs mb-1">
+            <span className="text-slate-500">Time Left</span>
+            <span className={`font-semibold ${isTimeRunningOut ? 'text-amber-600' : 'text-slate-500'}`}>
               {Number.isFinite(rawTimeLeftMins) ? `${Math.floor(rawTimeLeftMins)} mins` : '--'}
             </span>
           </div>
-          <div style={{
-            height: 6,
-            background: '#e2e8f0',
-            borderRadius: 3,
-            overflow: 'hidden'
-          }}>
-            <div style={{
-              height: '100%',
-              width: `${Math.max(0, Math.min(100, 100 - timeProgress))}%`,
-              background: isTimeRunningOut ? '#f59e0b' : '#8b5cf6',
-              transition: 'width 0.3s ease'
-            }} />
+          <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
+            <div
+              className="h-full transition-all duration-300"
+              style={{
+                width: `${Math.max(0, Math.min(100, 100 - timeProgress))}%`,
+                background: isTimeRunningOut ? '#f59e0b' : '#8b5cf6'
+              }}
+            />
           </div>
         </div>
       </div>
 
       {/* Trailing Stop Info */}
       {trailingStop.enabled && hasPnl && safeEffectiveReturnPct >= trailingStop.activation_pct && (
-        <div style={{
-          marginTop: 12,
-          padding: 8,
-          background: 'rgba(245, 158, 11, 0.1)',
-          border: '1px solid #fbbf24',
-          borderRadius: 6,
-          fontSize: 11,
-          color: '#92400e',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 6
-        }}>
+        <div className="mt-3 p-2 bg-amber-50 border border-amber-300 rounded-md text-xs text-amber-800 flex items-center gap-1.5">
           <TrendingUp size={14} />
-          <span style={{ fontWeight: 600 }}>Trailing Stop Active!</span>
+          <span className="font-semibold">Trailing Stop Active!</span>
           <span>Will exit if profit drops below {(safeEffectiveReturnPct - trailingStop.trail_distance_pct).toFixed(2)}%</span>
         </div>
       )}
 
       {/* Warnings */}
       {isNearStop && (
-        <div style={{
-          marginTop: 8,
-          padding: 8,
-          background: 'rgba(220, 38, 38, 0.1)',
-          border: '1px solid #dc2626',
-          borderRadius: 6,
-          fontSize: 11,
-          color: '#dc2626',
-          fontWeight: 600
-        }}>
+        <div className="mt-2 p-2 bg-red-50 border border-red-600 rounded-md text-xs text-red-600 font-semibold">
           ⚠️ Near stop loss! Consider exiting manually.
         </div>
       )}

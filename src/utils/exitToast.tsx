@@ -73,7 +73,7 @@ export const showExitToast = (exit: ExitAlert, isMobile: boolean = false) => {
       ? 'border-l-4 border-green-600 bg-gradient-to-r from-green-50 to-green-100 exit-toast-profit' 
       : 'border-l-4 border-red-600 bg-gradient-to-r from-red-50 to-red-100 exit-toast-loss',
     style: {
-      minWidth: isMobile ? '280px' : '320px',
+      minWidth: isMobile ? '260px' : '320px',
       maxWidth: isMobile ? '90vw' : '400px',
       margin: isMobile ? '0 16px' : '0',
       fontSize: isMobile ? '13px' : '14px',
