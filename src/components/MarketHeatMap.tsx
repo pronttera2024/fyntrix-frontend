@@ -443,7 +443,7 @@ export const MarketHeatMap: React.FC<MarketHeatMapProps> = ({
             <div
               key={stock.symbol}
               onClick={() => onStockClick?.(stock.symbol)}
-              className="bg-white min-w-[25%] rounded-lg p-1.5 mt-1 mb-1 gap-3 cursor-pointer transition-all duration-200 shadow-sm border border-gray-200 border-l-[3px] flex flex-col hover:shadow-lg hover:border-sky-500"
+              className="bg-white min-w-[18%] rounded-lg p-1.5 mt-1 mb-1 gap-3 cursor-pointer transition-all duration-200 shadow-sm border border-gray-200 border-l-[3px] flex flex-col hover:shadow-lg hover:border-sky-500"
               style={{ borderLeftColor: colors.border }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)'

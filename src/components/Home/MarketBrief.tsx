@@ -217,7 +217,7 @@ export const MarketBrief: React.FC<MarketBriefProps> = ({
                     const isPositive = (t.pct || 0) >= 0
                     const trendColor = isPositive ? '#16a34a' : '#ef4444'
                     return (
-                        <div key={t.name} className="min-w-46 md:min-w-56 flex-[0_0_auto] p-2.5 border border-slate-200 rounded-xl bg-white shadow-sm">
+                        <div key={t.name} className="min-w-46 md:min-w-50 flex-[0_0_auto] p-2.5 border border-slate-200 rounded-xl bg-white shadow-sm">
                             <div className="flex justify-between items-start mb-1.5">
                                 <div>
                                     <div className="text-xs font-bold text-slate-900 uppercase mb-0.25">{t.name === 'GOLD' ? 'GOLD (IN $/OUNCE)' : t.name}</div>
