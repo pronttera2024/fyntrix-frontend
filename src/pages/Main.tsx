@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState, Fragment, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getFlows, getMarketSummary, getNews, getMiniSeries, postChat, getAgentsPicks, postStrategySuggest, getWinningTrades, getTradingModes, validateTradingModes, logPickInteraction, logPickFeedback, updateMemory, getPortfolioMonitor, addWatchlistEntry, postAnalyze, getStrategyExits, getRlMetrics } from '../api'
+import { getFlows, getMarketSummary, getNews, getMiniSeries, postChat, getAgentsPicks, getTopPicks, postStrategySuggest, getWinningTrades, getTradingModes, validateTradingModes, logPickInteraction, logPickFeedback, updateMemory, getPortfolioMonitor, addWatchlistEntry, postAnalyze, getStrategyExits, getRlMetrics } from '../api'
 import { BRANDING } from '../branding'
 import { FyntrixLogo } from '../components/FyntrixLogo'
 import { News } from '../components/Home/News'
@@ -28,6 +28,7 @@ import { SupportChatModal } from '../components/SupportChatModal'
 import { WinningTradesModal } from '../components/WinningTradesModal'
 import { reportError } from '../utils/errorReporting'
 import { formatIstDate, formatIstTime, isWithinLastTradingSessionIst as isWithinLastTradingSession, isWithinTodayIst } from '../utils/time'
+import { loadTopPicksFromCache, saveTopPicksToCache, shouldRefreshCache, clearTopPicksCache } from '../utils/topPicksCache'
 import { LAYOUT_TOKENS, useBreakpoint } from '../utils/responsive'
 import { useSwipeToClose } from '../utils/swipeToClose'
 import { useFocusTrap } from '../utils/focusTrap'
@@ -1204,86 +1205,34 @@ export default function App() {
     setLoadingPicks(true)
     setPicksSystemMessage('')
 
-    let cached: any = null
-    let canUseCached = false
-    let needsRefresh = forceRefresh
+    // Load from optimized cache
+    const cachedEntry = loadTopPicksFromCache(universe, primaryMode, isIndiaMarketOpen)
+    const needsRefresh = forceRefresh || shouldRefreshCache(cachedEntry, primaryMode, isIndiaMarketOpen)
 
-    // Load cached picks once
-    try {
-      cached = JSON.parse(localStorage.getItem('arise_picks') || 'null')
-    } catch {
-      cached = null
-    }
-
-    if (cached && cached.items) {
-      const cachedItems: AIPick[] = Array.isArray(cached.items) ? cached.items : []
-      const sameUniverse = cached.universe === universe
-      const sameMode = cached.primary_mode === primaryMode
-      const todayLocal = isWithinTodayIst(cached.as_of)
-      const freshLocal = isIndiaMarketOpen ? todayLocal : isWithinLastTradingSession(cached.as_of)
-
-      const allFallbackCached = cachedItems.length > 0 && cachedItems.every(isFallbackPick)
-
-      // During market hours, never treat previous-session local cache as fresh.
-      // Force a backend refresh so users don't get stuck on yesterday's picks.
-      if (isIndiaMarketOpen && !todayLocal) {
-        needsRefresh = true
+    // Show cached picks immediately for instant UX (if available)
+    if (cachedEntry && cachedEntry.picks.length > 0) {
+      const allFallbackCached = cachedEntry.picks.every(isFallbackPick)
+      
+      if (!allFallbackCached) {
+        setPicks(cachedEntry.picks as AIPick[])
+        setPicksAsOf(cachedEntry.as_of || '')
+        setPicksData(cachedEntry as any)
+        console.log(`✓ Showing cached picks instantly (${cachedEntry.picks.length} picks)`)
       }
-
-      // If mode changed vs cache, force refresh only when market is open
-      if (!sameMode) {
-        console.log(`Mode mismatch: cached=${cached.primary_mode}, current=${primaryMode}. Forcing refresh.`)
-        if (isIndiaMarketOpen) {
-          needsRefresh = true
-        }
-      }
-
-      if (!freshLocal) {
-        try {
-          localStorage.removeItem('arise_picks')
-        } catch { }
-      }
-
-      // Safe to show cached instantly only if universe+mode match, snapshot is recent, and we're not on a Scalping fallback snapshot
-      canUseCached = sameUniverse && sameMode && freshLocal && !allFallbackCached
-
-      // If cache is for the right mode/universe, check for staleness (only when market is open)
-      if (canUseCached && cached.as_of) {
-        try {
-          const asOfTime = new Date(cached.as_of).getTime()
-          if (!Number.isNaN(asOfTime)) {
-            const ageMinutes = (Date.now() - asOfTime) / 60000
-            const isScalping = primaryMode === 'Scalping'
-            const staleThreshold = isScalping ? 10 : 60
-            if (ageMinutes > staleThreshold && isIndiaMarketOpen) {
-              console.log(`Cached picks are stale (${ageMinutes.toFixed(1)} min old). Triggering background refresh.`)
-              needsRefresh = true
-            }
-          }
-        } catch { }
-      }
-    }
-
-    // Show cached picks immediately if they are safe for the current universe/mode
-    if (canUseCached) {
-      const cachedItems: AIPick[] = Array.isArray(cached.items) ? cached.items : []
-      setPicks(cachedItems as AIPick[])
-      setPicksAsOf(cached.as_of || '')
-      setPicksData(cached.picksData)
     }
 
     try {
-      // Backend will serve from its own cache unless we explicitly request refresh
+      // Backend has 3-layer cache (memory → Redis → SQLite) - leverage it!
+      // Only force refresh during market hours when cache is stale
       const effectiveRefresh = needsRefresh && isIndiaMarketOpen
-      const r = await getAgentsPicks({
-        limit: 10,
+      const r = await getTopPicks({
         universe,
-        session_id: sessionId,
+        mode: primaryMode,
+        limit: 10,
         refresh: effectiveRefresh,
-        primary_mode: primaryMode,
       })
 
-      const items: AIPick[] = Array.isArray(r?.items) ? (r.items as AIPick[]) : []
+      const items: AIPick[] = Array.isArray(r?.picks) ? (r.picks as AIPick[]) : []
       const allFallbackFresh = items.length > 0 && items.every(isFallbackPick)
 
       if (items.length === 0) {
@@ -1317,10 +1266,9 @@ export default function App() {
           primaryMode === 'Scalping' || primaryMode === 'Intraday'
         const hasCachedItems =
           allowCachedFromLastSession &&
-          canUseCached &&
-          cached &&
-          Array.isArray(cached.items) &&
-          cached.items.length > 0
+          cachedEntry &&
+          Array.isArray(cachedEntry.picks) &&
+          cachedEntry.picks.length > 0
 
         if (hasCachedItems) {
           setPicksSystemMessage(
@@ -1366,99 +1314,60 @@ export default function App() {
       setPicks(items)
       setPicksAsOf(r?.as_of || '')
       setPicksData(r) // Store full response including mode_info
-      try {
-        localStorage.setItem(
-          'arise_picks',
-          JSON.stringify({ items, as_of: r?.as_of || '', universe, primary_mode: primaryMode, picksData: r }),
-        )
-      } catch { }
-    } catch {
-      // On error, try to use cache ONLY if mode matches
-      try {
-        const fallback = JSON.parse(localStorage.getItem('arise_picks') || 'null')
-        if (fallback && fallback.items && fallback.primary_mode === primaryMode) {
-          setPicks(fallback.items as AIPick[])
-          setPicksAsOf(fallback.as_of || '')
-          setPicksData(fallback.picksData)
-        } else {
-          setPicks([])
-        }
-      } catch {
+      
+      // Save to optimized cache
+      saveTopPicksToCache(universe, primaryMode, r)
+    } catch (error) {
+      // On error, try to use cache as fallback
+      console.warn('Failed to fetch top picks:', error)
+      if (cachedEntry && cachedEntry.picks.length > 0) {
+        setPicks(cachedEntry.picks as AIPick[])
+        setPicksAsOf(cachedEntry.as_of || '')
+        setPicksData(cachedEntry as any)
+        setPicksSystemMessage('Using cached picks (network error)')
+      } else {
         setPicks([])
+        setPicksSystemMessage('Failed to load picks. Please try again.')
       }
     } finally {
       setLoadingPicks(false)
     }
-  }, [universe, sessionId, primaryMode, isIndiaMarketOpen])
+  }, [universe, primaryMode, isIndiaMarketOpen])
 
   useEffect(() => {
     let cancelled = false
 
       ; (async () => {
         try {
-          if (picks.length > 0 && picksData && picksData.universe === universe && picksData.primary_mode === primaryMode) {
+          if (picks.length > 0 && picksData && picksData.universe === universe && picksData.mode === primaryMode) {
             return
           }
 
-          let cached: any = null
-          try {
-            cached = JSON.parse(localStorage.getItem('arise_picks') || 'null')
-          } catch {
-            cached = null
-          }
+          // Load from optimized cache
+          const cachedEntry = loadTopPicksFromCache(universe, primaryMode, isIndiaMarketOpen)
 
-          const cachedFreshForOpenMarket = (() => {
-            try {
-              if (!cached || !cached.as_of) return false
-              return isIndiaMarketOpen ? isWithinTodayIst(cached.as_of) : isWithinLastTradingSession(cached.as_of)
-            } catch {
-              return false
-            }
-          })()
-
-          if (
-            cached &&
-            cached.items &&
-            cached.universe === universe &&
-            cached.primary_mode === primaryMode &&
-            cachedFreshForOpenMarket
-          ) {
+          if (cachedEntry && cachedEntry.picks.length > 0) {
             if (!cancelled) {
-              const cachedItems: AIPick[] = Array.isArray(cached.items) ? cached.items : []
-              setPicks(cachedItems as AIPick[])
-              setPicksAsOf(cached.as_of || '')
-              setPicksData(cached.picksData)
+              setPicks(cachedEntry.picks as AIPick[])
+              setPicksAsOf(cachedEntry.as_of || '')
+              setPicksData(cachedEntry as any)
             }
             return
-          } else if (cached && cached.as_of && !cachedFreshForOpenMarket) {
-            try {
-              localStorage.removeItem('arise_picks')
-            } catch { }
           }
 
-          const shouldForceRefresh = (() => {
-            try {
-              if (!isIndiaMarketOpen) return false
-              if (!cached || !cached.as_of) return true
-              if (cached.universe !== universe) return true
-              if (cached.primary_mode !== primaryMode) return true
-              return !isWithinTodayIst(cached.as_of)
-            } catch {
-              return false
-            }
-          })()
+          // Determine if we should force refresh
+          const shouldForceRefresh = shouldRefreshCache(cachedEntry, primaryMode, isIndiaMarketOpen)
 
-          const r = await getAgentsPicks({
-            limit: 10,
+          const r = await getTopPicks({
             universe,
-            session_id: sessionId,
+            mode: primaryMode,
+            limit: 10,
             refresh: shouldForceRefresh,
-            primary_mode: primaryMode,
           })
 
           if (cancelled) return
 
-          const items: AIPick[] = Array.isArray(r?.items) ? (r.items as AIPick[]) : []
+          const items: AIPick[] = Array.isArray(r?.picks) ? (r.picks as AIPick[]) : []
           const allFallback = items.length > 0 && items.every(isFallbackPick)
 
           if (allFallback) {
@@ -1471,15 +1380,12 @@ export default function App() {
           setPicks(items)
           setPicksAsOf(r?.as_of || '')
           setPicksData(r)
+          
+          // Save to cache
+          saveTopPicksToCache(universe, primaryMode, r)
           // Prefetch with real picks should not leave an old "none selected" or
           // other stale banner from a different mode/universe.
           setPicksSystemMessage('')
-          try {
-            localStorage.setItem(
-              'arise_picks',
-              JSON.stringify({ items, as_of: r?.as_of || '', universe, primary_mode: primaryMode, picksData: r }),
-            )
-          } catch { }
         } catch (e) {
           reportError(e, { feature: 'picks', action: 'prefetch_top_picks', extra: { universe, primaryMode } })
         }
