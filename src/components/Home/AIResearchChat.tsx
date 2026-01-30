@@ -144,12 +144,12 @@ export const AIResearchChat: React.FC<AIResearchChatProps> = ({
           {chat.length > 0 && (
             <button
               onClick={() => setChat([])}
-              className="px-3.5 py-2 text-xs font-semibold rounded-full bg-slate-600 text-white cursor-pointer transition-all duration-200 shadow-sm flex items-center gap-1.5 hover:shadow-md"
+              className="px-1.5 py-1 md:px-3.5 md:py-2 font-semibold rounded-full bg-slate-600 text-white cursor-pointer transition-all duration-200 shadow-sm flex items-center gap-1.5 hover:shadow-md"
             >
               <span className="text-sm">
                 <BrushCleaning size={16}/>
                 </span>
-              <span>Clear chat</span>
+              <span className="text-xs md:text-sm">Clear chat</span>
             </button>
           )}
           {isMobile && (
