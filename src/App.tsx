@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import Main from './pages/Main'
 import Login from './pages/Auth/Login'
 import CreateAccount from './pages/Auth/CreateAccount'
+import LandingPage from './pages/LandingPage'
 import PrivateRoute from './components/PrivateRoute'
 import NotFound from './pages/NotFound'
 import { GOOGLE_CLIENT_ID } from './config/api'
@@ -63,6 +64,7 @@ function App() {
       <Router>
         <Routes>
           {/* Public routes */}
+          <Route path="/landing" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/create-account" element={<CreateAccount />} />
           

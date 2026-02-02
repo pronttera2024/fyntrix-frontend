@@ -177,7 +177,7 @@ export const MarketBrief: React.FC<MarketBriefProps> = ({
                             <div className="flex w-full flex-row md:flex-col justify-between md:justify-start gap-1 md:gap-2">
                                 <div className="flex flex-col md:flex-row items-start md:items-center gap-1 md:gap-2">
                                     <span className={`
-                    text-xs rounded-full font-semibold px-1.5 py-1 animate-pulse animation-duration-100 animation-iteration-count-infinite
+                    text-xs rounded-full font-semibold px-1.5 py-1 animate-pulse animation-iteration-count-infinite
                     ${!isMarketOpen
                                             ? 'bg-yellow-100 text-yellow-800'
                                             : (isStale
