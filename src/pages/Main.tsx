@@ -1136,7 +1136,7 @@ export default function App() {
         refresh: effectiveRefresh,
       })
 
-      const items: AIPick[] = Array.isArray(r?.picks) ? (r.picks as AIPick[]) : []
+      const items: AIPick[] = Array.isArray(r?.items) ? (r.items as AIPick[]) : []
       const allFallbackFresh = items.length > 0 && items.every(isFallbackPick)
 
       if (items.length === 0) {
@@ -1271,7 +1271,7 @@ export default function App() {
 
           if (cancelled) return
 
-          const items: AIPick[] = Array.isArray(r?.picks) ? (r.picks as AIPick[]) : []
+          const items: AIPick[] = Array.isArray(r?.items) ? (r.items as AIPick[]) : []
           const allFallback = items.length > 0 && items.every(isFallbackPick)
 
           if (allFallback) {

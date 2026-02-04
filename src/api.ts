@@ -220,12 +220,11 @@ export function getAgentsPicksConsistent(params?: { universes?: string; limit?: 
 export function getTopPicks(params?: { universe?: string; mode?: string; limit?: number; min_confidence?: string; refresh?: boolean }){
   const p = new URLSearchParams()
   if (params?.universe) p.set('universe', params.universe)
-  if (params?.mode) p.set('mode', params.mode)
+  if (params?.mode) p.set('primary_mode', params.mode)  // Changed to primary_mode for /agents/picks
   if (typeof params?.limit === 'number') p.set('limit', String(params.limit))
-  if (params?.min_confidence) p.set('min_confidence', params.min_confidence)
   if (params?.refresh) p.set('refresh', 'true')
   const qs = p.toString()
-  return json<any>(`/v1/top-picks${qs?`?${qs}`:''}`)
+  return json<any>(`/v1/agents/picks${qs?`?${qs}`:''}`)  // Changed endpoint
 }
 
 /**

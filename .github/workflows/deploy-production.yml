@@ -1,0 +1,100 @@
+name: Deploy Frontend to Production
+
+on:
+  push:
+    branches:
+      - production
+  release:
+    types: [published]
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ap-south-1
+  S3_BUCKET: fyntrix-frontend
+  CLOUDFRONT_DISTRIBUTION_ID: E26V0HY1P4H54K
+  NODE_VERSION: '18'
+
+jobs:
+  deploy:
+    name: Build and Deploy to Production S3/CloudFront
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build frontend
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL_PRODUCTION }}
+          VITE_ENVIRONMENT: production
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_PRODUCTION }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_PRODUCTION }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Upload to S3 (static assets with long cache)
+        run: |
+          aws s3 sync dist/ s3://${{ env.S3_BUCKET }} \
+            --delete \
+            --cache-control "public, max-age=31536000" \
+            --exclude "*.html" \
+            --exclude "*.json"
+
+      - name: Upload to S3 (HTML/JSON with no-cache)
+        run: |
+          aws s3 sync dist/ s3://${{ env.S3_BUCKET }} \
+            --cache-control "no-cache, no-store, must-revalidate" \
+            --exclude "*" \
+            --include "*.html" \
+            --include "*.json"
+
+      - name: Invalidate CloudFront cache
+        id: invalidate
+        run: |
+          INVALIDATION_ID=$(aws cloudfront create-invalidation \
+            --distribution-id ${{ env.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*" \
+            --query 'Invalidation.Id' \
+            --output text)
+          
+          echo "Invalidation ID: $INVALIDATION_ID"
+          echo "invalidation_id=$INVALIDATION_ID" >> $GITHUB_OUTPUT
+
+      - name: Wait for CloudFront invalidation
+        run: |
+          echo "Waiting for CloudFront invalidation to complete..."
+          aws cloudfront wait invalidation-completed \
+            --distribution-id ${{ env.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --id ${{ steps.invalidate.outputs.invalidation_id }}
+
+      - name: Deployment summary
+        run: |
+          echo "### Production Frontend Deployment Successful! 🎉" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** Production" >> $GITHUB_STEP_SUMMARY
+          echo "**S3 Bucket:** ${{ env.S3_BUCKET }}" >> $GITHUB_STEP_SUMMARY
+          echo "**CloudFront:** ${{ env.CLOUDFRONT_DISTRIBUTION_ID }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🌐 **Frontend URL:** https://fyntrix.ai" >> $GITHUB_STEP_SUMMARY
+          echo "🌐 **WWW URL:** https://www.fyntrix.ai" >> $GITHUB_STEP_SUMMARY
+
+      - name: Notify deployment
+        if: success()
+        run: |
+          echo "Production frontend deployment completed successfully!"
+          # Add Slack/Discord notification here if needed
